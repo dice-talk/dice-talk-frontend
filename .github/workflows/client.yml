@@ -1,0 +1,33 @@
+# .github/workflows/client.yml
+name: client
+on:
+  push:
+    branches:
+      - dev  # dev 브랜치에 push될 때 실행
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install  # 루트에서 실행
+
+      - name: Build project
+        run: npm run build  # 루트에서 실행
+
+      - name: SHOW AWS CLI VERSION
+        run: aws --version
+
+      - name: Sync S3 Bucket
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_EC2_METADATA_DISABLED: true
+        run: |
+          aws s3 sync build s3://dicetalk-frontend \
+            --region ap-northeast-2 \
+            --delete
+
