@@ -1,0 +1,37 @@
+<svg width="300" height="350" viewBox="0 0 300 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF66C4" />
+      <stop offset="100%" stop-color="#6A5ACD" />
+    </linearGradient>
+  </defs>
+
+  <!-- 첫 번째 주사위 -->
+  <rect x="50" y="50" width="100" height="100" stroke="url(#gradient)" stroke-width="5" rx="10" />
+  <circle cx="75" cy="75" r="5" fill="url(#gradient)" />
+  <circle cx="125" cy="75" r="5" fill="url(#gradient)" />
+  <circle cx="100" cy="100" r="5" fill="url(#gradient)" />
+  <circle cx="75" cy="125" r="5" fill="url(#gradient)" />
+  <circle cx="125" cy="125" r="5" fill="url(#gradient)" />
+
+  <!-- 두 번째 주사위 -->
+  <rect x="120" y="120" width="100" height="100" stroke="url(#gradient)" stroke-width="5" rx="10" />
+  <circle cx="145" cy="145" r="5" fill="url(#gradient)" />
+  <circle cx="195" cy="145" r="5" fill="url(#gradient)" />
+  <circle cx="170" cy="170" r="5" fill="url(#gradient)" />
+  <circle cx="145" cy="195" r="5" fill="url(#gradient)" />
+  <circle cx="195" cy="195" r="5" fill="url(#gradient)" />
+
+  <!-- 말풍선 (사람) -->
+  <rect x="180" y="40" width="50" height="30" rx="5" stroke="url(#gradient)" stroke-width="2" />
+  <circle cx="195" cy="55" r="5" fill="url(#gradient)" />
+  <circle cx="210" cy="55" r="5" fill="url(#gradient)" />
+  <path d="M190 65 Q202 75 215 65" stroke="url(#gradient)" stroke-width="2" fill="none" />
+
+  <!-- 말풍선 (하트) -->
+  <rect x="60" y="170" width="40" height="30" rx="5" stroke="url(#gradient)" stroke-width="2" />
+  <path d="M75 185 Q80 175 85 185 Q90 175 95 185 Q95 195 85 200 Q75 195 75 185" fill="url(#gradient)" stroke="none" />
+
+  <!-- 텍스트 (DICE TALK) -->
+  <text x="50" y="320" font-family="'Arial', sans-serif" font-size="32" fill="url(#gradient)" font-weight="bold">DICE TALK</text>
+</svg>
