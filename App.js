@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import  { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator} from '@react-navigation/native-stack';
 import LendingPage from './signUp/LendingPage';
+import EmailInput from './signUp/EmailInput';
 
 const Stack = createNativeStackNavigator();
 
@@ -11,6 +12,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen name='LendingPage' component={LendingPage}/>
+        <Stack.Screen name='EmailInput' component={EmailInput}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

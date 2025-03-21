@@ -4,6 +4,7 @@ import LongButton from '../component/LongButton';
 import { FontAwesome } from '@expo/vector-icons'; // 아이콘 라이브러리
 import logo from '../assets/icon/logo/logo.png';
 import { Image } from 'react-native';
+import EmailInput from './EmailInput';
 
 export default function LendingPage({navigation}) {
     return (
@@ -14,7 +15,7 @@ export default function LendingPage({navigation}) {
             </View>
 
             <View style={styles.bottomContainer}>
-                <LongButton onPress={() => navigation.navigate()}>
+                <LongButton onPress={() => navigation.navigate(EmailInput)}>
                 <FontAwesome name="envelope" size={20} color="white" style={styles.icon} /> 
                 <Text style={styles.text}>이메일로 로그인</Text>
                 </LongButton>
