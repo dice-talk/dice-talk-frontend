@@ -1,12 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import  { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator} from '@react-navigation/native-stack';
+import LendingPage from './signUp/LendingPage';
 
-export default function App() {
+const Stack = createNativeStackNavigator();
+
+export default function App() { 
   return (
-    <View style={styles.container}>
-      <Text>Hello DiceTalk!!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name='LendingPage' component={LendingPage}/>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
