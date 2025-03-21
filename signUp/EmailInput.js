@@ -46,15 +46,17 @@ export default function EmailInput({navigation}) {
                         onChangeText={validateEmail} // 입력 값이 들어오면 이메일 검사를 진행한다.
                         value={email}
                     />
-                    <LongButton 
-                    onPress={() => navigation.navigate()}
-                    // 이메일이 올바르게 작성되지 않으면 비활성화
-                    disabled={!isValid}// 비활성 상태일 때 스타일 변경
-                    >
-                    <View style={[styles.button, !isValid && styles.disabledButton]}>
-                        <Text style={styles.text}>확인 메일 보내기</Text>
-                        </View>
-                    </LongButton>
+                    <View 
+                    style={[!isValid && styles.disabledButton]} 
+                    pointerEvents={!isValid ? "none" : "auto"}>
+                        <LongButton 
+                        onPress={ () => navigation.navigate()}
+                        // 이메일이 올바르게 작성되지 않으면 비활성화
+                        disabled={!isValid}// 비활성 상태일 때 스타일 변경
+                        >
+                            <Text style={styles.text}>확인 메일 보내기</Text>
+                        </LongButton>
+                    </View>
                 </View>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
@@ -109,3 +111,8 @@ const styles = StyleSheet.create({
         opacity: 0.5,
     },
 });
+
+//pointerEvents={!isValid ? 'none' : 'auto'} 비활성 상태일 때 pointerEvents: 'none' 적용해 클릭 자체를 막는다.
+// isValid === false 상태일 때 버튼이 뿌옇게 opacity: 0.5 표시된다.
+// 비화성 상태일 때 pointerEvents : 'none' 을 적용해 버튼이 아예 클릭되지 않는다.
+// 활성화 (isValid === true) 상태가 되면 원래대로 작동한다. (pointerEvents: "auto")
