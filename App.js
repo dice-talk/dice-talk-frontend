@@ -9,7 +9,7 @@ const Stack = createNativeStackNavigator();
 export default function App() { 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen name='LendingPage' component={LendingPage}/>
       </Stack.Navigator>
     </NavigationContainer>
@@ -24,3 +24,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+const screenOptions = {
+  headerShown: false,
+  //gestureEnabled: true, // (선택) iOS에서 제스처 네비게이션 활성화
+  //animationEnabled: true, // (선택) 화면 전환 애니메이션 활성화
+}
