@@ -9,20 +9,10 @@ import { verifyCode } from '../utils/http/email.API';
 import EmailExistModal from '../component/EmailExistsModal';
 // 인증 코드 자리 수
 const CELL_COUNT = 6;
-// 자동 포커스를 호출하고 싶어 설정하자.
-const codeFieldRef = useRef(null);
-
-useEffect(() => {
-    //300ms 정도 딜레이를 줘서 더 자연스럽게 하자.
-    const timer = setTimout(() => {
-        Keyboard.dismiss(); // 키보드 초기화
-        codeFieldRef.current?.focus?.();
-    }, 300);
-
-    return () => clearTimeout(timer);
-}, []);
 
 export default function VerifyCode({ route, navigation }) {
+  // 자동 포커스를 호출하고 싶어 설정하자.
+  const codeFieldRef = useRef(null);
     // 이전 화면에서 받은 이메일
   const { email } = route.params;
   // 인증 코드 입력 상태
@@ -36,6 +26,16 @@ export default function VerifyCode({ route, navigation }) {
   // 모달 상태
   const [showModal, setShowModal] = useState(false);
 
+  useEffect(() => {
+    //300ms 정도 딜레이를 줘서 더 자연스럽게 하자.
+    const timer = setTimeout(() => {
+        Keyboard.dismiss(); // 키보드 초기화
+        codeFieldRef.current?.focus?.();
+    }, 300);
+
+    return () => clearTimeout(timer);
+}, []);
+
 // 타이머 카운트 다운
 // 특정 상태(timer)가 변경될 때 실행되는 React Hook
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function VerifyCode({ route, navigation }) {
         Alert.alert('시간 만료', '인증 요청에 실패하셨습니다.',[
             {
                 text: '확인',
-                onPress: () => navigation.replace('EmailInput'), //이전화면으로 이동동
+                onPress: () => navigation.replace('EmailInput'), //이전화면으로 이동
             },
         ]);
         return;

@@ -30,8 +30,8 @@ mock.onPost(BACK_URL + '/auth/email').reply(config => {
     }
       // 예시: 중복 이메일 체크
       if (email === 'test@duplicate.com') {
-        return [400, { error: '이미 등록된 이메일입니다.' }];
-      }
+          return [400, { error: '이미 등록된 이메일입니다.' }];
+        }
   
     return [400, { error: '인증번호가 올바르지 않습니다.' }];
   });
