@@ -18,6 +18,7 @@ export default function App() {
         <Stack.Screen name='EmailInput' component={EmailInput} />
         <Stack.Screen name='VerifyCode' component={VerifyCode} />
         <Stack.Screen name='IdentityVerification' component={IdentityVerification} />
+        <Stack.Screen name='TossAuth' component={TossAuth} />
       </Stack.Navigator>
     </NavigationContainer>
   );
