@@ -4,7 +4,8 @@ import { LinearGradient } from "expo-linear-gradient";
 
 const LongButton = ({ onPress, children }) => {
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.button, pressed && styles.pressed]}>
+    <Pressable 
+    onPress={onPress} style={({ pressed }) => [styles.button, pressed && styles.pressed]}>
       <LinearGradient 
       colors={["#B28EF8", "#F476E5"]}
       start= { {x: 0, y: 0.5}}
