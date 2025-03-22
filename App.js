@@ -5,6 +5,7 @@ import { createNativeStackNavigator} from '@react-navigation/native-stack';
 import LendingPage from './signUp/LendingPage';
 import EmailInput from './signUp/EmailInput';
 import VerifyCode from './signUp/VerifyCode';
+import IdentityVerification from './signUp/IdentityVerification';
 
 
 const Stack = createNativeStackNavigator();
@@ -16,6 +17,7 @@ export default function App() {
         <Stack.Screen name='LendingPage' component={LendingPage} />
         <Stack.Screen name='EmailInput' component={EmailInput} />
         <Stack.Screen name='VerifyCode' component={VerifyCode} />
+        <Stack.Screen name='IdentityVerification' component={IdentityVerification} />
       </Stack.Navigator>
     </NavigationContainer>
   );
