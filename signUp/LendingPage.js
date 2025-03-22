@@ -7,13 +7,14 @@ import LogoIcon from '../assets/icon/logo/logo_icon.svg'; // SVG를 React 컴포
 import LogoText from '../assets/icon/logo/logo_diceTalk.svg';
 
 
+
 export default function LendingPage({navigation}) {
     return (
 
         <View style={styles.container}>
             <View style={styles.logoContainer}>
                 <LogoIcon width={200} height={200} />
-                <LogoText width={300} height={300} />
+                <LogoText width={300} height={300}/>
             </View>
 
             <View style={styles.bottomContainer}>

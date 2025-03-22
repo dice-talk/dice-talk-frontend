@@ -5,6 +5,7 @@ import { createNativeStackNavigator} from '@react-navigation/native-stack';
 import LendingPage from './signUp/LendingPage';
 import EmailInput from './signUp/EmailInput';
 
+
 const Stack = createNativeStackNavigator();
 
 export default function App() { 
