@@ -24,24 +24,18 @@ export default function EmailInput({navigation}) {
         try {
             const result = await sendEmail(email);
             console.log('서버 응답:', result);
-
-            if(result.code) {
+                //Alert.alert('성공', '이메일을 성공적으로 전송했어요!');
                 // 인증번호 화면으로 넘어간다. (Code 같이 넘김)
-                navigation.navigate('VerifyCode', {
-                    email,
-                    code: result.code,
-                });
-            }
-
-            Alert.alert('성공', '이메일을 성공적으로 전송했어요!');
-            // 다음 단계로 이동하고 싶으면면 navigation을 사용하자.
-            //navigation.navigate('');
-        } catch (error) {
-            Alert.alert('오류', '이메일 전송에 실패했습니다.')
-        }
-    }
+                // VerifyCode 라는 화면(스크린) 으로 이동하면서 email과 code라는 데이터(파라미터)를 함께 전달하는 것이다.
+                navigation.navigate('VerifyCode', {email});
+            } catch (error) {
+                const errMsg = error.response?.data?.error || '알 수 없는 오류입니다.';
+                Alert.alert('오류', errMsg);
+                }
+    };
 
     return (
+        <>
         <KeyboardAvoidingView 
             behavior='height' // 안드로이드 전용 설정
             style={styles.container}
@@ -57,7 +51,7 @@ export default function EmailInput({navigation}) {
                         <FontAwesome name='envelope' size={30} color='white'/>
                     </LinearGradient>
 
-                    {/*타이틀틀*/}
+                    {/*타이틀*/}
                     <Text style={styles.titleText}>이메일 주소를 입력해주세요</Text>
 
                     <TextInput
@@ -65,7 +59,7 @@ export default function EmailInput({navigation}) {
                         placeholder='sample@example.com'
                         placeholderTextColor='#B3B3B3'
                         keyboardType='email-address' // 이메일 키보드 사용
-                        //autoCapitalize='none' // 첫 글자 대문자 방지
+                        autoCapitalize='none' // 첫 글자 대문자 방지
                         autoCorrect={false} // 자동 수정 방지
                         onChangeText={validateEmail} // 입력 값이 들어오면 이메일 검사를 진행한다.
                         value={email}
@@ -84,6 +78,7 @@ export default function EmailInput({navigation}) {
                 </View>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
+        </>
     )
 }
 

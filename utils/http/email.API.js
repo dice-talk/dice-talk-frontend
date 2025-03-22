@@ -12,26 +12,46 @@ const mock = new MockAdapter(axios);
 mock.onPost(BACK_URL + '/auth/email').reply(config => {
     const { email } = JSON.parse(config.data);
   
-    // 예시: 중복 이메일 체크
-    if (email === 'test@duplicate.com') {
-      return [409, { message: '이미 중복된 이메일입니다.' }];
-    }
+    // // 예시: 중복 이메일 체크
+    // if (email === 'test@duplicate.com') {
+    //   return [400, { error: '이미 등록된 이메일입니다.' }];
+    // }
   
     // 인증번호 반환 (테스트용)
     return [200, { code: '123456', message: '인증번호가 발송되었습니다.' }];
   });
+  // 인증번호 확인 (verifyCode)
+  mock.onPost(BACK_URL + '/auth/email/verify-code').reply(config => {
+    const { email, code } = JSON.parse(config.data);
   
+    // 테스트용 인증번호는 항상 '123456'
+    if (code === '123456') {
+      return [200, { message: '인증 성공' }];
+    }
+      // 예시: 중복 이메일 체크
+      if (email === 'test@duplicate.com') {
+          return [400, { error: '이미 등록된 이메일입니다.' }];
+        }
+  
+    return [400, { error: '인증번호가 올바르지 않습니다.' }];
+  });
+
+
+
+
+
+
 
 export const sendEmail = async (email) => {
-    try{
         //console.log(email)
-        const response = await axios.post( BACK_URL + '/auth/email', {
-            email : email,
-        });
-// 여기서 code가 넘어온다.
+        const response = await axios.post( BACK_URL + '/auth/email', {email});
         return response.data;
-    } catch (error) {
-        console.error('이메일 전송 실패:', error);
-        throw error;
-    }
 };
+
+export const verifyCode = async({ email, code }) => {
+    //console.log('요청보냄!', {email, code});
+    const response = await axios.post(BACK_URL + '/auth/email/verify-code', {email, code});
+    //console.log('응답 받음!', response.status, response.data);
+    return response.data;
+};
+
