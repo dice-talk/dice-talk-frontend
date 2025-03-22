@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, TouchableWitho
 import LongButton from '../component/LongButton';
 import { FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { sendEmail } from '../utils/http/email.API';
+import { Alert } from 'react-native';
 
 
 export default function EmailInput({navigation}) {
@@ -15,6 +17,28 @@ export default function EmailInput({navigation}) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         // 이메일이 유효하면 true, 아니면 false
         setIsValid(emailRegex.test(text));
+    }
+
+    //이메일 전송 핸들러 함수
+    const handleSendEmail = async () => {
+        try {
+            const result = await sendEmail(email);
+            console.log('서버 응답:', result);
+
+            if(result.code) {
+                // 인증번호 화면으로 넘어간다. (Code 같이 넘김)
+                navigation.navigate('VerifyCode', {
+                    email,
+                    code: result.code,
+                });
+            }
+
+            Alert.alert('성공', '이메일을 성공적으로 전송했어요!');
+            // 다음 단계로 이동하고 싶으면면 navigation을 사용하자.
+            //navigation.navigate('');
+        } catch (error) {
+            Alert.alert('오류', '이메일 전송에 실패했습니다.')
+        }
     }
 
     return (
@@ -50,7 +74,7 @@ export default function EmailInput({navigation}) {
                     style={[!isValid && styles.disabledButton]} 
                     pointerEvents={!isValid ? "none" : "auto"}>
                         <LongButton 
-                        onPress={ () => navigation.navigate()}
+                        onPress={handleSendEmail}
                         // 이메일이 올바르게 작성되지 않으면 비활성화
                         disabled={!isValid}// 비활성 상태일 때 스타일 변경
                         >
