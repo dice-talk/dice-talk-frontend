@@ -30,11 +30,12 @@ export default function EmailInput({navigation}) {
                 navigation.navigate('VerifyCode', {email});
             } catch (error) {
                 const errMsg = error.response?.data?.error || '알 수 없는 오류입니다.';
-            Alert.alert('오류', errMsg);
-        }
+                Alert.alert('오류', errMsg);
+                }
     };
 
     return (
+        <>
         <KeyboardAvoidingView 
             behavior='height' // 안드로이드 전용 설정
             style={styles.container}
@@ -77,6 +78,7 @@ export default function EmailInput({navigation}) {
                 </View>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
+        </>
     )
 }
 

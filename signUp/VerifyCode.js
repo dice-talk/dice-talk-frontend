@@ -1,13 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Alert, StyleSheet, TouchableOpacity } from 'react-native';
-import { CodeField, Cursor,useClearByFocusCell } from 'react-native-confirmation-code-field';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, Alert, StyleSheet, TouchableOpacity, Keyboard } from 'react-native';
+import { CodeField, Cursor,useClearByFocusCell, useBlurOnFulfill } from 'react-native-confirmation-code-field';
 import LongButton from '../component/LongButton';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome } from '@expo/vector-icons';
 import { sendEmail } from '../utils/http/email.API'; // 이메일 전송 및 코드 검증
 import { verifyCode } from '../utils/http/email.API';
-// 인증 코드 자리 수수
+import EmailExistModal from '../component/EmailExistsModal';
+// 인증 코드 자리 수
 const CELL_COUNT = 6;
+// 자동 포커스를 호출하고 싶어 설정하자.
+const codeFieldRef = useRef(null);
+
+useEffect(() => {
+    //300ms 정도 딜레이를 줘서 더 자연스럽게 하자.
+    const timer = setTimout(() => {
+        Keyboard.dismiss(); // 키보드 초기화
+        codeFieldRef.current?.focus?.();
+    }, 300);
+
+    return () => clearTimeout(timer);
+}, []);
 
 export default function VerifyCode({ route, navigation }) {
     // 이전 화면에서 받은 이메일
@@ -17,9 +30,11 @@ export default function VerifyCode({ route, navigation }) {
   // 셀 포커스 제어어
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({ value, setValue,});
 
-  const [timer, setTimer] = useState(10); // 5분  300초
+  const [timer, setTimer] = useState(300); // 5분  300초
   //버튼 비활성화 조건
   const isDisabled = value.length !== 6 || timer === 0;
+  // 모달 상태
+  const [showModal, setShowModal] = useState(false);
 
 // 타이머 카운트 다운
 // 특정 상태(timer)가 변경될 때 실행되는 React Hook
@@ -62,65 +77,85 @@ export default function VerifyCode({ route, navigation }) {
         //console.log('오류전체', error);
         // ?.(옵셔널 체이닝) 하나라도 undefined면 에러 터지지 않고 undefined 반환하도록 안전하게 체크한다.
         const errMsg = error.response?.data?.error || '인증 실패, 다시 시도해주세요';
-        Alert.alert('오류', errMsg);
+        if (errMsg === '이미 등록된 이메일입니다.') {
+            setShowModal(true); // 모달 오픈
+        } else {
+            Alert.alert('오류', errMsg)
+        }
+        
     }
   };
 
   return (
-    <View style={styles.container}>
-      <LinearGradient
-        colors={['#B28EF8', '#F476E5']}
-        start={{ x: 0, y: 0.5 }}
-        end={{ x: 1, y: 0.5 }}
-        style={styles.iconContainer}>
-            <FontAwesome name='envelope' size={30} color='white'/>
-        </LinearGradient>
+    <>
+        <View style={styles.container}>
+        <LinearGradient
+            colors={['#B28EF8', '#F476E5']}
+            start={{ x: 0, y: 0.5 }}
+            end={{ x: 1, y: 0.5 }}
+            style={styles.iconContainer}>
+                <FontAwesome name='envelope' size={30} color='white'/>
+            </LinearGradient>
 
-        <Text style={styles.title}>인증 코드를 입력해주세요</Text>
-        <Text style={styles.timer}>남은 시간: {formatTime(timer)}</Text>
-        {/*인증코드 입력 필드*/}
-        <CodeField
-            {...props}
-            value={value}
-            onChangeText={setValue}
-            cellCount={CELL_COUNT}
-            rootStyle={styles.codeFieldRoot}
-            keyboardType='number-pad'
-            textContentType='oneTimeCode'
-            renderCell={({ index, symbol, isFocused }) => (
-                <View
-                    key={index}
-                    style={[styles.cell, isFocused && styles.focusCell]}
-                    onLayout={getCellOnLayoutHandler(index)}>
-                    <Text style={styles.cellText}>
-                        {symbol || (isFocused ? <Cursor /> : null)}
-                    </Text>
-                </View>
-            )}
-        />
+            <Text style={styles.title}>인증 코드를 입력해주세요</Text>
+            <Text style={styles.timer}>남은 시간: {formatTime(timer)}</Text>
+            {/*인증코드 입력 필드*/}
+            <CodeField
+                ref={codeFieldRef}
+                {...props}
+                value={value}
+                onChangeText={setValue}
+                cellCount={CELL_COUNT}
+                rootStyle={styles.codeFieldRoot}
+                keyboardType='number-pad'
+                textContentType='oneTimeCode'
+                renderCell={({ index, symbol, isFocused }) => (
+                    <View
+                        key={index}
+                        style={[styles.cell, isFocused && styles.focusCell]}
+                        onLayout={getCellOnLayoutHandler(index)}>
+                        <Text style={styles.cellText}>
+                            {symbol || (isFocused ? <Cursor /> : null)}
+                        </Text>
+                    </View>
+                )}
+            />
 
-        <Text style={styles.helper}>수신된 이메일에 기재된 6자리 숫자를 입력해 주세요.</Text>
-        {/*인증 메일 재요청 버튼튼*/}
-        <TouchableOpacity onPress={async () => {
-            try {
-                // 이메일 재요청청
-                await sendEmail(email);
-                Alert.alert('알림','재요청 되었습니다. 이메일을 확인해주세요.')
-            } catch (error) {
-                Alert.alert('오류','이메일 재전송에 실패했습니다.')
-            }
-        }}>
-            <Text style={styles.helperSmall}>이메일을 받지 못했어요</Text>
-        </TouchableOpacity>
-        {/*인증하기 버튼 (조건부 비활성화 + 투명도 조절)*/}
-        <View 
-        style={[styles.buttonContainer, isDisabled && styles.disabled]}
-        pointerEvents={ isDisabled ? "none" : "auto"}>
-            <LongButton onPress={handleVerify} disabled={isDisabled}>
-                <Text style={styles.buttonText}>인증하기</Text>
-            </LongButton>
+            <Text style={styles.helper}>수신된 이메일에 기재된 6자리 숫자를 입력해 주세요.</Text>
+            {/*인증 메일 재요청 버튼*/}
+            <TouchableOpacity onPress={async () => {
+                try {
+                    // 이메일 재요청
+                    await sendEmail(email);
+                    Alert.alert('알림','재요청 되었습니다. 이메일을 확인해주세요.')
+                } catch (error) {
+                    Alert.alert('오류','이메일 재전송에 실패했습니다.')
+                }
+            }}>
+                <Text style={styles.helperSmall}>이메일을 받지 못했어요</Text>
+            </TouchableOpacity>
+            {/*인증하기 버튼 (조건부 비활성화 + 투명도 조절)*/}
+            <View 
+            style={[styles.buttonContainer, isDisabled && styles.disabled]}
+            pointerEvents={ isDisabled ? "none" : "auto"}>
+                <LongButton onPress={handleVerify} disabled={isDisabled}>
+                    <Text style={styles.buttonText}>인증하기</Text>
+                </LongButton>
+            </View>
         </View>
-    </View>
+                <EmailExistModal
+                visible={showModal}
+                onClose={() => setShowModal(false)}
+                onLogin={() => {
+                    setShowModal(false);
+                    navigation.navigate('Login')// 로그인 페이지로 이동
+                }}
+                onFindEmail={() => {
+                    setShowModal(false);
+                    navigation.navigate('FindEmail'); //이메일 찾기 페이지로 이동동
+                }}
+                />
+    </>
   );
 }
 
@@ -186,7 +221,9 @@ const styles = StyleSheet.create({
       color: '#fff',
       fontSize: 16,
     },
-    disabled: { // 버튼 비활성화 상태이 때 투명도 적용
+    disabled: { // 버튼 비활성화 상태일 때 투명도 적용
         opacity: 0.5,
     },
   });
+
+  // useBlurOnFulfill 인증코드 입력이 끝날 때 자동으로 포커스 해제해준다.
