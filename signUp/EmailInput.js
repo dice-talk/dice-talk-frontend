@@ -24,22 +24,15 @@ export default function EmailInput({navigation}) {
         try {
             const result = await sendEmail(email);
             console.log('서버 응답:', result);
-
-            if(result.code) {
+                //Alert.alert('성공', '이메일을 성공적으로 전송했어요!');
                 // 인증번호 화면으로 넘어간다. (Code 같이 넘김)
-                navigation.navigate('VerifyCode', {
-                    email,
-                    code: result.code,
-                });
-            }
-
-            Alert.alert('성공', '이메일을 성공적으로 전송했어요!');
-            // 다음 단계로 이동하고 싶으면면 navigation을 사용하자.
-            //navigation.navigate('');
-        } catch (error) {
-            Alert.alert('오류', '이메일 전송에 실패했습니다.')
+                // VerifyCode 라는 화면(스크린) 으로 이동하면서 email과 code라는 데이터(파라미터)를 함께 전달하는 것이다.
+                navigation.navigate('VerifyCode', {email});
+            } catch (error) {
+                const errMsg = error.response?.data?.error || '알 수 없는 오류입니다.';
+            Alert.alert('오류', errMsg);
         }
-    }
+    };
 
     return (
         <KeyboardAvoidingView 
