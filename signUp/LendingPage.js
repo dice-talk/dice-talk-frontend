@@ -4,7 +4,7 @@ import LongButton from '../component/LongButton';
 import { FontAwesome } from '@expo/vector-icons'; // 아이콘 라이브러리
 //import EmailInput from './EmailInput';
 import LogoIcon from '../assets/icon/logo/logo_icon.svg'; // SVG를 React 컴포넌트처럼 사용
-import LogoText from '../assets/icon/logo/logo_dice Talk.svg';
+import LogoText from '../assets/icon/logo/logo_diceTalk.svg';
 
 
 export default function LendingPage({navigation}) {

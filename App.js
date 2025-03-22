@@ -10,9 +10,9 @@ const Stack = createNativeStackNavigator();
 export default function App() { 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={screenOptions}>
-        <Stack.Screen name='LendingPage' component={LendingPage} options={headerShown = false}/>
-        <Stack.Screen name='EmailInput' component={EmailInput}/>
+      <Stack.Navigator /*screenOptions={screenOptions}*/>
+        <Stack.Screen name='LendingPage' component={LendingPage} />
+        <Stack.Screen name='EmailInput' component={EmailInput} />
       </Stack.Navigator>
     </NavigationContainer>
   );
