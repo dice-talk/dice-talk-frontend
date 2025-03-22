@@ -17,7 +17,7 @@ export default function VerifyCode({ route, navigation }) {
   // 셀 포커스 제어어
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({ value, setValue,});
 
-  const [timer, setTimer] = useState(300); // 5분  300초
+  const [timer, setTimer] = useState(10); // 5분  300초
   //버튼 비활성화 조건
   const isDisabled = value.length !== 6 || timer === 0;
 
@@ -54,10 +54,12 @@ export default function VerifyCode({ route, navigation }) {
         // 서버에 검증 요청 인증 서버에 요청하는 핵심 액션 
         // 아래 코드가 없으면 인증 코드가 서버에 아예 전송되지 않는다.
         // 즉, 사용자가 입력한 6자리 숫자를 백엔드에 보내서 맞는지 확인하는 작업을 하지 않게 된다.
+        //console.log('검증 성공1', result);
         await verifyCode({ email, code: value });
         Alert.alert('인증 성공', '본인인증을 시작하겠습니다!');
-        navigation.navigate(); // 다음 단계로 이동
+        navigation.navigate('LendiingPge'); // 다음 단계로 이동
     } catch (error) {
+        //console.log('오류전체', error);
         // ?.(옵셔널 체이닝) 하나라도 undefined면 에러 터지지 않고 undefined 반환하도록 안전하게 체크한다.
         const errMsg = error.response?.data?.error || '인증 실패, 다시 시도해주세요';
         Alert.alert('오류', errMsg);

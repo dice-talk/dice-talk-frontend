@@ -14,7 +14,7 @@ mock.onPost(BACK_URL + '/auth/email').reply(config => {
   
     // 예시: 중복 이메일 체크
     if (email === 'test@duplicate.com') {
-      return [400, { message: '이미 중복된 이메일입니다.' }];
+      return [400, { error: '이미 중복된 이메일입니다.' }];
     }
   
     // 인증번호 반환 (테스트용)
@@ -45,9 +45,9 @@ export const sendEmail = async (email) => {
 };
 
 export const verifyCode = async({ email, code }) => {
-    console.log('요청보냄!', {email, code});
+    //console.log('요청보냄!', {email, code});
     const response = await axios.post(BACK_URL + '/auth/verifyCode', {email, code});
-    console.log('응답 받음!', response.data);
+    //console.log('응답 받음!', response.status, response.data);
     return response.data;
 };
 

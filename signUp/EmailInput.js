@@ -50,7 +50,7 @@ export default function EmailInput({navigation}) {
                         <FontAwesome name='envelope' size={30} color='white'/>
                     </LinearGradient>
 
-                    {/*타이틀틀*/}
+                    {/*타이틀*/}
                     <Text style={styles.titleText}>이메일 주소를 입력해주세요</Text>
 
                     <TextInput
@@ -58,7 +58,7 @@ export default function EmailInput({navigation}) {
                         placeholder='sample@example.com'
                         placeholderTextColor='#B3B3B3'
                         keyboardType='email-address' // 이메일 키보드 사용
-                        //autoCapitalize='none' // 첫 글자 대문자 방지
+                        autoCapitalize='none' // 첫 글자 대문자 방지
                         autoCorrect={false} // 자동 수정 방지
                         onChangeText={validateEmail} // 입력 값이 들어오면 이메일 검사를 진행한다.
                         value={email}
