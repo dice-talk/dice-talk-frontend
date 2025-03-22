@@ -20,7 +20,23 @@ mock.onPost(BACK_URL + '/auth/email').reply(config => {
     // 인증번호 반환 (테스트용)
     return [200, { code: '123456', message: '인증번호가 발송되었습니다.' }];
   });
+  // 인증번호 확인 (verifyCode)
+  mock.onPost(BACK_URL + '/auth/verifyCode').reply(config => {
+    const { email, code } = JSON.parse(config.data);
   
+    // 테스트용 인증번호는 항상 '123456'
+    if (code === '123456') {
+      return [200, { message: '인증 성공' }];
+    }
+  
+    return [400, { error: '인증번호가 올바르지 않습니다.' }];
+  });
+
+
+
+
+
+
 
 export const sendEmail = async (email) => {
         //console.log(email)
@@ -28,8 +44,10 @@ export const sendEmail = async (email) => {
         return response.data;
 };
 
-export const VerifyCode = async({ email, code }) => {
+export const verifyCode = async({ email, code }) => {
+    console.log('요청보냄!', {email, code});
     const response = await axios.post(BACK_URL + '/auth/verifyCode', {email, code});
+    console.log('응답 받음!', response.data);
     return response.data;
 };
 

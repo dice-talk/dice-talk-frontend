@@ -1,22 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Alert, StyleSheet, TouchableOpacity } from 'react-native';
-import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
+import { CodeField, Cursor,useClearByFocusCell } from 'react-native-confirmation-code-field';
 import LongButton from '../component/LongButton';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome } from '@expo/vector-icons';
-import { sendEmail } from '../utils/http/email.API';
-// input 버튼 6개로 나눠보자
+import { sendEmail } from '../utils/http/email.API'; // 이메일 전송 및 코드 검증
+import { verifyCode } from '../utils/http/email.API';
+// 인증 코드 자리 수수
 const CELL_COUNT = 6;
 
 export default function VerifyCode({ route, navigation }) {
+    // 이전 화면에서 받은 이메일
   const { email } = route.params;
+  // 인증 코드 입력 상태
   const [value, setValue] = useState('');
-  //const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT});
+  // 셀 포커스 제어어
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({ value, setValue,});
 
   const [timer, setTimer] = useState(300); // 5분  300초
+  //버튼 비활성화 조건
+  const isDisabled = value.length !== 6 || timer === 0;
 
 // 타이머 카운트 다운
+// 특정 상태(timer)가 변경될 때 실행되는 React Hook
   useEffect(() => {
     if (timer === 0) {
         Alert.alert('시간 만료', '인증 요청에 실패하셨습니다.',[
@@ -27,23 +33,32 @@ export default function VerifyCode({ route, navigation }) {
         ]);
         return;
     } 
-
+// 1초마다 감소한다. setInterval은 timer을 1씩 줄이는 함수
     const interval = setInterval(() => setTimer((prev) => prev -1), 1000);
+    // 언마운트시 타이머 정리 clearInterval은 컴포넌트가 사라질 때(setInterval 중복 방지) 타이머 정리하는 정리 함수
     return () => clearInterval(interval);
   }, [timer]);
-
+// 타이머 텍스트 포맷
+// 숫자 형태의 초(sec)를 '분:초' 형태의 00:00 문자열로 변환해준다.
   const formatTime = (sec) => {
+    // Math.floor(sec / 60) 초를 60으로 나눠서 분 단위로 내림
     const min = String(Math.floor(sec / 60)).padStart(2,'0');
+    // sec % 60 초를 60으로 나눈 나머지 
+    // -> 남은 초 String(...).padStart(2, '0'): 자릿수가 1개일 경우, 앞에 '0'을 붙여 2자리를 맞춘다. ex) 4 -> '04'
     const secStr = String(sec % 60).padStart(2, '0');
     return `${min}:${secStr}`;
   };
-
+// 인증 코드 서버 검증 요청
   const handleVerify = async () => {
     try {
-        const result = await VerifyCode({ email, code: value });
+        // 서버에 검증 요청 인증 서버에 요청하는 핵심 액션 
+        // 아래 코드가 없으면 인증 코드가 서버에 아예 전송되지 않는다.
+        // 즉, 사용자가 입력한 6자리 숫자를 백엔드에 보내서 맞는지 확인하는 작업을 하지 않게 된다.
+        await verifyCode({ email, code: value });
         Alert.alert('인증 성공', '본인인증을 시작하겠습니다!');
         navigation.navigate(); // 다음 단계로 이동
     } catch (error) {
+        // ?.(옵셔널 체이닝) 하나라도 undefined면 에러 터지지 않고 undefined 반환하도록 안전하게 체크한다.
         const errMsg = error.response?.data?.error || '인증 실패, 다시 시도해주세요';
         Alert.alert('오류', errMsg);
     }
@@ -61,7 +76,7 @@ export default function VerifyCode({ route, navigation }) {
 
         <Text style={styles.title}>인증 코드를 입력해주세요</Text>
         <Text style={styles.timer}>남은 시간: {formatTime(timer)}</Text>
-
+        {/*인증코드 입력 필드*/}
         <CodeField
             {...props}
             value={value}
@@ -83,9 +98,10 @@ export default function VerifyCode({ route, navigation }) {
         />
 
         <Text style={styles.helper}>수신된 이메일에 기재된 6자리 숫자를 입력해 주세요.</Text>
-
+        {/*인증 메일 재요청 버튼튼*/}
         <TouchableOpacity onPress={async () => {
             try {
+                // 이메일 재요청청
                 await sendEmail(email);
                 Alert.alert('알림','재요청 되었습니다. 이메일을 확인해주세요.')
             } catch (error) {
@@ -94,9 +110,11 @@ export default function VerifyCode({ route, navigation }) {
         }}>
             <Text style={styles.helperSmall}>이메일을 받지 못했어요</Text>
         </TouchableOpacity>
-
-        <View style={{marginTop: 30}}>
-            <LongButton onPress={handleVerify} disabled={timer === 0 || value.length !== 6}>
+        {/*인증하기 버튼 (조건부 비활성화 + 투명도 조절)*/}
+        <View 
+        style={[styles.buttonContainer, isDisabled && styles.disabled]}
+        pointerEvents={ isDisabled ? "none" : "auto"}>
+            <LongButton onPress={handleVerify} disabled={isDisabled}>
                 <Text style={styles.buttonText}>인증하기</Text>
             </LongButton>
         </View>
@@ -159,8 +177,14 @@ const styles = StyleSheet.create({
       fontSize: 11,
       color: '#999',
     },
+    buttonContainer: {
+      opacity: 1
+    },
     buttonText: {
       color: '#fff',
       fontSize: 16,
+    },
+    disabled: { // 버튼 비활성화 상태이 때 투명도 적용
+        opacity: 0.5,
     },
   });
