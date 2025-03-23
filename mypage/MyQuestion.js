@@ -1,7 +1,7 @@
 import { Text, View, StyleSheet, Pressable, Image, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState, useEffect } from "react";
-import friendIcon from '../assets/icon/profile/friend_01.png';
+
 import Footer from "../component/Footer";
 import QuestionItem from "./QuestionItem";
 import { getMyQuestions } from "../utils/http/question.API";
