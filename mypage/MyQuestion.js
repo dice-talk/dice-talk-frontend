@@ -6,6 +6,8 @@ import Footer from "../component/Footer";
 import QuestionItem from "./QuestionItem";
 import { getMyQuestions } from "../utils/http/question.API";
 import Header from "../component/Header"
+import MyQuestionInputText from "./MyQuestionInputText";
+import { useNavigation } from '@react-navigation/native';
 
 function Button({ title, onPress }) {
   return (
@@ -18,6 +20,7 @@ function Button({ title, onPress }) {
 }
 
 export default function MyQuestion({ navigation }) {
+
   const [questions, setQuestions] = useState([]);
   const memberId = 123; // 실제 ID로 교체
   const page = 1;
@@ -50,7 +53,7 @@ export default function MyQuestion({ navigation }) {
           </View>
           <View style={styles.separator} />
           <View style={styles.buttonContainer}>
-            <Button title={"1:1 문의글 작성"} onPress={() => { /* 작성 페이지로 이동 */ }} />
+            <Button title={"1:1 문의글 작성"} onPress={() => navigation.navigate('MyQuestionInputText')} />
           </View>
         </LinearGradient>
       </View>

@@ -69,6 +69,23 @@ mock.onGet(new RegExp(`${BACK_URL}/questions/\\d+`)).reply(config => {
     return [204]; // 간단한 테스트용 mock 데이터
   });
 
+  mock.onPost(`${BACK_URL}/questions`).reply(config => {
+    const newQuestion = JSON.parse(config.data);
+    newQuestion.id = dummyQuestions.length + 1;
+    newQuestion.createAt = new Date().toISOString().split('T')[0];
+    newQuestion.question_status = "QUESTION_PENDING";
+    newQuestion.answer = {
+      answerId: null,
+      memberId: null,
+      questionId: null,
+      content: null,
+      answerImage: null,
+      createAt: null
+    };
+    dummyQuestions.push(newQuestion);
+    return [201, newQuestion];
+  });
+
 // ✅ 실제 axios 호출 함수 delete
 export const deleteMyQuestion = async (questionId) => {
     try {
@@ -116,3 +133,15 @@ export const getMyQuestions = async (memberId, page) => {
       throw error;
     }
   };
+
+// ✅ 질문 작성 요청
+export const postQuestion = async (questionData) => {
+  try {
+    const response = await axios.post(`${BACK_URL}/questions`, questionData);
+    console.log('✅ 질문 작성 응답:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('❌ 질문 작성 에러:', error);
+    throw error;
+  }
+};
