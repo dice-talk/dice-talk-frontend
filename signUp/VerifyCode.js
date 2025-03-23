@@ -20,11 +20,13 @@ export default function VerifyCode({ route, navigation }) {
   // 셀 포커스 제어어
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({ value, setValue,});
 
-  const [timer, setTimer] = useState(300); // 5분  300초
+  const [timer, setTimer] = useState(15); // 5분  300초
   //버튼 비활성화 조건
   const isDisabled = value.length !== 6 || timer === 0;
   // 모달 상태
   const [showModal, setShowModal] = useState(false);
+  //useRef로 컴포넌트 상태를 추적
+  const isMounted = useRef(true);
 
   useEffect(() => {
     //300ms 정도 딜레이를 줘서 더 자연스럽게 하자.
@@ -39,7 +41,11 @@ export default function VerifyCode({ route, navigation }) {
 // 타이머 카운트 다운
 // 특정 상태(timer)가 변경될 때 실행되는 React Hook
   useEffect(() => {
-    if (timer === 0) {
+    // 이 useEffect가 실행되었을 때는 마운트 상태이다.
+    isMounted.current = true;
+    // 타이머가 0이 되면 Alert 띄우고 이전 화면으로 이동한다.
+    // navigation.isFocused() 을 이용해 현재 화면이 Active한 상태에서만 Alert을 띄운다.
+    if (timer === 0 && isMounted.current && navigation.isFocused()) {
         Alert.alert('시간 만료', '인증 요청에 실패하셨습니다.',[
             {
                 text: '확인',
@@ -48,11 +54,21 @@ export default function VerifyCode({ route, navigation }) {
         ]);
         return;
     } 
+// 타이머가 0보다 작아지지 않도록 조건 추가
+    if (timer <= 0) return;
+
 // 1초마다 감소한다. setInterval은 timer을 1씩 줄이는 함수
-    const interval = setInterval(() => setTimer((prev) => prev -1), 1000);
+    const interval = setInterval(() => {
+      if (isMounted.current) {
+      setTimer((prev) => (prev > 0 ? prev -1 : 0)); // 음수 방지!
+  }
+  }, 1000);
     // 언마운트시 타이머 정리 clearInterval은 컴포넌트가 사라질 때(setInterval 중복 방지) 타이머 정리하는 정리 함수
-    return () => clearInterval(interval);
-  }, [timer]);
+    return () => {
+      isMounted.current = false, // 이제 더이상 화면에 없다.
+      clearInterval(interval); // setInterval 중복 방지지
+  };
+}, [timer]);
 // 타이머 텍스트 포맷
 // 숫자 형태의 초(sec)를 '분:초' 형태의 00:00 문자열로 변환해준다.
   const formatTime = (sec) => {
@@ -71,8 +87,9 @@ export default function VerifyCode({ route, navigation }) {
         // 즉, 사용자가 입력한 6자리 숫자를 백엔드에 보내서 맞는지 확인하는 작업을 하지 않게 된다.
         //console.log('검증 성공1', result);
         await verifyCode({ email, code: value });
-        Alert.alert('인증 성공', '본인인증을 시작하겠습니다!');
-        navigation.navigate('LendiingPge'); // 다음 단계로 이동
+        Alert.alert('인증 성공', '본인인증을 시작하겠습니다!',
+            [{ text: '확인', onPress: () => navigation.navigate('TossAuth')}] // 다음 단계로 이동
+        );
     } catch (error) {
         //console.log('오류전체', error);
         // ?.(옵셔널 체이닝) 하나라도 undefined면 에러 터지지 않고 undefined 반환하도록 안전하게 체크한다.
@@ -152,7 +169,7 @@ export default function VerifyCode({ route, navigation }) {
                 }}
                 onFindEmail={() => {
                     setShowModal(false);
-                    navigation.navigate('FindEmail'); //이메일 찾기 페이지로 이동동
+                    navigation.navigate('FindPassword'); //비밀번호호 찾기 페이지로 이동동
                 }}
                 />
     </>
