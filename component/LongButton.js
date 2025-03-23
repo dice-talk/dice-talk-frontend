@@ -2,7 +2,7 @@ import React from "react";
 import { View, Pressable, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
-const LongButton = ({ onPress, children }) => {
+export default function LongButton ({ onPress, children }) {
   return (
     <Pressable 
     onPress={onPress} style={({ pressed }) => [styles.button, pressed && styles.pressed]}>
@@ -41,9 +41,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-
-export default LongButton;
 
 // start와 end는 컴포넌트 속성으로 직접 지정해줘야 한다. 안그러면 무시된다.
 //start: { x: 0, y: 0.5}, // 왼쪽에서 시작 (x: 0 => 왼쪽에서 시작) (y: 0.5 => 세로방향으로 중앙 정렬)

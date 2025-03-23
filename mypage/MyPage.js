@@ -2,22 +2,13 @@ import { Pressable, StyleSheet, View, Text, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import friendIcon from '../assets/icon/profile/friend_01.png'
 import Footer from "../component/Footer";
-function Button ({title, onPress}) {
-    return (
-        <Pressable onPress={onPress}> 
-            <View style={styles.button}>
-                <Text>{title}</Text>
-            </View>
-        </Pressable>
-    )
-}
+import MyPageButton from '../component/MyPageButton'
 
 function MyPage ({navigation}) {
     return (
         <>
         <View style={styles.container}>
-            <View style={styles.backgroundShape}>
-                <LinearGradient colors={["#D8B4FE", "#F9A8D4"]} />
+                <LinearGradient colors={["#D8B4FE", "#F9A8D4"]} style={styles.backgroundShape}/>
                     <View style={styles.profileContainer}>
                         <Image source={friendIcon} style={styles.profileImage}/>
                         <Text style={styles.userName}>새침한 세찌</Text>
@@ -29,20 +20,19 @@ function MyPage ({navigation}) {
                         </View>
                     </View>
                     <View style={styles.buttonContainer}>
-                        <Button title="나의 정보" onPress={() => navigation.navigate('MyInfo')}/>
-                        <Button title="나의 문의 조회" onPress={() => navigation.navigate('MyQuestion')} />
-                        <Button title="DICE 사용 내역" onPress={() => navigation.navigate('ItemHistory')}/>
-                        <Button title="DICE 충전하기" />
+                        <MyPageButton title="나의 정보" onPress={() => navigation.navigate('MyInfo')}/>
+                        <MyPageButton title="나의 문의 조회" onPress={() => navigation.navigate('MyQuestion')} />
+                        <MyPageButton title="DICE 사용 내역" onPress={() => navigation.navigate('ItemHistory')}/>
+                        <MyPageButton title="DICE 충전하기" />
                     </View>
                 </View>
-            </View>
+
             <View style={styles.bottomLine} />
             <View style={styles.logout}>
                 <Text>로그아웃</Text>
             </View>
             <Footer />
         </>
-
     )
 }
 
@@ -67,7 +57,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        //backgroundColor: '#fff',
         alignContent: 'center',
         justifyContent: 'center'
       },
