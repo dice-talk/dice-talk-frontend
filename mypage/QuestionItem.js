@@ -4,11 +4,11 @@ import { View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import MyQuestionDetail from './MyQuestionDetail'
 import { useNavigation } from '@react-navigation/native';
 // 제목, 날짜, 답변 상태 받기
-export default function QuestionItem({ title, date, isAnswered }) {
+export default function QuestionItem({ id, title, date, isAnswered }) {
     const navigation = useNavigation();
 
     function handlePress() {
-        navigation.navigate('MyQuestionDetail');
+        navigation.navigate('MyQuestionDetail', {questionId: id});
     }
 
   return (

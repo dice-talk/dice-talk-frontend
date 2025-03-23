@@ -47,7 +47,6 @@ export default function MyQuestion({ navigation }) {
           <View style={styles.profileContainer}>
             <Image source={friendIcon} style={styles.profileImage} />
             <Text style={styles.userName}>새침한 세찌</Text>
-            
           </View>
           <View style={styles.separator} />
           <View style={styles.buttonContainer}>
@@ -60,13 +59,13 @@ export default function MyQuestion({ navigation }) {
         {questions.map(q => (
           <QuestionItem
             key={q.id}
+            id={q.id}
             title={q.title}
             date={q.createAt || q.date}
             isAnswered={q.question_status === 'QUESTION_ANSWERED' || q.isAnswered}
           />
         ))}
       </ScrollView>
-
       <Footer />
     </>
   );
