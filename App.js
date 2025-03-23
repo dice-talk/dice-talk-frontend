@@ -11,9 +11,15 @@ import MyPage from './mypage/MyPage';
 import MyInfo from './mypage/MyInfo';
 import MyQuestion from './mypage/MyQuestion';
 import MyQuestionDetail from './mypage/MyQuestionDetail';
+import { setupMockAPI } from './utils/mockSetup';
+import SignupScreen from './signUp/SignupScreen';
 
 
 const Stack = createNativeStackNavigator();
+
+if(__DEV__) {
+  setupMockAPI(); // mock 등록 실행!
+}
 
 export default function App() { 
   return (
@@ -25,6 +31,7 @@ export default function App() {
         <Stack.Screen name='VerifyCode' component={VerifyCode} />
         <Stack.Screen name='IdentityVerification' component={IdentityVerification} />
         <Stack.Screen name='TossAuth' component={TossAuth} />
+        <Stack.Screen name='SignupScreen' component={SignupScreen} />
 
 
 
