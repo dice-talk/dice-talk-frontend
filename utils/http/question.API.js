@@ -19,7 +19,8 @@ const dummyQuestions = [
       memberId: 2,
       questionId: 1,
       content: "네 변경하세요~",
-      answerImage: null
+      answerImage: null,
+      createAt: "2025-03-18"
     }
   },
   {
@@ -34,7 +35,8 @@ const dummyQuestions = [
       memberId: 2,
       questionId: 2,
       content: "네 변경하세요~",
-      answerImage: null
+      answerImage: null,
+      createAt: "2025-03-18"
     }
   }
 ];

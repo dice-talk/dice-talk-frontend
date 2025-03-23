@@ -10,12 +10,13 @@ export default function MyQuestionDetail () {
     const navigation = useNavigation();
 
     const [question, setQuestion] = useState(null);
-
+    const [answer, setAnswer] = useState(null);
 useEffect(() => {
   const fetchDetail = async () => {
     try {
       const result = await getQuestionDetail(1,1);
       setQuestion(result); // API 응답이 { data: { ... } } 형태
+      setAnswer(result.answer)
     } catch (error) {
       console.error("❌ 질문 상세 조회 에러:", error);
     }
@@ -53,11 +54,11 @@ useEffect(() => {
                     <LinearGradient colors={["#D8B4FE", "#F9A8D4"]} style={styles.gradientLine} />
                     <View style={styles.titleBox}>
                         <Text style={styles.label}>답변</Text>
-                        <Text style={styles.date}>등록일: 2025.03.16</Text>
+                        <Text style={styles.date}>등록일: {answer?.createAt}</Text>
                     </View>
                     <View style={styles.answerBox}>
                         <Text style={styles.answerText}>
-                            그런 걱정을 하고 힘들어하기엔 이미 너무 멀리 왔어요. 여러분들은 할 수 있어요. 아니, 해야 해요! 화이팅!
+                            {answer?.content}
                         </Text>
                     </View>
                     <LinearGradient colors={["#D8B4FE", "#F9A8D4"]} style={styles.deleteButton}>
