@@ -6,6 +6,7 @@ import LendingPage from './signUp/LendingPage';
 import EmailInput from './signUp/EmailInput';
 import VerifyCode from './signUp/VerifyCode';
 import IdentityVerification from './signUp/IdentityVerification';
+import TossAuth from './signUp/TossAuth';
 
 
 const Stack = createNativeStackNavigator();

@@ -20,7 +20,7 @@ export default function VerifyCode({ route, navigation }) {
   // 셀 포커스 제어어
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({ value, setValue,});
 
-  const [timer, setTimer] = useState(300); // 5분  300초
+  const [timer, setTimer] = useState(15); // 5분  300초
   //버튼 비활성화 조건
   const isDisabled = value.length !== 6 || timer === 0;
   // 모달 상태
@@ -44,7 +44,8 @@ export default function VerifyCode({ route, navigation }) {
     // 이 useEffect가 실행되었을 때는 마운트 상태이다.
     isMounted.current = true;
     // 타이머가 0이 되면 Alert 띄우고 이전 화면으로 이동한다.
-    if (timer === 0 && isMounted.current) {
+    // navigation.isFocused() 을 이용해 현재 화면이 Active한 상태에서만 Alert을 띄운다.
+    if (timer === 0 && isMounted.current && navigation.isFocused()) {
         Alert.alert('시간 만료', '인증 요청에 실패하셨습니다.',[
             {
                 text: '확인',
@@ -53,10 +54,13 @@ export default function VerifyCode({ route, navigation }) {
         ]);
         return;
     } 
+// 타이머가 0보다 작아지지 않도록 조건 추가
+    if (timer <= 0) return;
+
 // 1초마다 감소한다. setInterval은 timer을 1씩 줄이는 함수
     const interval = setInterval(() => {
       if (isMounted.current) {
-      setTimer((prev) => prev -1);
+      setTimer((prev) => (prev > 0 ? prev -1 : 0)); // 음수 방지!
   }
   }, 1000);
     // 언마운트시 타이머 정리 clearInterval은 컴포넌트가 사라질 때(setInterval 중복 방지) 타이머 정리하는 정리 함수
@@ -84,7 +88,7 @@ export default function VerifyCode({ route, navigation }) {
         //console.log('검증 성공1', result);
         await verifyCode({ email, code: value });
         Alert.alert('인증 성공', '본인인증을 시작하겠습니다!',
-            [{ text: '확인', onPress: () => navigation.navigate('IdentityVerification')}] // 다음 단계로 이동
+            [{ text: '확인', onPress: () => navigation.navigate('TossAuth')}] // 다음 단계로 이동
         );
     } catch (error) {
         //console.log('오류전체', error);
