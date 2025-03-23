@@ -20,7 +20,7 @@ export default function VerifyCode({ route, navigation }) {
   // 셀 포커스 제어어
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({ value, setValue,});
 
-  const [timer, setTimer] = useState(15); // 5분  300초
+  const [timer, setTimer] = useState(300); // 5분  300초
   //버튼 비활성화 조건
   const isDisabled = value.length !== 6 || timer === 0;
   // 모달 상태
