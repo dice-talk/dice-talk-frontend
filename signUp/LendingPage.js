@@ -1,11 +1,11 @@
-import { StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Button} from 'react-native';
 import React from 'react';
 import LongButton from '../component/LongButton';
 import { FontAwesome } from '@expo/vector-icons'; // 아이콘 라이브러리
 //import EmailInput from './EmailInput';
 import LogoIcon from '../assets/icon/logo/logo_icon.svg'; // SVG를 React 컴포넌트처럼 사용
 import LogoText from '../assets/icon/logo/logo_diceTalk.svg';
-
+import MyPage from '../mypage/MyPage';
 
 
 export default function LendingPage({navigation}) {
@@ -16,6 +16,8 @@ export default function LendingPage({navigation}) {
                 <LogoIcon width={200} height={200} />
                 <LogoText width={300} height={300}/>
             </View>
+
+            <Button title='MyPage' onPress={() => {navigation.navigate('MyPage')}} />
 
             <View style={styles.bottomContainer}>
                   <LongButton onPress={() => navigation.navigate('EmailInput')}>
@@ -43,8 +45,6 @@ export default function LendingPage({navigation}) {
                 <View style={styles.policyContainer}>
                     <Text style={styles.polictyText}>문의하기</Text>
                 </View>
-
-                <Button onPress={() => {navigation.navigate('MyPage')}}></Button>
                 
             </View>
         </View>

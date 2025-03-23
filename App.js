@@ -26,7 +26,28 @@ export default function App() {
         <Stack.Screen name='IdentityVerification' component={IdentityVerification} />
         <Stack.Screen name='TossAuth' component={TossAuth} />
 
-        <Stack.Screen name='Mypage' component={MyPage} />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <Stack.Screen name='MyPage' component={MyPage} />
         <Stack.Screen name='MyInfo' component={MyInfo} />
         <Stack.Screen name='MyQuestion' component={MyQuestion} />
         <Stack.Screen name='MyQuestionDetail' component={MyQuestionDetail} />
