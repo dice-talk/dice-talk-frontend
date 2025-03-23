@@ -13,6 +13,7 @@ import MyQuestion from './mypage/MyQuestion';
 import MyQuestionDetail from './mypage/MyQuestionDetail';
 import { setupMockAPI } from './utils/mockSetup';
 import SignupScreen from './signUp/SignupScreen';
+import Agreement from './signUp/Agreement';
 
 
 const Stack = createNativeStackNavigator();
@@ -24,7 +25,7 @@ if(__DEV__) {
 export default function App() { 
   return (
     <NavigationContainer>
-      <Stack.Navigator /*screenOptions={screenOptions}*/>
+      <Stack.Navigator screenOptions={{ headerShown : false }}>
 
         <Stack.Screen name='LendingPage' component={LendingPage} />
         <Stack.Screen name='EmailInput' component={EmailInput} />
@@ -32,6 +33,7 @@ export default function App() {
         <Stack.Screen name='IdentityVerification' component={IdentityVerification} />
         <Stack.Screen name='TossAuth' component={TossAuth} />
         <Stack.Screen name='SignupScreen' component={SignupScreen} />
+        <Stack.Screen name='Agreement' component={Agreement} />
 
 
 
@@ -73,9 +75,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-
-// const screenOptions = {
-//   headerShown: false,
-//   //gestureEnabled: true, // (선택) iOS에서 제스처 네비게이션 활성화
-//   //animationEnabled: true, // (선택) 화면 전환 애니메이션 활성화
-// }
