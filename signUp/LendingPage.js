@@ -5,7 +5,7 @@ import { FontAwesome } from '@expo/vector-icons'; // 아이콘 라이브러리
 //import EmailInput from './EmailInput';
 import LogoIcon from '../assets/icon/logo/logo_icon.svg'; // SVG를 React 컴포넌트처럼 사용
 import LogoText from '../assets/icon/logo/logo_diceTalk.svg';
-import MyPage from '../mypage/MyPage';
+
 
 
 export default function LendingPage({navigation}) {
@@ -25,7 +25,7 @@ export default function LendingPage({navigation}) {
                   <Text style={styles.text}>이메일로 로그인</Text>
                   </LongButton>
 
-                <LongButton onPress={() => navigation.navigate()}>
+                <LongButton onPress={() => navigation.navigate('EmailInput')}>
                 <FontAwesome name="user" size={20} color="white" style={styles.icon} />
                 <Text style={styles.text}>회원가입</Text> 
                 </LongButton>

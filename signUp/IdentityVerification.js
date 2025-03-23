@@ -34,7 +34,7 @@ export default function IdentityVerification({ navigation }) {
   
         {/* 버튼 */}
         <View style={styles.buttonWrapper}>
-            <LongButton onPress={() => navigation.navigate('TossAuth')}>
+            <LongButton onPress={() => navigation.navigate('Agreement')}>
             <Text style={styles.buttonText}>본인인증하기</Text>
             </LongButton>
         </View>
