@@ -1,95 +1,126 @@
-import { Text, View, StyleSheet, Pressable, Image } from "react-native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Text, View, StyleSheet, Pressable, Image, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import friendIcon from '../assets/icon/profile/friend_01.png'
+import { useState, useEffect } from "react";
+import friendIcon from '../assets/icon/profile/friend_01.png';
 import Footer from "../component/Footer";
-function Button ({title, onPress}) {
-    return (
-        <Pressable onPress={onPress}> 
-            <View style={styles.button}>
-                <Text>{title}</Text>
-            </View>
-        </Pressable>
-    )
+import QuestionItem from "./QuestionItem";
+import { getMyQuestions } from "../utils/http/question.API";
+import Header from "../component/Header"
+
+function Button({ title, onPress }) {
+  return (
+    <Pressable onPress={onPress}>
+      <View style={styles.button}>
+        <Text>{title}</Text>
+      </View>
+    </Pressable>
+  );
 }
 
-function MyQuestion ({navigation}) {
-    
-    return (
-        <>
-        <View style={styles.container}>
-            <View style={styles.backgroundShape}>
-                <LinearGradient colors={["#D8B4FE", "#F9A8D4"]} />
-                    <View style={styles.profileContainer}>
-                        <Image source={friendIcon} style={styles.profileImage}/>
-                        <Text style={styles.userName}>새침한 세찌</Text>
-                        <View style={styles.separator} />
-                    </View>
-                    <View style={styles.buttonContainer}>
-                        <Button title={"1:1 문의글 작성"} />    
-                    </View>
-                </View>
-            </View>
-            <Footer />
-        </>
-    )
+export default function MyQuestion({ navigation }) {
+  const [questions, setQuestions] = useState([]);
+  const memberId = 123; // 실제 ID로 교체
+  const page = 1;
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      const response = await getMyQuestions(memberId, page);
+
+      if (response && response.data) {
+        const sorted = response.data.sort((a, b) => {
+          return new Date(b.createAt || b.date) - new Date(a.createAt || a.date);
+        });
+        setQuestions(sorted);
+      } else {
+        console.warn('데이터 형식이 예상과 다릅니다:', response);
+      }
+    };
+
+    fetchQuestions();
+  }, []);
+
+  return (
+    <>
+      <View style={styles.container}>
+        <LinearGradient colors={["#D8B4FE", "#F9A8D4"]} style={styles.backgroundShape}>
+        <Header />
+          <View style={styles.profileContainer}>
+            <Image source={friendIcon} style={styles.profileImage} />
+            <Text style={styles.userName}>새침한 세찌</Text>
+            
+          </View>
+          <View style={styles.separator} />
+          <View style={styles.buttonContainer}>
+            <Button title={"1:1 문의글 작성"} onPress={() => { /* 작성 페이지로 이동 */ }} />
+          </View>
+        </LinearGradient>
+      </View>
+      {/* 질문 리스트 */}
+      <ScrollView style={{ paddingTop: 10, backgroundColor: 'white' }}>
+        {questions.map(q => (
+          <QuestionItem
+            key={q.id}
+            title={q.title}
+            date={q.createAt || q.date}
+            isAnswered={q.question_status === 'QUESTION_ANSWERED' || q.isAnswered}
+          />
+        ))}
+      </ScrollView>
+
+      <Footer />
+    </>
+  );
 }
 
 const styles = StyleSheet.create({
-    button: {
-        width: 150,
-        height: 35,
-        backgroundColor: '#F5E1FF',
-        borderRadius: 15,
-        borderColor: '#B28EF8',
-        borderWidth: 2,
-        margin: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    buttonContainer: {
-        alignItems: 'center',
-        bottom: 35
-    },
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignContent: 'center',
-        justifyContent: 'center'
-      },
-      profileImage: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        backgroundColor: '#fff',
-      },
-      profileContainer: {
-        width: '100%',
-        height: 230,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderBottomLeftRadius: 40,
-        borderBottomRightRadius: 40,
-        marginTop: 45
-      },
-      separator: {
-        marginVertical: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: '#B28EF8',
-        width: '80%',
-        alignSelf: 'center',
-    },
-    backgroundShape: {
-        flex:1,
-        alignContent: 'center',
-        position: 'absolute',
-        top: 0,
-        width: '100%',
-        height: 340 ,  // 배경 높이 조정
-        backgroundColor: '#D8B4FE',
-        borderBottomLeftRadius: 200, // 둥근 효과
-        borderBottomRightRadius: 200, // 둥근 효과
-    },
-})
-
-export default MyQuestion;
+  container: {
+    // flex: 1,
+    backgroundColor: 'white',
+  },
+  backgroundShape: {
+    width: '100%',
+    height: 340,
+    borderBottomLeftRadius: 200,
+    borderBottomRightRadius: 200,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  profileContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 50,
+  },
+  profileImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'white',
+  },
+  userName: {
+    marginTop: 10,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  separator: {
+    marginVertical: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#B28EF8',
+    width: '80%',
+    alignSelf: 'center',
+  },
+  buttonContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  button: {
+    width: 150,
+    height: 35,
+    backgroundColor: '#F5E1FF',
+    borderRadius: 15,
+    borderColor: '#B28EF8',
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

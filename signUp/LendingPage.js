@@ -43,6 +43,8 @@ export default function LendingPage({navigation}) {
                 <View style={styles.policyContainer}>
                     <Text style={styles.polictyText}>문의하기</Text>
                 </View>
+
+                <Button onPress={() => {navigation.navigate('MyPage')}}></Button>
                 
             </View>
         </View>

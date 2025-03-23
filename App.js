@@ -7,6 +7,10 @@ import EmailInput from './signUp/EmailInput';
 import VerifyCode from './signUp/VerifyCode';
 import IdentityVerification from './signUp/IdentityVerification';
 import TossAuth from './signUp/TossAuth';
+import MyPage from './mypage/MyPage';
+import MyInfo from './mypage/MyInfo';
+import MyQuestion from './mypage/MyQuestion';
+import MyQuestionDetail from './mypage/MyQuestionDetail';
 
 
 const Stack = createNativeStackNavigator();
@@ -15,11 +19,19 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator /*screenOptions={screenOptions}*/>
+
         <Stack.Screen name='LendingPage' component={LendingPage} />
         <Stack.Screen name='EmailInput' component={EmailInput} />
         <Stack.Screen name='VerifyCode' component={VerifyCode} />
         <Stack.Screen name='IdentityVerification' component={IdentityVerification} />
         <Stack.Screen name='TossAuth' component={TossAuth} />
+
+        <Stack.Screen name='Mypage' component={MyPage} />
+        <Stack.Screen name='MyInfo' component={MyInfo} />
+        <Stack.Screen name='MyQuestion' component={MyQuestion} />
+        <Stack.Screen name='MyQuestionDetail' component={MyQuestionDetail} />
+
+
       </Stack.Navigator>
     </NavigationContainer>
   );
