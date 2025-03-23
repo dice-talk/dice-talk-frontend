@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View, Text, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import friendIcon from '../assets/icon/profile/friend_01.png'
+
 import Footer from "../component/Footer";
 import MyPageButton from '../component/MyPageButton'
 
