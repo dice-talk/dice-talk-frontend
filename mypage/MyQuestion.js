@@ -1,7 +1,7 @@
 import { Text, View, StyleSheet, Pressable, Image, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState, useEffect } from "react";
-
+import FriendIcon from '../assets/icon/profile/friends_01.svg';
 import Footer from "../component/Footer";
 import QuestionItem from "./QuestionItem";
 import { getMyQuestions } from "../utils/http/question.API";
@@ -45,17 +45,16 @@ export default function MyQuestion({ navigation }) {
   return (
     <>
       <View style={styles.container}>
-        <LinearGradient colors={["#D8B4FE", "#F9A8D4"]} style={styles.backgroundShape}>
+        <LinearGradient colors={["#D7C0FA", "#F8B4F1"]} style={styles.backgroundShape}/>
         <Header />
           <View style={styles.profileContainer}>
-            <Image source={friendIcon} style={styles.profileImage} />
+            <FriendIcon width={90} height={90}/>
             <Text style={styles.userName}>새침한 세찌</Text>
           </View>
           <View style={styles.separator} />
           <View style={styles.buttonContainer}>
-            <Button title={"1:1 문의글 작성"} onPress={() => navigation.navigate('MyQuestionInputText')} />
+            <Button title={"1:1 문의글 작성"} onPress={() => navigation.navigate('MyQuestionInutText')} />
           </View>
-        </LinearGradient>
       </View>
       {/* 질문 리스트 */}
       <ScrollView style={{ paddingTop: 10, backgroundColor: 'white' }}>
@@ -100,10 +99,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   userName: {
-    marginTop: 10,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+    fontSize: 20,
+    color: '#715E7C'
+},
   separator: {
     marginVertical: 20,
     borderBottomWidth: 1,
