@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import LoginLogo from '../assets/public/login_logo.svg';
+
 import LongButton from '../component/LongButton';
 import { FontAwesome } from '@expo/vector-icons';
 

@@ -15,6 +15,7 @@ import { setupMockAPI } from './utils/mockSetup';
 import SignupScreen from './signUp/SignupScreen';
 import Agreement from './signUp/Agreement';
 import DetailAgreement from './signUp/DetailAgreement';
+import MyQuestionInputText from './mypage/MyQuestionInputText';
 
 
 const Stack = createNativeStackNavigator();
@@ -26,8 +27,7 @@ if(__DEV__) {
 export default function App() { 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown : false }}>
-
+      <Stack.Navigator>
         <Stack.Screen name='LendingPage' component={LendingPage} />
         <Stack.Screen name='EmailInput' component={EmailInput} />
         <Stack.Screen name='VerifyCode' component={VerifyCode} />
@@ -62,7 +62,7 @@ export default function App() {
         <Stack.Screen name='MyInfo' component={MyInfo} />
         <Stack.Screen name='MyQuestion' component={MyQuestion} />
         <Stack.Screen name='MyQuestionDetail' component={MyQuestionDetail} />
-
+        <Stack.Screen name='MyQuestionInputText' component={MyQuestionInputText} />
 
       </Stack.Navigator>
     </NavigationContainer>

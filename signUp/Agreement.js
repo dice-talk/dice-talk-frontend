@@ -82,7 +82,7 @@ const terms = [
                 <LongButton 
                 onPress={handleNext} 
                 disabled={!allRequiredChecked}>
-                    <Text style={styles.buttonText}>다음</Text>
+                    <Text style={styles.buttonText}> 다음 </Text>
                 </LongButton>
               </TouchableOpacity>
           </View>

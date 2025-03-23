@@ -1,44 +1,32 @@
-import { View, Text, StyleSheet, Pressable, ScrollView, Image} from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, Image, TextInput} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from "expo-linear-gradient";
 import Footer from "../component/Footer";
 import React, { useEffect } from 'react';
-import { useRoute } from '@react-navigation/native';
-import { getQuestionDetail } from '../utils/http/question.API';
 import { useState } from 'react';
-import { deleteMyQuestion } from '../utils/http/question.API';
+import { postQuestion } from '../utils/http/question.API'; // 실제 위치에 따라 경로 조정
 
-export default function MyQuestionDetail () {
+export default function MyQuestionInputText () {
+    const [text, setText] = useState('');
     const navigation = useNavigation();
-    const route = useRoute();
-    const { questionId } = route.params;
-
+    const [content, setContent] = useState('');
     const [question, setQuestion] = useState(null);
-    const [answer, setAnswer] = useState(null);
 
-useEffect(() => {
-  const fetchDetail = async () => {
-    try {
-      const result = await getQuestionDetail(questionId,1);
-      setQuestion(result); // API 응답이 { data: { ... } } 형태
-      setAnswer(result.answer)
-    } catch (error) {
-      console.error("❌ 질문 상세 조회 에러:", error);
-    }
-  };
-  fetchDetail();
-}, []);
-
-const handleDelete = async () => {
-  try {
-    await deleteMyQuestion(questionId); // 삭제 API 호출
-    alert('질문이 삭제되었습니다.');
-    navigation.goBack(); // 이전 화면으로 이동
-  } catch (error) {
-    alert('삭제 중 오류가 발생했습니다.');
-  }
-};
+    const handleSubmit = async () => {
+        try {
+            const newQuestion = {
+                title: text,
+                content: content,
+                question_image: null, // 필요한 경우 이미지 데이터 처리
+            };
+            await postQuestion(newQuestion);
+            alert('문의가 등록되었습니다.');
+            navigation.goBack();
+        } catch (error) {
+            alert('등록에 실패했습니다.');
+        }
+    };
 
     return (
     <View style={styles.container}>
@@ -52,42 +40,30 @@ const handleDelete = async () => {
         <ScrollView contentContainerStyle={styles.content}>
             {/* 옵셔널 체이닝 = ?. 값이 있을때만 가져옴 없으면 undefined반환으로 에러 방지 */}
             <Text style={styles.label}>제목</Text>
-            <View style={styles.titleBox}>
-                    <Text style={styles.title}>{question?.title}</Text>
-                    <Text style={styles.date}>등록일: {question?.createAt}</Text>
-            </View>
+            <TextInput style={styles.input} placeholder='제목을 작성해주세요' value={text} onChangeText={setText} />
             <View style={styles.fullWidthLine}>
                 <LinearGradient colors={["#D8B4FE", "#F9A8D4"]} style={styles.gradientLine} />
             </View>
+            {/* <Pressable style={styles.attachmentButton}>
+                <Text style={styles.attachmentText}>첨부파일</Text>
+            </Pressable> */}
             <Image source={question?.question_image} style={styles.imageSize} resizeMode='contain'/>
-            <View style={styles.chatBox}>
-                <Text style={styles.chatText}>
-                   {question?.content}
-                </Text>
-            </View>
-            </ScrollView>
-            <ScrollView contentContainerStyle={styles.content}>
-                <View contentContainerStyle={styles.content}>
-                    <LinearGradient colors={["#D8B4FE", "#F9A8D4"]} style={styles.gradientLine} />
-                    <View style={styles.titleBox}>
-                        <Text style={styles.label}>답변</Text>
-                        <Text style={styles.date}>등록일: {answer?.createAt}</Text>
-                    </View>
-                    <Image source={question?.answerImage} style={styles.imageSize} resizeMode='contain'/>
-                    <View style={styles.answerBox}>
-                        <Text style={styles.answerText}>
-                            { answer?.content === null ? "작성된 답변이 없습니다" : answer?.content }
-                        </Text>
-                    </View>
-                    <LinearGradient colors={["#D8B4FE", "#F9A8D4"]} style={styles.deleteButton}>
-                        <Pressable onPress={handleDelete}>
-                            <Text style={styles.date}>삭제</Text>
-                        </Pressable>
-                    </LinearGradient>    
-                    <LinearGradient colors={["#D8B4FE", "#F9A8D4"]} style={styles.gradientLine} />
+            <View style={styles.bottomInputContainer}>
+                <TextInput
+                    style={styles.bottomTextInput}
+                    placeholder="문의 내용을 입력해주세요"
+                    multiline
+                    value={content}
+                    onChangeText={setContent}
+                />
+                <View style={styles.buttonRow}>
+                    <Pressable style={styles.confirmButton} onPress={handleSubmit}>
+                        <Text style={styles.buttonText}>등록</Text>
+                    </Pressable>
                 </View>
-            </ScrollView>
-    <Footer />
+            </View>
+        </ScrollView>
+        <Footer />
     </View>
     );
 }
@@ -108,7 +84,7 @@ const styles = StyleSheet.create({
         padding: 20,
         paddingBottom: 0,
     },
-    label: { fontSize: 14, color: '#888' },
+    label: { fontSize: 14, color: '#888', marginBottom: 4 },
     title: {
          fontSize: 20,
           fontWeight: '600',
@@ -191,5 +167,61 @@ const styles = StyleSheet.create({
         width: '100%',
         // height: '100%',
         // aspectRatio: 1
-      }
-  });
+      },
+      input: {
+        borderColor: '#ccc',
+        borderRadius: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        fontSize: 16,
+      },
+      attachmentButton: {
+        alignSelf: 'flex-end',
+        backgroundColor: '#eee',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 8,
+        marginBottom: 8,
+      },
+      attachmentText: {
+        fontSize: 14,
+        color: '#555',
+      },
+      bottomInputContainer: {
+        padding: 20,
+      },
+      bottomTextInput: {
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 8,
+        padding: 12,
+        minHeight: 100,
+        textAlignVertical: 'top',
+        marginBottom: 12,
+      },
+      buttonRow: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        gap: 12,
+      },
+      cancelButton: {
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#DCDCDC',
+        backgroundColor: '#f3e8ff',
+      },
+      confirmButton: {
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#DCDCDC',
+        backgroundColor: '#f9d5ec',
+      },
+      buttonText: {
+        fontSize: 14,
+        color: '#333',
+      },
+});
