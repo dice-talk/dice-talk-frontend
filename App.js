@@ -14,6 +14,7 @@ import MyQuestionDetail from './mypage/MyQuestionDetail';
 import { setupMockAPI } from './utils/mockSetup';
 import SignupScreen from './signUp/SignupScreen';
 import Agreement from './signUp/Agreement';
+import DetailAgreement from './signUp/DetailAgreement';
 
 
 const Stack = createNativeStackNavigator();
@@ -34,6 +35,7 @@ export default function App() {
         <Stack.Screen name='TossAuth' component={TossAuth} />
         <Stack.Screen name='SignupScreen' component={SignupScreen} />
         <Stack.Screen name='Agreement' component={Agreement} />
+        <Stack.Screen name='DetailAgreement' component={DetailAgreement} />
 
 
 

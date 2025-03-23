@@ -69,7 +69,7 @@ const terms = [
           </View>
 
           <View style={styles.focusAgreement}>
-            <TouchableOpacity onPress={() => {}}>
+            <TouchableOpacity onPress={() => {navigation.navigate('DetailAgreement')}}>
             <Text style={styles.focusText}>이용약관 자세히 보기</Text>
             </TouchableOpacity>
           </View>
