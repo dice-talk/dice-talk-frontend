@@ -88,7 +88,7 @@ export default function VerifyCode({ route, navigation }) {
         //console.log('검증 성공1', result);
         await verifyCode({ email, code: value });
         Alert.alert('인증 성공', '본인인증을 시작하겠습니다!',
-            [{ text: '확인', onPress: () => navigation.navigate('TossAuth', { email })}] // 다음 단계로 이동
+            [{ text: '확인', onPress: () => navigation.navigate('SignupInput')}] // 다음 단계로 이동
         );
     } catch (error) {
         //console.log('오류전체', error);
@@ -169,7 +169,7 @@ export default function VerifyCode({ route, navigation }) {
                 }}
                 onFindEmail={() => {
                     setShowModal(false);
-                    navigation.navigate('FindPassword'); //비밀번호호 찾기 페이지로 이동동
+                    navigation.navigate('FindPassword'); //비밀번호 찾기 페이지로 이동
                 }}
                 />
     </>

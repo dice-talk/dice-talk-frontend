@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     },
     input: { 
         borderBottomWidth: 1, 
-        borderColor: '#ccc', 
+        borderColor: '#BEBEBE', 
         paddingVertical: 6, 
         fontSize: 14 
     },
