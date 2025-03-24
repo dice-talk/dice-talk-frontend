@@ -5,7 +5,7 @@ import FriendIcon from '../assets/icon/profile/friends_01.svg';
 import Footer from "../component/Footer";
 import QuestionItem from "./QuestionItem";
 import { getMyQuestions } from "../utils/http/question.API";
-import Header from "../component/Header"
+import Pagination from "../component/Pagination";
 import MyQuestionInputText from "./MyQuestionInputText";
 import { useNavigation } from '@react-navigation/native';
 
@@ -21,76 +21,96 @@ function Button({ title, onPress }) {
 
 export default function MyQuestion({ navigation }) {
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [questions, setQuestions] = useState([]);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+  
   const memberId = 123; // 실제 ID로 교체
   const page = 1;
 
   useEffect(() => {
     const fetchQuestions = async () => {
-      const response = await getMyQuestions(memberId, page);
-
+      const response = await getMyQuestions(memberId, currentPage);
+  
       if (response && response.data) {
+        // 총 페이지 수 계산을 위해 전체 데이터 길이를 넘겨주는 방법 (가짜 API니까 총 개수를 직접 처리해줘야 함)
+        const totalCount = 70; // 실제로는 백엔드에서 총 개수 넘겨주는 게 이상적
+        const size = 4;
+        setTotalPages(Math.ceil(totalCount / size));
+  
         const sorted = response.data.sort((a, b) => {
           return new Date(b.createAt || b.date) - new Date(a.createAt || a.date);
         });
         setQuestions(sorted);
-      } else {
-        console.warn('데이터 형식이 예상과 다릅니다:', response);
       }
     };
-
+  
     fetchQuestions();
-  }, []);
+  }, [currentPage]);
 
   return (
     <>
       <View style={styles.container}>
         <LinearGradient colors={["#D7C0FA", "#F8B4F1"]} style={styles.backgroundShape}/>
-        <Header />
           <View style={styles.profileContainer}>
+            <Text style={{fontSize: 25, color: '#715E7C', bottom: 30}}>나의 문의</Text>
             <FriendIcon width={90} height={90}/>
             <Text style={styles.userName}>새침한 세찌</Text>
-          </View>
-          <View style={styles.separator} />
-          <View style={styles.buttonContainer}>
-            <Button title={"1:1 문의글 작성"} onPress={() => navigation.navigate('MyQuestionInutText')} />
+            <View style={styles.separator} />
+            
+            <View style={styles.buttonContainer}>
+              <Button title={"1:1 문의글 작성"} onPress={() => navigation.navigate('MyQuestionInputText')} />
+            </View>
           </View>
       </View>
-      {/* 질문 리스트 */}
-      <ScrollView style={{ paddingTop: 10, backgroundColor: 'white' }}>
-        {questions.map(q => (
-          <QuestionItem
-            key={q.id}
-            id={q.id}
-            title={q.title}
-            date={q.createAt || q.date}
-            isAnswered={q.question_status === 'QUESTION_ANSWERED' || q.isAnswered}
-          />
-        ))}
-      </ScrollView>
+      <View style={{ flex: 1, backgroundColor: 'white' }}>
+        <ScrollView style={{ paddingTop: 10, marginBottom: 60 }}>
+          {questions.map(q => (
+            <QuestionItem
+              key={q.id}
+              id={q.id}
+              title={q.title}
+              date={q.createAt || q.date}
+              isAnswered={q.question_status === 'QUESTION_ANSWERED' || q.isAnswered}
+            />
+          ))}
+        </ScrollView>
+        <View style={{ position: 'absolute', bottom: 80, width: '100%' }}>
+          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange}/>
+        </View>
+      </View>
       <Footer />
     </>
-  );
+  ); 
 }
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    backgroundColor: 'white',
+    flex: 1,
+    alignContent: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'white'
   },
   backgroundShape: {
+    position: 'absolute',
+    top: 0,
     width: '100%',
-    height: 340,
-    borderBottomLeftRadius: 200,
-    borderBottomRightRadius: 200,
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+    height: 340 ,  // 배경 높이 조정
+    borderBottomLeftRadius: 160, // 둥근 효과
+    borderBottomRightRadius: 160, // 둥근 효과
+},
   profileContainer: {
+    width: '100%',
+    height: 230,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 50,
+    borderBottomLeftRadius: 40,
+    borderBottomRightRadius: 40,
+    position: 'absolute',
+    top: 80,
   },
   profileImage: {
     width: 80,
@@ -118,7 +138,7 @@ const styles = StyleSheet.create({
     height: 35,
     backgroundColor: '#F5E1FF',
     borderRadius: 15,
-    borderColor: '#B28EF8',
+    borderColor: '#9A80BA',
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
