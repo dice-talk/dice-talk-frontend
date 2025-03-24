@@ -76,7 +76,7 @@ export default function SignupInput({ route, navigation}) {
               const result = await res.json();
               console.log('회원가입 성공:', result);
 
-            navigation.navigate('SignupInput'); // 사용자 정보 넘김
+            navigation.navigate('Congratulate'); // 사용자 정보 넘김
 
             } catch (err) {
             console.error('인증 결과 확인 실패:', err); 

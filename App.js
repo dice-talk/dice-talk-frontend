@@ -16,6 +16,9 @@ import Agreement from './signUp/Agreement';
 import DetailAgreement from './signUp/DetailAgreement';
 import MyQuestionInputText from './mypage/MyQuestionInputText';
 import SignupInput from './signUp/SignupInput';
+import Congratulate from './signUp/Congratulate';
+import LoginEmail from './login/LoginEmail';
+import LoginPassword from './login/LoginPassword';
 
 import EditMyInfo from './mypage/EditMyInfo';
 import MyDice from './mypage/MyDice';
@@ -43,6 +46,10 @@ export default function App() {
           <Stack.Screen name='Agreement' component={Agreement} />
           <Stack.Screen name='DetailAgreement' component={DetailAgreement} />
           <Stack.Screen name='SignupInput' component={SignupInput} />
+          <Stack.Screen name='Congratulate' component={Congratulate} options={{headerShown : false}}/>
+
+          <Stack.Screen name='LoginEmail' component={LoginEmail} />
+          <Stack.Screen name='LoginPassword' component={LoginPassword} />
 
 
 
