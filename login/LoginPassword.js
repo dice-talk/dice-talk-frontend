@@ -1,31 +1,31 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from 'react-native';
 import LongButton from '../component/LongButton';
-import { FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { sendEmail } from '../utils/http/email.API';
 import { Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 
-export default function LoginEmail({navigation}) {
-    const [inputEmail, setInputEmail] = useState('');
-    const [isValid, setIsValid] = useState(false); // 버튼 활성화 비활성화 + 이메일이 유효한지 check
+export default function LoginPassword({navigation}) {
+    const [inputPassword, setInputPassword] = useState('');
+    const [isValid, setIsValid] = useState(false); // 버튼 활성화 비활성화 + 비밀번호가가 유효한지 check
+    const [showPassword, setShowPassword] = useState(false);
 
-    const validateEmail = (text) => {
-        setInputEmail(text);
-        // 이메일 정규표현식
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        // 이메일이 유효하면 true, 아니면 false
-        setIsValid(emailRegex.test(text));
+    const validatePassword = (text) => {
+        setInputPassword(text);
+        // 비밀번호 정규표현식 비밀번호는 8~16자 영문 대, 소문자, 숫자, 특수문자를 사용하세요.
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{}[\]|;:'",.<>/?]).{8,16}$/;
+        // 비밀번호가 유효하면 true, 아니면 false
+        setIsValid(passwordRegex.test(text));
     }
 
-    //이메일 전송 핸들러 함수
-    const handleSendEmail = async () => {
+    //비밀번호호 전송 핸들러 함수
+    const handleSendPassword = async () => {
         try {
-            const result = await sendEmail(inputEmail); // 수정 필요 code와 maessage를 보낼 필요 X. email을 보내야 한다.
+            const result = await sendPassword(inputPassword);
             console.log('서버 응답:', result);
 
-                navigation.navigate('LoginPassword', {email: inputEmail});
+                navigation.navigate('MainPage', {password: inputPassword});
             } catch (error) {
                 const errMsg = error.response?.data?.error || '알 수 없는 오류입니다.';
                 Alert.alert('오류', errMsg);
@@ -46,37 +46,44 @@ export default function LoginEmail({navigation}) {
                           start= { {x: 0, y: 0.5}}
                           end= { {x: 1, y: 0.5}}
                           style={styles.iconContainer}>
-                        <FontAwesome name='envelope' size={30} color='white'/>
+                        <Text style={styles.dotIcon}>•••</Text>
                     </LinearGradient>
 
                     {/*타이틀*/}
-                    <Text style={styles.titleText}>이메일 주소를 입력해주세요</Text>
+                    <Text style={styles.titleText}>비밀번호를 입력해주세요</Text>
 
-                    <TextInput
-                        style={styles.input} 
-                        placeholder='sample@example.com'
-                        placeholderTextColor='#B3B3B3'
-                        keyboardType='email-address' // 이메일 키보드 사용
-                        autoCapitalize='none' // 첫 글자 대문자 방지
-                        autoCorrect={false} // 자동 수정 방지
-                        onChangeText={validateEmail} // 입력 값이 들어오면 이메일 검사를 진행한다.
-                        value={inputEmail}
-                    />
+                    {/* 비밀번호 확인*/}
+                    <View style={styles.inputRow}>
+                        <TextInput
+                        style={styles.inputFlex}
+                        placeholder="비밀번호를 입력해주세요"
+                        secureTextEntry={!showPassword}
+                        value={inputPassword}
+                        onChangeText={ (text) => {
+                            setInputPassword(text);
+                            validatePassword(text);
+                        }}
+                        />
+                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                        <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color='#666' />
+                    </TouchableOpacity>
+                </View>
+
                     <View style={styles.forgotContainer}>
                         <TouchableOpacity onPress={() => {}} style={styles.forgotButton}>
-                        <Text style={{color: '#B19ADE', fontSize: 12, textAlign: 'right'}}>이메일을 잊으셨나요?</Text>
+                        <Text style={{color: '#B19ADE', fontSize: 12, textAlign: 'right'}}>비밀번호를 잊으셨나요?</Text>
                         </TouchableOpacity>
                     </View>
-
+                    {/* 로그인 버튼 */}
                     <View 
-                    style={[!isValid && styles.disabledButton]} 
+                    style={[!isValid && styles.disabled]} 
                     pointerEvents={!isValid ? "none" : "auto"}>
                         <LongButton 
-                        onPress={handleSendEmail}
+                        onPress={handleSendPassword}
                         // 이메일이 올바르게 작성되지 않으면 비활성화
                         disabled={!isValid}// 비활성 상태일 때 스타일 변경
                         >
-                            <Text style={styles.text}>확인</Text>
+                            <Text style={styles.text}>로그인</Text>
                         </LongButton>
                     </View>
                 </View>
@@ -130,7 +137,7 @@ const styles = StyleSheet.create({
     // button: {
     //     opacity: 1
     // },
-    disabledButton: { // 버튼 비활성화 상태이 때 투명도 적용
+    disabled: { // 버튼 비활성화 상태이 때 투명도 적용
         opacity: 0.5,
     },
     forgotContainer: {
@@ -140,5 +147,26 @@ const styles = StyleSheet.create({
       },
       forgotButton: {
         alignItems: 'flex-end', //오른쪽 정렬
+      },
+      dotIcon: {
+        color: 'white',
+        fontSize: 24,
+      },
+      label: { 
+        fontSize: 14, 
+        marginTop: 16 
+    },
+    inputRow: {
+        flexDirection: 'row',
+        borderBottomWidth: 1,
+        borderColor: '#ccc',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingVertical: 4,
+      },
+      inputFlex: {
+        flex: 1,
+        fontSize: 14,
+        paddingVertical: 6,
       },
 });

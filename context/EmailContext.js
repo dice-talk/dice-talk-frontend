@@ -14,7 +14,7 @@ export const EmailProvider = ({children}) => {
 // 3. 화면에서 쉽게 쓰기 위한 커스텀 훅
 export const useEmail = () => {
     const context = useContext(EmailContext);
-    console.log('useEmail context:', context); // 확인
+    //console.log('useEmail context:', context); // 확인
     return context;
 };
 

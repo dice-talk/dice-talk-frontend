@@ -38,7 +38,7 @@ const terms = [
         alert('필수 약관에 모두 동의해주세요.');
         return;
       }
-      navigation.navigate('SignupInput'/*{, {
+      navigation.navigate('TossAuth'/*{, {
         email: 'test@example.com',
         name: '홍길동',
         gender: '남성',
