@@ -10,9 +10,10 @@ import WhitePink from '../assets/fire/WhitePink.svg';
 import BlackPink from '../assets/fire/BlackPink.svg';
 
 export default function Coongratulate({ navigation }) {
-  const handleLoginPress = () => {
-    navigation.navigate('Login');
-  };
+
+  // const handleLoginPress = () => {
+  //   navigation.navigate('LoginEmail');
+  // };
 
   return (
     <View style={styles.container}>
@@ -28,7 +29,7 @@ export default function Coongratulate({ navigation }) {
 
       {/* 버튼 */}
       <View style={styles.buttonWrapper}>
-        <LongButton onPress={handleLoginPress}> 
+        <LongButton onPress={() => {navigation.navigate('LoginEmail')}}> 
             <Text style={styles.buttonText}>로그인하러 가기</Text>
         </LongButton>
       </View>

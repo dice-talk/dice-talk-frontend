@@ -20,7 +20,7 @@ export default function LendingPage({navigation}) {
             <Button title='MyPage' onPress={() => {navigation.navigate('MyPage')}} />
 
             <View style={styles.bottomContainer}>
-                  <LongButton onPress={() => navigation.navigate('EmailInput')}>
+                  <LongButton onPress={() => navigation.navigate('LoginEmail')}>
                   <FontAwesome name="envelope" size={20} color="white" style={styles.icon} /> 
                   <Text style={styles.text}>이메일로 로그인</Text>
                   </LongButton>

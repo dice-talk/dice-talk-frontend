@@ -7,6 +7,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { sendEmail } from '../utils/http/email.API'; // 이메일 전송 및 코드 검증
 import { verifyCode } from '../utils/http/email.API';
 import EmailExistModal from '../component/EmailExistsModal';
+import { useEmail } from '../context/EmailContext';
 // 인증 코드 자리 수
 const CELL_COUNT = 6;
 
@@ -14,7 +15,7 @@ export default function VerifyCode({ route, navigation }) {
   // 자동 포커스를 호출하고 싶어 설정하자.
   const codeFieldRef = useRef(null);
     // 이전 화면에서 받은 이메일
-  const { email } = route.params;
+  const { email } = useEmail();
   // 인증 코드 입력 상태
   const [value, setValue] = useState('');
   // 셀 포커스 제어어
