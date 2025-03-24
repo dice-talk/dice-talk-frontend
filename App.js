@@ -1,4 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
+import { EmailProvider } from './context/EmailContext';
 import { StyleSheet, Text, View } from 'react-native';
 import  { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -12,10 +12,10 @@ import MyInfo from './mypage/MyInfo';
 import MyQuestion from './mypage/MyQuestion';
 import MyQuestionDetail from './mypage/MyQuestionDetail';
 import { setupMockAPI } from './utils/mockSetup';
-import SignupScreen from './signUp/SignupScreen';
 import Agreement from './signUp/Agreement';
 import DetailAgreement from './signUp/DetailAgreement';
 import MyQuestionInputText from './mypage/MyQuestionInputText';
+import SignupInput from './signUp/SignupInput';
 
 import EditMyInfo from './mypage/EditMyInfo';
 import MyDice from './mypage/MyDice';
@@ -30,16 +30,17 @@ if(__DEV__) {
 
 export default function App() { 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name='LendingPage' component={LendingPage} />
-        <Stack.Screen name='EmailInput' component={EmailInput} />
-        <Stack.Screen name='VerifyCode' component={VerifyCode} />
-        <Stack.Screen name='IdentityVerification' component={IdentityVerification} />
-        <Stack.Screen name='TossAuth' component={TossAuth} />
-        <Stack.Screen name='SignupScreen' component={SignupScreen} />
-        <Stack.Screen name='Agreement' component={Agreement} />
-        <Stack.Screen name='DetailAgreement' component={DetailAgreement} />
+    <EmailProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name='LendingPage' component={LendingPage} />
+          <Stack.Screen name='EmailInput' component={EmailInput} />
+          <Stack.Screen name='VerifyCode' component={VerifyCode} />
+          <Stack.Screen name='IdentityVerification' component={IdentityVerification} />
+          <Stack.Screen name='TossAuth' component={TossAuth} />
+          <Stack.Screen name='Agreement' component={Agreement} />
+          <Stack.Screen name='DetailAgreement' component={DetailAgreement} />
+          <Stack.Screen name='SignupInput' component={SignupInput} />
 
 
 
@@ -70,9 +71,9 @@ export default function App() {
         <Stack.Screen name="EditMyInfo" component={EditMyInfo} />
         <Stack.Screen name="MyDice" component={MyDice} />
         <Stack.Screen name="ChargeDice" component={ChargeDice} />
-
-      </Stack.Navigator>
-    </NavigationContainer>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </EmailProvider>
   );
 }
 

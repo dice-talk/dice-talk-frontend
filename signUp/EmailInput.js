@@ -5,11 +5,19 @@ import { FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { sendEmail } from '../utils/http/email.API';
 import { Alert } from 'react-native';
+import { useEmail } from '../context/EmailContext';
 
 
 export default function EmailInput({navigation}) {
-    const [email, setEmail] = useState(""); // 이메일 입력 상태 관리
+    const { email, setEmail } = useEmail(''); // 이메일 입력 상태 관리 전역 상태 접근
+
+    const [inputEmail, setInputEmail] = useState('');
     const [isValid, setIsValid] = useState(false); // 버튼 활성화 비활성화 + 이메일이 유효한지 check
+
+   // const handleNext = () => {
+   //     setEmail(inputEmail); // 전역 상태에 저장
+   //     navigation.navigate('VerifyCode') // 다음 화면으로 이동
+   // }
 
     const validateEmail = (text) => {
         setEmail(text);

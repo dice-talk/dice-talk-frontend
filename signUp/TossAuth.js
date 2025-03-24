@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, SafeAreaView } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { requestTossAuth, verifyTossAuth } from "../utils/http/toss.API";
-import SignupScreen from "./SignupScreen";
+import SignupInput from "./SignupInput";
 
-const BACKEND_URL = 'http://10.0.2.2:8080'; // 애뮬레이터용 주소 (로컬 서버버)
+const BACKEND_URL = 'http://172.30.1.79:3000'; // 애뮬레이터용 주소 (로컬 서버)
 
 
 export default function TossAuth({navigation}) {
@@ -15,7 +15,7 @@ export default function TossAuth({navigation}) {
     useEffect(() => {
         const fetchAuthUrl = async () => {
             try {
-                const res = await fetch('${BACKEND_URL}/toss/request', {
+                const res = await fetch(`${BACKEND_URL}/toss/request`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                 });
@@ -29,17 +29,18 @@ export default function TossAuth({navigation}) {
         };
         fetchAuthUrl();
     }, []);
-
     // 인증결과 수신 후 회원가입 페이지로 이동 (정보 전달) 인증완료 + 사용자 정보 요청
     const handleAuthComplete = async () => {
         try {
+            console.log('인증결과 요청 시작')
             const res = await fetch(`${BACKEND_URL}/toss/result`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ txId }),
             });
-            const user = await res.json();
-            navigation.navigate('SignupScreen', { user }); // 사용자 정보 넘김
+            const userInfo = await res.json();
+            console.log(userInfo);
+            navigation.navigate('SignupInput', { userInfo }); // 사용자 정보 넘김
           } catch (err) {
             console.error('인증 결과 확인 실패:', err); 
             Alert.alert('오류', '인증 결과 확인에 실패했습니다.');
@@ -54,17 +55,20 @@ export default function TossAuth({navigation}) {
             <WebView
             source={{
                 uri: authUrl,
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `txId=${txId}`,
+                //method: 'POST',
+                //headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                //body: `txId=${txId}`,
             }}
             originWhitelist={['*']}
             javaScriptEnabled={true}
             onNavigationStateChange={(navState) => {
+                console.log('현재 URL:', navState.url);
                 const url = navState.url;
                 if (url.includes('complete')) {
+                console.log('인증 완료 URL 감지!');
                 handleAuthComplete(); // Toss 인증 성공
                 } else if (url.includes('fail')) {
+                console.log('인증 실패 URL 감지!');
                 alert('인증 실패');
                 }
             }}

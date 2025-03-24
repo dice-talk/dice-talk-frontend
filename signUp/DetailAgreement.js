@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ScrollView, View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { termsData } from './TermsData';
+import { termsData } from '../dummyData/TermsData';
 import LongButton from '../component/LongButton';
 import { FlatList } from 'react-native';
 
@@ -56,7 +56,12 @@ export default function DetailAgreement ({navigation}) {
                     pointerEvents={allRequiredChecked ? 'auto' : 'none'} // 클릭방지지
                     >
                         <LongButton
-                            onPress={() => navigation.navigate('SignupScreen')}
+                            onPress={() => navigation.navigate('SignupInput', {
+                                email: 'test@example.com',
+                                name: '홍길동',
+                                gender: '남성',
+                                birth: '1999-12-29',
+                              })}
                             disabled={!allRequiredChecked}
                         >
                             <Text style={styles.buttonText}> 다음 </Text>
@@ -66,7 +71,6 @@ export default function DetailAgreement ({navigation}) {
                 showsVerticalScrollIndicator={false}
             />
         </View>
-                    
     );
 } 
 
