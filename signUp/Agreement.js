@@ -38,7 +38,12 @@ const terms = [
         alert('필수 약관에 모두 동의해주세요.');
         return;
       }
-      navigation.navigate('SignupScreen');
+      navigation.navigate('SignupInput'/*{, {
+        email: 'test@example.com',
+        name: '홍길동',
+        gender: '남성',
+        birth: '1999-12-29',
+      }*/);
     };
 
     return (
@@ -80,8 +85,9 @@ const terms = [
               activeOpacity={allRequiredChecked ? 0.8 : 1}
               >
                 <LongButton 
-                onPress={handleNext} 
-                disabled={!allRequiredChecked}>
+                onPress={handleNext}
+                disabled={!allRequiredChecked}
+                >
                     <Text style={styles.buttonText}> 다음 </Text>
                 </LongButton>
               </TouchableOpacity>
