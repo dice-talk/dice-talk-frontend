@@ -17,6 +17,10 @@ import DetailAgreement from './signUp/DetailAgreement';
 import MyQuestionInputText from './mypage/MyQuestionInputText';
 import SignupInput from './signUp/SignupInput';
 
+import EditMyInfo from './mypage/EditMyInfo';
+import MyDice from './mypage/MyDice';
+import ChargeDice from './mypage/ChargeDice';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -59,12 +63,14 @@ export default function App() {
 
 
 
-          <Stack.Screen name='MyPage' component={MyPage} />
-          <Stack.Screen name='MyInfo' component={MyInfo} />
-          <Stack.Screen name='MyQuestion' component={MyQuestion} />
-          <Stack.Screen name='MyQuestionDetail' component={MyQuestionDetail} />
-          <Stack.Screen name='MyQuestionInputText' component={MyQuestionInputText} />
-
+        <Stack.Screen name='MyPage' component={MyPage} />
+        <Stack.Screen name='MyInfo' component={MyInfo} />
+        <Stack.Screen name='MyQuestion' component={MyQuestion} />
+        <Stack.Screen name='MyQuestionDetail' component={MyQuestionDetail} />
+        <Stack.Screen name='MyQuestionInputText' component={MyQuestionInputText} />
+        <Stack.Screen name="EditMyInfo" component={EditMyInfo} />
+        <Stack.Screen name="MyDice" component={MyDice} />
+        <Stack.Screen name="ChargeDice" component={ChargeDice} />
         </Stack.Navigator>
       </NavigationContainer>
     </EmailProvider>
