@@ -63,10 +63,11 @@ export default function LoginEmail({navigation}) {
                         value={inputEmail}
                     />
                     <View style={styles.forgotContainer}>
-                        <TouchableOpacity onPress={() => {}}>
-                        <Text style={styles.forgotText}>이메일을 잊으셨나요?</Text>
+                        <TouchableOpacity onPress={() => {}} style={styles.forgotButton}>
+                        <Text style={{color: '#B19ADE', fontSize: 12, textAlign: 'right'}}>이메일을 잊으셨나요?</Text>
                         </TouchableOpacity>
                     </View>
+
                     <View 
                     style={[!isValid && styles.disabledButton]} 
                     pointerEvents={!isValid ? "none" : "auto"}>
@@ -133,8 +134,11 @@ const styles = StyleSheet.create({
         opacity: 0.5,
     },
     forgotContainer: {
-        width: '70%', // 전체 너비 차지
+        width: '100%', // 전체 너비 차지
         paddingLeft: 20, // 왼쪽 여백 추가
         marginBottom: 16
-      }
+      },
+      forgotButton: {
+        alignItems: 'flex-end', //오른쪽 정렬
+      },
 });
