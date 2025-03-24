@@ -1,4 +1,3 @@
-// utils/http/question.API.js
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 
@@ -39,37 +38,44 @@ const dummyQuestions = [
         createAt: "2025-03-18"
       }
   }
-];
+]
 
-// ✅ 단일 조회 mock (하드코딩 또는 dummy에서 찾아서)
+// ✅ 단일 조회: /questions/:memberId/:questionId
 mock.onGet(new RegExp(`${BACK_URL}/questions/\\d+/\\d+$`)).reply(config => {
-    const questionId = Number(config.url.split('/').pop());
+    const parts = config.url.split('/');
+    const questionId = Number(parts[parts.length - 1]);
 
     const question = dummyQuestions.find(q => q.id === questionId);
   
     if (question) {
-        // 성공하면 200 상태코드와 question 리턴
-      return [200, question];
+        return [200, question];
     } else {
-        // 실패하면 404 상태코드와 에러메시지 출력
-      return [404, { message: 'Question not found' }];
+        return [404, { message: 'Question not found' }];
     }
-  });
+});
 
-  // ✅ 요청 가로채서 응답 처리
-mock.onGet(new RegExp(`${BACK_URL}/questions/\\d+`)).reply(config => {
-    const { page } = config.params;
-    console.log(`📦 Mock 응답 - page: ${page}`);
-    return [200, dummyQuestions]; // 간단한 테스트용 mock 데이터
-  });
+// ✅ 목록 조회:
+mock.onGet(new RegExp(`${BACK_URL}/questions/\\d+(\\?.*)?$`)).reply(config => {
+    const urlParts = config.url.split('/');
+    const memberId = parseInt(urlParts[urlParts.length - 1].split('?')[0]);
+    const { page = 1, size = 4 } = config.params || {};
 
-  // ✅ 요청 가로채서 응답 처리
-  mock.onDelete(new RegExp(`${BACK_URL}/questions/\\d+`)).reply(config => {
+    // 페이징 처리
+    const startIndex = (page - 1) * size;
+    const endIndex = startIndex + size;
+    const paginatedQuestions = dummyQuestions.slice(startIndex, endIndex);
+
+    console.log(`📦 Mock 응답 - memberId: ${memberId}, page: ${page}, size: ${size}`);
+    return [200, paginatedQuestions];
+});
+
+// ✅ 요청 가로채서 응답 처리
+mock.onDelete(new RegExp(`${BACK_URL}/questions/\\d+`)).reply(config => {
     const id = parseInt(config.url.split('/').pop());
     return [204]; // 간단한 테스트용 mock 데이터
-  });
+});
 
-  mock.onPost(`${BACK_URL}/questions`).reply(config => {
+mock.onPost(`${BACK_URL}/questions`).reply(config => {
     const newQuestion = JSON.parse(config.data);
     newQuestion.id = dummyQuestions.length + 1;
     newQuestion.createAt = new Date().toISOString().split('T')[0];
@@ -84,20 +90,17 @@ mock.onGet(new RegExp(`${BACK_URL}/questions/\\d+`)).reply(config => {
     };
     dummyQuestions.push(newQuestion);
     return [201, newQuestion];
-  });
+});
 
 // ✅ 실제 axios 호출 함수 delete
 export const deleteMyQuestion = async (questionId) => {
     try {
-      // axios로 엔드포인트 설정하여 response 받아오기
       const response = await axios.delete(`${BACK_URL}/questions/${questionId}`);
-    // 응답 데이터 반환
-    return response;
-  } catch (error) {
-    // error가 있다면 error 내용 출력
-    console.error('❌ 에러:', error);
-    throw error;
-  }
+      return response;
+    } catch (error) {
+      console.error('❌ 에러:', error);
+      throw error;
+    }
 };
 
 // question 단일 조회
@@ -112,12 +115,10 @@ export const getQuestionDetail = async (questionId, memberId) => {
     }
 };
 
-// ✅ 실제 axios 호출 함수
+// ✅ 실제 axios 호출 함-
 export const getMyQuestions = async (memberId, page) => {
     try {
-      // axios로 엔드포인트 설정하여 response 받아오기
       const response = await axios.get(`${BACK_URL}/questions/${memberId}`, {
-          // 파람스로 size와 page 전달
         params: {
           size: 4,
           page: page
@@ -125,14 +126,12 @@ export const getMyQuestions = async (memberId, page) => {
       });
   
       console.log('✅ 응답 데이터:', response.data);
-      // 응답 데이터 반환
       return response;
     } catch (error) {
-      // error가 있다면 error 내용 출력
       console.error('❌ 에러:', error);
       throw error;
     }
-  };
+};
 
 // ✅ 질문 작성 요청
 export const postQuestion = async (questionData) => {

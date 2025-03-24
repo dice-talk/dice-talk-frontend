@@ -6,12 +6,32 @@ import Footer from "../component/Footer";
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { postQuestion } from '../utils/http/question.API'; // 실제 위치에 따라 경로 조정
+import * as DocumentPicker from 'expo-document-picker';
 
 export default function MyQuestionInputText () {
     const [text, setText] = useState('');
     const navigation = useNavigation();
     const [content, setContent] = useState('');
     const [question, setQuestion] = useState(null);
+    const [files, setFiles] = useState([]);
+
+    const handleFilePick = async () => {
+        try {
+            const result = await DocumentPicker.getDocumentAsync({
+                type: ['image/*'],
+                multiple: true,
+                copyToCacheDirectory: true,
+            });
+
+            if (!result.canceled && result.assets.length > 0) {
+                const selected = result.assets.slice(0, 3);
+                const filtered = selected.filter(file => file.size <= 30 * 1024 * 1024);
+                setFiles(filtered);
+            }
+        } catch (error) {
+            alert('파일 선택에 실패했습니다.');
+        }
+    };
 
     const handleSubmit = async () => {
         try {
@@ -38,15 +58,15 @@ export default function MyQuestionInputText () {
             </View>
         </LinearGradient>
         <ScrollView contentContainerStyle={styles.content}>
-            {/* 옵셔널 체이닝 = ?. 값이 있을때만 가져옴 없으면 undefined반환으로 에러 방지 */}
-            <Text style={styles.label}>제목</Text>
-            <TextInput style={styles.input} placeholder='제목을 작성해주세요' value={text} onChangeText={setText} />
-            <View style={styles.fullWidthLine}>
-                <LinearGradient colors={["#D8B4FE", "#F9A8D4"]} style={styles.gradientLine} />
+            <View style={styles.formGuideContainer}>
+                <Text style={styles.formGuideTitle}>문의 양식</Text>
+                <Text style={styles.formGuideSubtitle}>문의 내용은 가능한 자세히 작성해주세요</Text>
             </View>
-            {/* <Pressable style={styles.attachmentButton}>
-                <Text style={styles.attachmentText}>첨부파일</Text>
-            </Pressable> */}
+            <Text style={styles.label}>제목</Text>
+            <TextInput style={styles.input} placeholder='제목을 입력해 주세요' value={text} onChangeText={setText} placeholderTextColor="#ccc" />
+            <View style={styles.fullWidthLine}>
+                <LinearGradient colors={["#D3D3D3", "#D3D3D3"]} style={styles.gradientLine} />
+            </View>
             <Image source={question?.question_image} style={styles.imageSize} resizeMode='contain'/>
             <View style={styles.bottomInputContainer}>
                 <TextInput
@@ -55,10 +75,50 @@ export default function MyQuestionInputText () {
                     multiline
                     value={content}
                     onChangeText={setContent}
+                    placeholderTextColor="#ccc"
                 />
                 <View style={styles.buttonRow}>
-                    <Pressable style={styles.confirmButton} onPress={handleSubmit}>
-                        <Text style={styles.buttonText}>등록</Text>
+                    <Pressable onPress={handleFilePick}>
+                        <LinearGradient colors={["#D8B4FE", "#F9A8D4"]} style={styles.confirmButton}>
+                            <Text style={[styles.buttonText, { color: 'white' }]}>파일 선택</Text>
+                        </LinearGradient>
+                    </Pressable>
+                </View>
+                <View style={{ height: 38, marginTop: 8 }}>
+                    {files.map((file, idx) => (
+                        <View key={idx} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+                            <Text style={{ fontSize: 12, color: '#555' }}>
+                                {file.name} ({(file.size / (1024 * 1024)).toFixed(2)} MB)
+                            </Text>
+                            <Pressable
+                                onPress={() => {
+                                    const newFiles = [...files];
+                                    newFiles.splice(idx, 1);
+                                    setFiles(newFiles);
+                                }}
+                                style={{
+                                    marginLeft: 8,
+                                    paddingHorizontal: 8,
+                                    paddingVertical: 2,
+                                    backgroundColor: '#eee',
+                                    borderRadius: 8,
+                                }}
+                            >
+                                <Text style={{ fontSize: 12, color: '#333' }}>X</Text>
+                            </Pressable>
+                        </View>
+                    ))}
+                </View>
+                <View style={styles.bottomButtonRow}>
+                    <Pressable onPress={() => navigation.goBack()}>
+                        <LinearGradient colors={["#D8B4FE", "#F9A8D4"]} style={styles.confirmButton}>
+                            <Text style={[styles.buttonText, { color: 'white' }]}>취소</Text>
+                        </LinearGradient>
+                    </Pressable>
+                    <Pressable onPress={handleSubmit}>
+                        <LinearGradient colors={["#D8B4FE", "#F9A8D4"]} style={styles.confirmButton}>
+                            <Text style={[styles.buttonText, { color: 'white' }]}>등록</Text>
+                        </LinearGradient>
                     </Pressable>
                 </View>
             </View>
@@ -84,7 +144,12 @@ const styles = StyleSheet.create({
         padding: 20,
         paddingBottom: 0,
     },
-    label: { fontSize: 14, color: '#888', marginBottom: 4 },
+    label: { 
+      fontSize: 17,
+      color: '#888',
+      marginBottom: 4,
+      marginTop: 8,
+    },
     title: {
          fontSize: 20,
           fontWeight: '600',
@@ -155,25 +220,21 @@ const styles = StyleSheet.create({
       },
       gradientLine: {
         height: 1,
-        width: '100%',
+        width: '97%',
         marginVertical: 8,
-      },
-      fullWidthLine: {
-        marginHorizontal: -20,
+        marginHorizontal:5,
       },
       imageSize: {
         maxWidth: 130,
         maxxHeight: 130,
         width: '100%',
-        // height: '100%',
-        // aspectRatio: 1
       },
       input: {
         borderColor: '#ccc',
         borderRadius: 8,
         paddingHorizontal: 12,
         paddingVertical: 8,
-        fontSize: 16,
+        fontSize: 14,
       },
       attachmentButton: {
         alignSelf: 'flex-end',
@@ -188,20 +249,29 @@ const styles = StyleSheet.create({
         color: '#555',
       },
       bottomInputContainer: {
-        padding: 20,
+        paddingHorizontal: 0,
+        paddingBottom: 20,
       },
       bottomTextInput: {
         borderColor: '#ccc',
         borderWidth: 1,
         borderRadius: 8,
-        padding: 12,
-        minHeight: 100,
+        padding: 16,
+        minHeight: 230,
         textAlignVertical: 'top',
         marginBottom: 12,
+        width: '100%',
+        alignSelf: 'stretch',
       },
       buttonRow: {
         flexDirection: 'row',
-        justifyContent: 'flex-end',
+        justifyContent: 'space-between',
+        gap: 12,
+      },
+      bottomButtonRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 12,
         gap: 12,
       },
       cancelButton: {
@@ -215,7 +285,7 @@ const styles = StyleSheet.create({
       confirmButton: {
         paddingVertical: 8,
         paddingHorizontal: 16,
-        borderRadius: 8,
+        borderRadius: 20,
         borderWidth: 1,
         borderColor: '#DCDCDC',
         backgroundColor: '#f9d5ec',
@@ -223,5 +293,17 @@ const styles = StyleSheet.create({
       buttonText: {
         fontSize: 14,
         color: '#333',
+      },
+      formGuideContainer: {
+        marginBottom: 12,
+      },
+      formGuideTitle: {
+        fontSize: 20,
+        color: 'gray',
+        marginBottom: 2,
+      },
+      formGuideSubtitle: {
+        fontSize: 11,
+        color: 'gray',
       },
 });
