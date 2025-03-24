@@ -23,6 +23,8 @@ import LoginPassword from './login/LoginPassword';
 import EditMyInfo from './mypage/EditMyInfo';
 import MyDice from './mypage/MyDice';
 import ChargeDice from './mypage/ChargeDice';
+import Chat from './chat/Chat';
+import ChatReport from './chat/ChatReport'
 
 
 const Stack = createNativeStackNavigator();
@@ -78,9 +80,12 @@ export default function App() {
         <Stack.Screen name="EditMyInfo" component={EditMyInfo} />
         <Stack.Screen name="MyDice" component={MyDice} />
         <Stack.Screen name="ChargeDice" component={ChargeDice} />
+        <Stack.Screen name="Chat" component={Chat} />
+        <Stack.Screen name="ChatReport" component={ChatReport} />
         </Stack.Navigator>
       </NavigationContainer>
     </EmailProvider>
+
   );
 }
 

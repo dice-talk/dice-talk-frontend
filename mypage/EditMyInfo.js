@@ -6,34 +6,19 @@ export default function EditMyInfo({ navigation }) {
   return (
     <>
       <View style={styles.container}>
-        <LinearGradient
-          colors={["#D7C0FA", "#F8B4F1"]}
-          style={styles.topBar}
-        >
+        <LinearGradient colors={["#D7C0FA", "#F8B4F1"]} style={styles.topBar}>
           <Text style={styles.header}>회원정보 수정</Text>
         </LinearGradient>
 
         <View style={styles.content}>
           <Text style={styles.label}>이메일</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="gildongii@gmail.com"
-            placeholderTextColor="#aaa"
-          />
+          <TextInput style={styles.input} placeholder="gildongii@gmail.com" placeholderTextColor="#aaa"/>
 
           <Text style={[styles.label, { marginTop: 32 }]}>비밀번호 확인</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="비밀번호를 입력해주세요."
-            placeholderTextColor="#aaa"
-            secureTextEntry
-          />
+          <TextInput style={styles.input} placeholder="비밀번호를 입력해주세요." placeholderTextColor="#aaa" secureTextEntry/>
 
           <Pressable style={styles.button}>
-            <LinearGradient
-              colors={["#B28EF8", "#F9A8D4"]}
-              style={styles.gradientButton}
-            >
+            <LinearGradient colors={["#B28EF8", "#F9A8D4"]} style={styles.gradientButton}>
               <Text style={styles.buttonText}>확인</Text>
             </LinearGradient>
           </Pressable>
