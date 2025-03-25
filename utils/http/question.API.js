@@ -133,7 +133,7 @@ export const getMyQuestions = async (memberId, page) => {
     }
 };
 
-// ✅ 질문 작성 요청
+// ✅ 질문 등록 요청
 export const postQuestion = async (questionData) => {
   try {
     const response = await axios.post(`${BACK_URL}/questions`, questionData);
