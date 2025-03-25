@@ -25,7 +25,7 @@ import MyDice from './mypage/MyDice';
 import ChargeDice from './mypage/ChargeDice';
 import Chat from './chat/Chat';
 import ChatReport from './chat/ChatReport'
-
+import Main from './main/Main';
 
 const Stack = createNativeStackNavigator();
 
@@ -82,6 +82,7 @@ export default function App() {
         <Stack.Screen name="ChargeDice" component={ChargeDice} />
         <Stack.Screen name="Chat" component={Chat} />
         <Stack.Screen name="ChatReport" component={ChatReport} />
+        <Stack.Screen name="Main" component={Main} />
         </Stack.Navigator>
       </NavigationContainer>
     </EmailProvider>
