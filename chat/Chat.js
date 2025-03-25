@@ -32,8 +32,8 @@ import Love03 from "../assets/icon/profile/love_03.svg";
 import Love04 from "../assets/icon/profile/love_04.svg";
 import Love05 from "../assets/icon/profile/love_05.svg";
 import Love06 from "../assets/icon/profile/love_06.svg";
-
-
+import Signal from "../assets/event/signal.svg";
+import ResultModal from "../component/ResultModal";
 
 
 export default function Chat({ navigation }) {
@@ -335,29 +335,51 @@ export default function Chat({ navigation }) {
         </View>
       )}
 
-      {thirdModalVisible && (
-        <Pressable style={styles.overlay} onPress={() => setThirdModalVisible(false)}>
-          <View style={{ alignItems: "center" }}>
-            <View style={{ width: 420, height: 300, position: 'relative' }}>
-              <ArrowBoard03 width={420} height={300} />
-              <Pressable onPress={() => setThirdModalVisible(false)} style={{ position: 'absolute', top: 8, right: 10, zIndex: 1 }}>
-                <Text style={{ color: "white", fontSize: 16 }}>X</Text>
-              </Pressable>
-            </View>
-            <Pressable
-              style={[
-                styles.confirmButton,
-                { backgroundColor: "#F8B4C4", marginTop: 16 }
-              ]}
-              onPress={() => setThirdModalVisible(false)}
-            >
-              <Text style={styles.confirmText}>확인</Text>
-            </Pressable>
-          </View>
+{thirdModalVisible && (
+  <Pressable style={styles.overlay} onPress={() => setThirdModalVisible(false)}>
+    <View style={{ alignItems: "center" }}>
+      <View style={{ width: 520, height: 400, position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
+        <ArrowBoard01 width={520} height={400} />
+
+        <Pressable onPress={() => setThirdModalVisible(false)} style={{ position: 'absolute', top: 8, right: 10, zIndex: 1 }}>
+          <Text style={{ color: "white", fontSize: 16 }}>X</Text>
         </Pressable>
-      )}
+
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, position: 'absolute', top: 170, zIndex: 1 }}>
+          <Love01 width={50} height={50} />
+          <Signal width={150} height={90} />
+          <Love02 width={50} height={50} />
+        </View>
+
+        <Text style={{ position: 'absolute', top: 135, fontSize: 14, color: "#fff", zIndex: 1 }}>
+          시그널이 연결되었어요!
+        </Text>
+      </View>
+      <Pressable
+        style={[
+          styles.confirmButton,
+          { backgroundColor: "#F8B4C4", marginTop: 16 }
+        ]}
+        onPress={() => setThirdModalVisible(false)}
+      >
+        <Text style={styles.confirmText}>확인</Text>
+      </Pressable>
+    </View>
+  </Pressable>
+)}
       
-      {resultModalVisible && (
+      <ResultModal
+  visible={resultModalVisible}
+  onClose={() => setResultModalVisible(false)}
+  text="선택의 결과를 확인해주세요"
+  SvgComponent={ArrowBoard02}
+  onConfirm={() => {
+    setResultModalVisible(false);
+    setTimeout(() => setThirdModalVisible(true), 300);
+  }}
+/>
+
+{resultModalVisible && (
         <Pressable style={styles.overlay} onPress={() => setResultModalVisible(false)}>
           <View style={{ alignItems: "center" }}>
             <View style={{ width: 420, height: 300, position: 'relative' }}>
@@ -387,6 +409,7 @@ export default function Chat({ navigation }) {
       </View>
     </TouchableWithoutFeedback>
   );
+  
 }
 
 const styles = StyleSheet.create({

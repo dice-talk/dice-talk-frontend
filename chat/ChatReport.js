@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, ScrollView, Pressable, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 // 프로필 아이콘
 import Love_01 from "../assets/icon/profile/love_01.svg";
@@ -10,6 +11,7 @@ import RedCircle from "../assets/icon/chat/red_circle.svg";  // 테두리만 있
 import RedCheck from "../assets/icon/chat/red_check.svg";    // 체크표시 원
 
 export default function ChatReport() {
+  const navigation = useNavigation();
   const [selectedIds, setSelectedIds] = useState([]);
   const [showReasonModal, setShowReasonModal] = useState(false);
   const [selectedReasons, setSelectedReasons] = useState([]);
@@ -153,8 +155,8 @@ export default function ChatReport() {
               }}
               disabled={selectedReasons.length === 0}
               onPress={() => {
-                // Handle reason submit here
                 setShowReasonModal(false);
+                navigation.navigate("Chat");
               }}
             >
               <Text style={{ color: "white", fontSize: 15 }}>확인</Text>
