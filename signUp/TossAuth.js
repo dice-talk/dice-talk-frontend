@@ -1,55 +1,164 @@
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, SafeAreaView } from 'react-native';
+import React, { useEffect, useState, useRef } from "react";
+import { ActivityIndicator, SafeAreaView, AppState, Alert, Text } from 'react-native';
 import { WebView } from 'react-native-webview';
-import { requestTossAuth, verifyTossAuth } from "../utils/http/toss.API";
+import * as Linking from 'expo-linking';
+import * as Crypto from 'expo-crypto';
+import uuid from 'react-native-uuid';
+
 import SignupInput from "./SignupInput";
 
-const BACKEND_URL = 'http://172.30.1.79:3000'; // 애뮬레이터용 주소 (로컬 서버)
+const BACKEND_URL = 'http://192.168.45.246:8080'; // 서버 주소
 
 
 export default function TossAuth({navigation}) {
-    const [authUrl, setAuthUrl] = useState(null);
+    const [pendingUrl, setPendingUrl] = useState(null);
     const [txId, setTxId] = useState(null);
+    const appState = useRef(AppState.currentState);
+    const [loading, setLoading] = useState(true);
 
     // Toss 인증 URL 요청
     useEffect(() => {
         const fetchAuthUrl = async () => {
             try {
-                const res = await fetch(`${BACKEND_URL}/toss/request`, {
+                const res = await fetch(`${BACKEND_URL}/auth/request`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                 });
+
                 const data= await res.json();
-                setAuthUrl(data.authUrl);
+                console.log('인증 요청 응답:', data);
+                //setAuthUrl(data.authUrl);
                 setTxId(data.txId);
+
+                const appUriRes = await fetch(
+                    `https://cert.toss.im/api-client/v1/transactions/${data.txId}`
+                );
+                const appUriData = await appUriRes.json();
+
+                if(appUriData.resultType === "SUCCESS") {
+                    const tossUri = appUriData.success.appUri.android;
+                    await Linking.openURL(tossUri); // Toss 앱 실행
+                } else {
+                    throw new Error(appUriData.error?.reason || "Toss 인증 오류");
+                }
             } catch (e) {
-                console.error('인증 URL 요청 실패:', err);
-                alert('오류', '인증을 시작할 수 없습니다.');
+                console.error('Toss 인증 요청 실패:', err);
+                Alert.alert('오류', 'Toss 인증요청 또는 실행에 실패하셨습니다다.');
+            } finally {
+                console.log("Toss 인증 요청 성공");
+                setLoading(false);
             }
         };
         fetchAuthUrl();
     }, []);
-    // 인증결과 수신 후 회원가입 페이지로 이동 (정보 전달) 인증완료 + 사용자 정보 요청
-    const handleAuthComplete = async () => {
+    // 세션키 생성
+    const createSesstionKey = async () => {
+        const randomBytes = await Crypto.getRandomBytesAsync(32);
+        const base64Key = Buffer.from(randomBytes).toString("base64");
+        const uuidKey = uuid.v4();
+        return `v1${uuidKey}$${base64Key}`;
+    };
+    // 사용자 정보 조회
+    const fetchUserInfo = async () => {
         try {
-            console.log('인증결과 요청 시작')
-            const res = await fetch(`${BACKEND_URL}/toss/result`, {
+            setLoading(true);
+            console.log('사용자 정보 조회 시작')
+
+            const res = await fetch(`${BACKEND_URL}/toss/result?txId=${txId}`, {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ txId }),
             });
-            const userInfo = await res.json();
-            console.log(userInfo);
-            navigation.navigate('SignupInput', { userInfo }); // 사용자 정보 넘김
+
+            const data = await res.json();
+            console.log("사용자 정보:", data);
+            navigation.navigate('SignupInput', { userInfo: data }); // 사용자 정보 넘김
           } catch (err) {
-            console.error('인증 결과 확인 실패:', err); 
-            Alert.alert('오류', '인증 결과 확인에 실패했습니다.');
+            console.error('사용자 정보 요청 실패:', err); 
+            Alert.alert('오류', '인증 정보 확인에 실패했습니다.');
+          } finally {
+            setLoading(false);
           }
         };
-    
+        // 앱 복귀 감지 + 딥링크 확인
+        useEffect(() => {
+            const handleAppStateChange = async (nextState) => {
+                if(appState.current.match(/inactive|background/) && nextState === "active") {
+                    console.log("앱 복귀 감지됨");
+                    const url = await Linking.getInitialURL();
+                    if (url) {
+                        console.log("복귀 URL:" , url);
+                        setPendingUrl(url); // 바로 처리하지 않고 저장
+                    }
+                }
+                appState.current = nextState;
+            };
+            
+            const subscription = AppState.addEventListener("change", handleAppStateChange);
+            return () => subscription.remove();
+        }, []);
+
+        // useEffect(() => {
+        //     const handleDeepLink = ({ url }) => {
+        //       console.log("💌 딥링크 수신됨:", url);
+        //       setPendingUrl(url);
+        //     };
+          
+        //     const appStateSub = AppState.addEventListener("change", async (nextState) => {
+        //       if (appState.current.match(/inactive|background/) && nextState === "active") {
+        //         console.log("📲 앱 복귀 감지됨");
+        //         const url = await Linking.getInitialURL();
+        //         if (url) {
+        //           console.log("🌐 초기 복귀 URL:", url);
+        //           setPendingUrl(url);
+        //         }
+        //       }
+        //       appState.current = nextState;
+        //     });
+          
+        //     const linkingSub = Linking.addEventListener("url", handleDeepLink);
+          
+        //     return () => {
+        //       appStateSub.remove();
+        //       linkingSub.remove();
+        //     };
+        //   }, []);
+          
+
+
+
+        // txId와 복귀 URL이 모두 준비됐을 떄 실행
+        useEffect(() => {
+            const tryProcess = async () => {
+                console.log("txId와 복귀 URL이 모두 준비됐을 때 실행",txId,setPendingUrl);
+                if(!txId || !pendingUrl) return;
+
+                if(txId) {
+                    console.log(" Toss 인증 성공 처리 시작");
+                    await fetchUserInfo();
+                } else if (!txId) {
+                    Alert.alert("인증 실패", "다시 시도해주세요.")
+                }
+
+                setPendingUrl(null); // 중복방지
+            };
+
+            tryProcess();
+        }, [txId, pendingUrl]);
+
+
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-        {!authUrl ? (
+        <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        {loading && <ActivityIndicator size='large' />}
+        </SafeAreaView>
+    );
+}
+
+
+// authUrl 토스가 준 인증 창 URL
+// txId 인증 요청 고유 번호(이걸로 결과 조회)
+// 딥링크 인증 완료 시 앱으로 돌아오게 해주는 앱스킴
+// WebView authUrl 열어서 인증 수행
+// axios.post('/check', { txId }) 인증 상태 조회
+        {/* {!authUrl ? (
             <ActivityIndicator size='large' />
         ) : (
             <WebView
@@ -73,14 +182,4 @@ export default function TossAuth({navigation}) {
                 }
             }}
             />
-        )}
-        </SafeAreaView>
-    );
-}
-
-
-// authUrl 토스가 준 인증 창 URL
-// txId 인증 요청 고유 번호(이걸로 결과 조회)
-// 딥링크 인증 완료 시 앱으로 돌아오게 해주는 앱스킴
-// WebView authUrl 열어서 인증 수행
-// axios.post('/check', { txId }) 인증 상태 조회
+        )} */}
