@@ -5,7 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { sendEmail } from '../utils/http/email.API';
 import { Alert } from 'react-native';
-import AlerModal from '../component/AlertModal';
+import AlertModal from '../component/AlertModal';
 
 
 export default function LoginEmail({navigation}) {
@@ -72,7 +72,7 @@ export default function LoginEmail({navigation}) {
                     </View>
 
                     {/* 모달 컴포넌트 */}
-                    <AlerModal
+                    <AlertModal
                     visible={showModal}
                     message={`본인 인증이 필요한 서비스입니다.\n계속하시겠습니까?`}
                     onCancel={() => setShowModal(false)}

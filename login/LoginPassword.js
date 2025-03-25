@@ -4,7 +4,7 @@ import LongButton from '../component/LongButton';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import AlerModal from '../component/AlertModal';
+import AlertModal from '../component/AlertModal';
 
 
 export default function LoginPassword({navigation}) {
@@ -78,12 +78,12 @@ export default function LoginPassword({navigation}) {
                         </TouchableOpacity>
                     </View>
 
-                    <AlerModal
+                    <AlertModal
                     visible={showModal}
                     message={`본인 인증이 필요한 서비스입니다.\n계속하시겠습니까?`}
                     onCancel={() => setShowModal(false)}
                     />
-
+t
                     {/* 로그인 버튼 */}
                     <View 
                     style={[!isValid && styles.disabled]} 
