@@ -1,21 +1,14 @@
-import React, { useRef } from "react";
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  Animated,
-  ScrollView,
-  Text,
-  Image,
-} from "react-native";
+import React, { useRef, useState } from "react";
+import { View, StyleSheet, Dimensions, Animated, ScrollView, Text, Image, Pressable, Modal, TouchableOpacity } from "react-native";
 import { BlurView } from "expo-blur";
+import { useNavigation } from "@react-navigation/native";
+import HeartSignalLogo from "../assets/icon/logo/hsDs.svg"
 
 // SVG 테마 컴포넌트
 import ExFriendsTheme from "../assets/theme/exFriendsTheme.svg";
 import FriendsTheme from "../assets/theme/friendsTheme.svg";
 import HeartSignalTheme from "../assets/theme/heartSignalTheme.svg";
 
-const { width } = Dimensions.get("window");
 const BANNER_HEIGHT = 180;
 const THEME_IMAGE_SIZE = 200;
 const ITEM_WIDTH = THEME_IMAGE_SIZE;
@@ -23,6 +16,8 @@ const SPACING = 20;
 
 export default function Main() {
   const scrollX = useRef(new Animated.Value(0)).current;
+  const navigation = useNavigation();
+  const [heartModalVisible, setHeartModalVisible] = useState(false);
 
   // 배너 이미지들
   const bannerImages = [
@@ -45,15 +40,6 @@ export default function Main() {
           source={bannerImages[0]} // 원하는대로 currentIndex 연결 가능
           style={styles.bannerImage}
         />
-        {/* 텍스트 오버레이
-        <View style={styles.bannerOverlay}>
-          <Text style={styles.welcomeText}>WELCOME</Text>
-          <Text style={styles.benefitText}>BENEFIT</Text>
-          <Text style={styles.dateText}>2025.03.01 ~ 2025.04.01</Text>
-          <View style={styles.pageIndicator}>
-            <Text style={styles.pageText}>1 / {bannerImages.length}</Text>
-          </View>
-        </View> */}
       </View>
 
       {/* 🔸 캐러셀 섹션 */}
@@ -65,7 +51,7 @@ export default function Main() {
           snapToInterval={ITEM_WIDTH + SPACING}
           decelerationRate="fast"
           contentContainerStyle={{
-            paddingHorizontal: (width - ITEM_WIDTH) / 2,
+            paddingHorizontal: (Dimensions.get("window").width - 200) / 2,
           }}
           onScroll={Animated.event(
             [{ nativeEvent: { contentOffset: { x: scrollX } } }],
@@ -113,17 +99,45 @@ export default function Main() {
                     transform: [{ perspective: 800 }, { scale }, { rotateY }, { translateY }],
                     opacity,
                   },
-                ]}
-              >
-                <BlurView intensity={opacity.__getValue() < 1 ? 60 : 0} style={styles.blurWrapper}>
-                  <item.Component width={THEME_IMAGE_SIZE} height={THEME_IMAGE_SIZE} />
-                </BlurView>
+                ]}>
+                <Pressable
+                  onPress={() => {
+                    if (item.id === 0) {
+                      navigation.navigate("DiceFriendsDs");
+                    } else if (item.id === 1) {
+                      setHeartModalVisible(true);
+                    }
+                  }}>
+                  <BlurView intensity={opacity.__getValue() < 1 ? 60 : 0} style={styles.blurWrapper}>
+                    <item.Component width={THEME_IMAGE_SIZE} height={THEME_IMAGE_SIZE} />
+                  </BlurView>
+                </Pressable>
                 <Text style={styles.label}>{item.label}</Text>
               </Animated.View>
             );
           })}
         </Animated.ScrollView>
       </View>
+
+      {/* Heart Signal Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={heartModalVisible}
+        onRequestClose={() => setHeartModalVisible(false)}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <TouchableOpacity style={styles.closeButton} onPress={() => setHeartModalVisible(false)}>
+              <Text style={styles.closeButtonText}>X</Text>
+            </TouchableOpacity>
+            <HeartSignalLogo width={100} height={100} />
+            <Text style={styles.modalText}>Join the Heart Signal community!</Text>
+            <Pressable style={styles.joinButton} onPress={() => navigation.navigate("SelectRegion")}>
+              <Text style={styles.joinButtonText}>참여하기</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -144,40 +158,6 @@ const styles = StyleSheet.create({
     height: "100%",
     resizeMode: "cover",
   },
-  bannerOverlay: {
-    position: "absolute",
-    top: 20,
-    left: 20,
-  },
-  welcomeText: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#C66DD2",
-  },
-  benefitText: {
-    fontSize: 20,
-    color: "#6F95DD",
-    marginTop: -5,
-  },
-  dateText: {
-    fontSize: 12,
-    color: "#555",
-    marginTop: 4,
-  },
-  pageIndicator: {
-    position: "absolute",
-    bottom: -10,
-    right: -20,
-    backgroundColor: "rgba(255,255,255,0.5)",
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 2,
-  },
-  pageText: {
-    fontSize: 12,
-    color: "#555",
-  },
-
   // 캐러셀
   carouselWrapper: {
     flex: 1,
@@ -185,13 +165,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   card: {
-    width: ITEM_WIDTH,
+    width: 200,
     marginHorizontal: SPACING / 2,
     alignItems: "center",
     justifyContent: "center",
   },
   blurWrapper: {
-    borderRadius: THEME_IMAGE_SIZE / 2,
+    borderRadius: 100,
     overflow: "hidden",
   },
   label: {
@@ -200,5 +180,42 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#555",
     textAlign: "center",
+  },
+  // Modal styles
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: 300,
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+  },
+  closeButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  modalText: {
+    marginVertical: 20,
+    fontSize: 16,
+    textAlign: "center",
+  },
+  joinButton: {
+    backgroundColor: "#007BFF",
+    padding: 10,
+    borderRadius: 5,
+  },
+  joinButtonText: {
+    color: "white",
+    fontSize: 16,
   },
 });

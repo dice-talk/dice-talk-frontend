@@ -28,12 +28,21 @@ import Chat from './chat/Chat';
 import ChatReport from './chat/ChatReport'
 import ReceiveEmali from './login/ReceiveEmail';
 import ReceivePassword from './login/ReceivePassword';
-
-import Main from './main/Main';
+import SelectRegion from './main/SelectRegion';
 import Home from './main/Home';
+
 import LetterEventScreen from './loveEvent/LetterEventScreen';
 
+import DiceFriendsDs from './main/DiceFriendsDs'
+import SelectAge from './main/SelectAge';
+import hihihi from './main/hihihi';
 
+
+
+
+
+
+// Removed loadPartialConfig import as it is not needed
 const Stack = createNativeStackNavigator();
 
 if(__DEV__) {
@@ -63,42 +72,23 @@ export default function App() {
           <Stack.Screen name='Home' component={Home} />
           <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} />
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <Stack.Screen name='MyPage' component={MyPage} />
-        <Stack.Screen name='MyInfo' component={MyInfo} />
-        <Stack.Screen name='MyQuestion' component={MyQuestion} />
-        <Stack.Screen name='MyQuestionDetail' component={MyQuestionDetail} />
-        <Stack.Screen name='MyQuestionInputText' component={MyQuestionInputText} />
-        <Stack.Screen name="EditMyInfo" component={EditMyInfo} />
-        <Stack.Screen name="MyDice" component={MyDice} />
-        <Stack.Screen name="ChargeDice" component={ChargeDice} />
-        <Stack.Screen name="Chat" component={Chat} />
-        <Stack.Screen name="ChatReport" component={ChatReport} />
-        <Stack.Screen name="Main" component={Main} />
+          <Stack.Screen name='MyPage' component={MyPage} />
+          <Stack.Screen name='MyInfo' component={MyInfo} />
+          <Stack.Screen name='MyQuestion' component={MyQuestion} />
+          <Stack.Screen name='MyQuestionDetail' component={MyQuestionDetail} />
+          <Stack.Screen name='MyQuestionInputText' component={MyQuestionInputText} />
+          <Stack.Screen name="EditMyInfo" component={EditMyInfo} />
+          <Stack.Screen name="MyDice" component={MyDice} />
+          <Stack.Screen name="ChargeDice" component={ChargeDice} />
+          <Stack.Screen name="Chat" component={Chat} />
+          <Stack.Screen name="ChatReport" component={ChatReport} />
+          <Stack.Screen name="DiceFriendsDs" component={DiceFriendsDs} />
+          <Stack.Screen name="SelectAge" component={SelectAge} />
+          <Stack.Screen name="SelectRegion" component={SelectRegion} />
+          <Stack.Screen name="hihihi" component={hihihi} />
         </Stack.Navigator>
       </NavigationContainer>
     </EmailProvider>
-
   );
 }
 
