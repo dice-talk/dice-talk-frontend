@@ -19,6 +19,7 @@ import SignupInput from './signUp/SignupInput';
 import Congratulate from './signUp/Congratulate';
 import LoginEmail from './login/LoginEmail';
 import LoginPassword from './login/LoginPassword';
+import FindEmail from './login/FindEmail';
 
 import EditMyInfo from './mypage/EditMyInfo';
 import MyDice from './mypage/MyDice';
@@ -50,6 +51,7 @@ export default function App() {
 
           <Stack.Screen name='LoginEmail' component={LoginEmail} />
           <Stack.Screen name='LoginPassword' component={LoginPassword} />
+          <Stack.Screen name='FindEmail' component={FindEmail} />
 
 
 

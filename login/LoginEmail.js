@@ -5,11 +5,14 @@ import { FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { sendEmail } from '../utils/http/email.API';
 import { Alert } from 'react-native';
+import AlerModal from '../component/AlertModal';
 
 
 export default function LoginEmail({navigation}) {
     const [inputEmail, setInputEmail] = useState('');
     const [isValid, setIsValid] = useState(false); // 버튼 활성화 비활성화 + 이메일이 유효한지 check
+
+    const [showModal, setShowModal] = useState(false);
 
     const validateEmail = (text) => {
         setInputEmail(text);
@@ -63,10 +66,17 @@ export default function LoginEmail({navigation}) {
                         value={inputEmail}
                     />
                     <View style={styles.forgotContainer}>
-                        <TouchableOpacity onPress={() => {}} style={styles.forgotButton}>
+                        <TouchableOpacity onPress={() => {setShowModal(true)}} style={styles.forgotButton}>
                         <Text style={{color: '#B19ADE', fontSize: 12, textAlign: 'right'}}>이메일을 잊으셨나요?</Text>
                         </TouchableOpacity>
                     </View>
+
+                    {/* 모달 컴포넌트 */}
+                    <AlerModal
+                    visible={showModal}
+                    message={`본인 인증이 필요한 서비스입니다.\n계속하시겠습니까?`}
+                    onCancel={() => setShowModal(false)}
+                    />
 
                     <View 
                     style={[!isValid && styles.disabledButton]} 
