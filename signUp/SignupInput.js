@@ -158,8 +158,8 @@ export default function SignupInput({ route, navigation}) {
             />
 
             {/* 가입버튼 */}
-            <View style={{marginTop: 30, alignItems: 'center', opacity: isFormValid ? 1 : 0.4}}>
-                <LongButton onPress={handleSignup} disabled={!isFormValid}>
+            <View style={{marginTop: 30, alignItems: 'center', opacity: isMatch ? 1 : 0.4}}>
+                <LongButton onPress={handleSignup} disabled={!isMatch}>
                     <Text style={styles.buttonText}>가입하기</Text>
                 </LongButton>
             </View>

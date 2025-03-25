@@ -5,14 +5,10 @@ import { FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { sendEmail } from '../utils/http/email.API';
 import { Alert } from 'react-native';
-import AlertModal from '../component/AlertModal';
 
-
-export default function LoginEmail({navigation}) {
+export default function FindEmail() {
     const [inputEmail, setInputEmail] = useState('');
     const [isValid, setIsValid] = useState(false); // 버튼 활성화 비활성화 + 이메일이 유효한지 check
-
-    const [showModal, setShowModal] = useState(false);
 
     const validateEmail = (text) => {
         setInputEmail(text);
@@ -25,7 +21,7 @@ export default function LoginEmail({navigation}) {
     //이메일 전송 핸들러 함수
     const handleSendEmail = async () => {
         try {
-            const result = await sendEmail(inputEmail); // 수정 필요 code와 maessage를 보낼 필요 X. email을 보내야 한다.
+            const result = await sendEmail(inputEmail); // 수정 필요 code와 maessage를 보낼 필요 X. email을 보내야 한다. +  Toss인증으로 바로 연결결
             console.log('서버 응답:', result);
 
                 navigation.navigate('LoginPassword', {email: inputEmail});
@@ -45,10 +41,10 @@ export default function LoginEmail({navigation}) {
                 <View style={styles.inner}>
                     {/*아이콘*/}
                     <LinearGradient 
-                          colors={["#B28EF8", "#F476E5"]}
-                          start= { {x: 0, y: 0.5}}
-                          end= { {x: 1, y: 0.5}}
-                          style={styles.iconContainer}>
+                            colors={["#B28EF8", "#F476E5"]}
+                            start= { {x: 0, y: 0.5}}
+                            end= { {x: 1, y: 0.5}}
+                            style={styles.iconContainer}>
                         <FontAwesome name='envelope' size={30} color='white'/>
                     </LinearGradient>
 
@@ -66,17 +62,10 @@ export default function LoginEmail({navigation}) {
                         value={inputEmail}
                     />
                     <View style={styles.forgotContainer}>
-                        <TouchableOpacity onPress={() => {setShowModal(true)}} style={styles.forgotButton}>
+                        <TouchableOpacity onPress={() => {}} style={styles.forgotButton}>
                         <Text style={{color: '#B19ADE', fontSize: 12, textAlign: 'right'}}>이메일을 잊으셨나요?</Text>
                         </TouchableOpacity>
                     </View>
-
-                    {/* 모달 컴포넌트 */}
-                    <AlertModal
-                    visible={showModal}
-                    message={`본인 인증이 필요한 서비스입니다.\n계속하시겠습니까?`}
-                    onCancel={() => setShowModal(false)}
-                    />
 
                     <View 
                     style={[!isValid && styles.disabledButton]} 

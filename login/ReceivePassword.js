@@ -1,18 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from 'react-native';
 import LongButton from '../component/LongButton';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AlertModal from '../component/AlertModal';
+import { sendEmail } from '../utils/http/email.API';
 
 
-export default function LoginPassword({navigation}) {
+export default function ReceivePassword({navigation}) {
     const [inputPassword, setInputPassword] = useState('');
-    const [isValid, setIsValid] = useState(false); // 버튼 활성화 비활성화 + 비밀번호가가 유효한지 check
+    const [confirmpassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-
-    const [showModal, setShowModal] = useState(false);
+    const [isValid, setIsValid] = useState(false); // 버튼 활성화 비활성화 + 비밀번호가가 유효한지 check
+    //비밀 번호 일치 여부
+    const isMatch = inputPassword.length > 0 && confirmpassword.length > 0 && inputPassword === confirmpassword;
 
     const validatePassword = (text) => {
         setInputPassword(text);
@@ -21,19 +23,25 @@ export default function LoginPassword({navigation}) {
         // 비밀번호가 유효하면 true, 아니면 false
         setIsValid(passwordRegex.test(text));
     }
+    const [showModal, setShowModal] = useState(false);
 
-    //비밀번호호 전송 핸들러 함수
+    //비밀번호 전송 핸들러 함수
     const handleSendPassword = async () => {
         try {
-            const result = await sendPassword(inputPassword);
+            const result = await sendEmail(inputPassword);  //   =====> 이거 바꿔야해!!!!!!!
             console.log('서버 응답:', result);
-
-                navigation.navigate('MainPage', {password: inputPassword});
+                setShowModal(true); // 모달을 띄우자자
+                //navigation.navigate('MainPage', {password: inputPassword});
             } catch (error) {
                 const errMsg = error.response?.data?.error || '알 수 없는 오류입니다.';
                 Alert.alert('오류', errMsg);
                 }
     };
+
+    const handleConfirm = () => {
+        setShowModal(false);
+        navigation.navigate('LoginEmail')
+    }
 
     return (
         <>
@@ -53,13 +61,13 @@ export default function LoginPassword({navigation}) {
                     </LinearGradient>
 
                     {/*타이틀*/}
-                    <Text style={styles.titleText}>비밀번호를 입력해주세요</Text>
+                    <Text style={styles.titleText}>비밀번호를 재설정합니다.</Text>
 
-                    {/* 비밀번호 확인*/}
+                    {/* 비밀번호 설정*/}
                     <View style={styles.inputRow}>
                         <TextInput
                         style={styles.inputFlex}
-                        placeholder="비밀번호를 입력해주세요"
+                        placeholder="새로운 비밀번호를 입력해주세요."
                         secureTextEntry={!showPassword}
                         value={inputPassword}
                         onChangeText={ (text) => {
@@ -67,35 +75,48 @@ export default function LoginPassword({navigation}) {
                             validatePassword(text);
                         }}
                         />
-                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                        <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color='#666' />
-                    </TouchableOpacity>
-                </View>
+                    </View>
 
-                    <View style={styles.forgotContainer}>
-                        <TouchableOpacity onPress={() => {setShowModal(true)}} style={styles.forgotButton}>
-                        <Text style={{color: '#B19ADE', fontSize: 12, textAlign: 'right'}}>비밀번호를 잊으셨나요?</Text>
+                    {/* 비밀번호 확인 */}
+                    <View style={styles.inputRow}>
+                        <TextInput
+                            style={styles.inputFlex}
+                            placeholder="새로운 비밀번호를 다시 입력해주세요."
+                            secureTextEntry={!showPassword}
+                            value={confirmpassword}
+                            onChangeText={setConfirmPassword}
+                            />
+                        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                            <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color='#666' />
                         </TouchableOpacity>
                     </View>
 
-                    <AlertModal
-                    visible={showModal}
-                    message={`본인 인증이 필요한 서비스입니다.\n계속하시겠습니까?`}
-                    onCancel={() => setShowModal(false)}
-                    />
-t
+                    {/* 비밀번호 일치 여부 메세지*/}
+                    {confirmpassword.length > 0 && (
+                        <Text style={{ color: isMatch ? 'green' : 'red', fontSize: 12}}>
+                            {isMatch ? '비밀번호가 일치합니다.' : '비밀번호가 일치하지 않습니다.'}
+                        </Text>
+                    )}
+
                     {/* 로그인 버튼 */}
                     <View 
-                    style={[!isValid && styles.disabled]} 
-                    pointerEvents={!isValid ? "none" : "auto"}>
+                    style={[!isMatch && styles.disabled]} 
+                    pointerEvents={!isMatch ? "none" : "auto"}>
                         <LongButton 
-                        onPress={handleSendPassword}
-                        // 이메일이 올바르게 작성되지 않으면 비활성화
-                        disabled={!isValid}// 비활성 상태일 때 스타일 변경
-                        >
-                            <Text style={styles.text}>로그인</Text>
+                            onPress={handleSendPassword}
+                            disabled={!isMatch}>
+                                <Text style={styles.text}>재설정하기</Text>
                         </LongButton>
                     </View>
+
+
+                    <AlertModal
+                    visible={showModal}
+                    message={`설정이 완료되었습니다.\n로그인 화면으로 이동합니다.?`}
+                    onCancel={() => setShowModal(false)}
+                    onConfirm={handleConfirm}
+                    />
+
                 </View>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
@@ -144,9 +165,6 @@ const styles = StyleSheet.create({
     titleText: {
         marginBottom: 16,
     },
-    // button: {
-    //     opacity: 1
-    // },
     disabled: { // 버튼 비활성화 상태이 때 투명도 적용
         opacity: 0.5,
     },

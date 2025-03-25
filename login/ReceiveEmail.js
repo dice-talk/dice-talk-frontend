@@ -3,37 +3,29 @@ import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, TouchableWitho
 import LongButton from '../component/LongButton';
 import { FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { sendEmail } from '../utils/http/email.API';
-import { Alert } from 'react-native';
 import AlertModal from '../component/AlertModal';
 
+export default function ReceiveEmali({ route, navigation }) {
+    const email = route.param // ??
 
-export default function LoginEmail({navigation}) {
     const [inputEmail, setInputEmail] = useState('');
     const [isValid, setIsValid] = useState(false); // 버튼 활성화 비활성화 + 이메일이 유효한지 check
 
     const [showModal, setShowModal] = useState(false);
+    
 
-    const validateEmail = (text) => {
-        setInputEmail(text);
-        // 이메일 정규표현식
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        // 이메일이 유효하면 true, 아니면 false
-        setIsValid(emailRegex.test(text));
-    }
+    // //이메일 전송 핸들러 함수
+    // const handleSendEmail = async () => {
+    //     try {
+    //         const result = await sendEmail(inputEmail); // 수정 필요 code와 maessage를 보낼 필요 X. email을 보내야 한다.
+    //         console.log('서버 응답:', result);
 
-    //이메일 전송 핸들러 함수
-    const handleSendEmail = async () => {
-        try {
-            const result = await sendEmail(inputEmail); // 수정 필요 code와 maessage를 보낼 필요 X. email을 보내야 한다.
-            console.log('서버 응답:', result);
-
-                navigation.navigate('LoginPassword', {email: inputEmail});
-            } catch (error) {
-                const errMsg = error.response?.data?.error || '알 수 없는 오류입니다.';
-                Alert.alert('오류', errMsg);
-                }
-    };
+    //             navigation.navigate('LoginEmail', {email: inputEmail});
+    //         } catch (error) {
+    //             const errMsg = error.response?.data?.error || '알 수 없는 오류입니다.';
+    //             Alert.alert('오류', errMsg);
+    //             }
+    // };
 
     return (
         <>
@@ -45,29 +37,21 @@ export default function LoginEmail({navigation}) {
                 <View style={styles.inner}>
                     {/*아이콘*/}
                     <LinearGradient 
-                          colors={["#B28EF8", "#F476E5"]}
-                          start= { {x: 0, y: 0.5}}
-                          end= { {x: 1, y: 0.5}}
-                          style={styles.iconContainer}>
+                            colors={["#B28EF8", "#F476E5"]}
+                            start= { {x: 0, y: 0.5}}
+                            end= { {x: 1, y: 0.5}}
+                            style={styles.iconContainer}>
                         <FontAwesome name='envelope' size={30} color='white'/>
                     </LinearGradient>
 
                     {/*타이틀*/}
-                    <Text style={styles.titleText}>이메일 주소를 입력해주세요</Text>
+                    <Text style={styles.titleText}>검색결과 이메일은 아래와 같습니다.</Text>
 
-                    <TextInput
-                        style={styles.input} 
-                        placeholder='sample@example.com'
-                        placeholderTextColor='#B3B3B3'
-                        keyboardType='email-address' // 이메일 키보드 사용
-                        autoCapitalize='none' // 첫 글자 대문자 방지
-                        autoCorrect={false} // 자동 수정 방지
-                        onChangeText={validateEmail} // 입력 값이 들어오면 이메일 검사를 진행한다.
-                        value={inputEmail}
-                    />
+                    <TextInput style={styles.input} value={email} editable={false} placeholder={email} />
+
                     <View style={styles.forgotContainer}>
                         <TouchableOpacity onPress={() => {setShowModal(true)}} style={styles.forgotButton}>
-                        <Text style={{color: '#B19ADE', fontSize: 12, textAlign: 'right'}}>이메일을 잊으셨나요?</Text>
+                        <Text style={{color: '#B19ADE', fontSize: 12, textAlign: 'right'}}>비밀번호를 잊으셨나요?</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -78,17 +62,9 @@ export default function LoginEmail({navigation}) {
                     onCancel={() => setShowModal(false)}
                     />
 
-                    <View 
-                    style={[!isValid && styles.disabledButton]} 
-                    pointerEvents={!isValid ? "none" : "auto"}>
-                        <LongButton 
-                        onPress={handleSendEmail}
-                        // 이메일이 올바르게 작성되지 않으면 비활성화
-                        disabled={!isValid}// 비활성 상태일 때 스타일 변경
-                        >
-                            <Text style={styles.text}>확인</Text>
-                        </LongButton>
-                    </View>
+                    <LongButton onPress={() => {navigation.navigate('LoginEmail')}}>
+                        <Text style={styles.text}>로그인하러 가기</Text>
+                    </LongButton>
                 </View>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>

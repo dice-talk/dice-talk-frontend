@@ -1,14 +1,17 @@
 import { StyleSheet, View, Text, TouchableOpacity, Button} from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import LongButton from '../component/LongButton';
 import { FontAwesome } from '@expo/vector-icons'; // 아이콘 라이브러리
 //import EmailInput from './EmailInput';
 import LogoIcon from '../assets/icon/logo/logo_icon.svg'; // SVG를 React 컴포넌트처럼 사용
 import LogoText from '../assets/icon/logo/logo_diceTalk.svg';
+import AlerModal from '../component/AlertModal';
 
 
 
 export default function LendingPage({navigation}) {
+  const [showModal, setShowModal] = useState(false);
+
     return (
 
         <View style={styles.container}>
@@ -32,10 +35,16 @@ export default function LendingPage({navigation}) {
                 </LongButton>
 
                 <View style={styles.forgotContainer}>
-                    <TouchableOpacity onPress={() => {}}>
+                    <TouchableOpacity onPress={() => {setShowModal(true);}}>
                     <Text style={styles.forgotText}>이메일/비밀번호를 잊으셨나요?</Text>
                     </TouchableOpacity>
                 </View>
+
+                {/* 모달 컴포넌트 */}
+                <AlerModal
+                  visible={showModal}
+                  message={`본인 인증이 필요한 서비스입니다.\n계속하시겠습니까?`}
+                  onCancel={() => setShowModal(false)}/>
 
                 <View style={styles.policyContainer}>
                     <Text style={styles.polictyText}>이용약관</Text>
