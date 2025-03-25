@@ -4,12 +4,15 @@ import LongButton from '../component/LongButton';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AlerModal from '../component/AlertModal';
 
 
 export default function LoginPassword({navigation}) {
     const [inputPassword, setInputPassword] = useState('');
     const [isValid, setIsValid] = useState(false); // 버튼 활성화 비활성화 + 비밀번호가가 유효한지 check
     const [showPassword, setShowPassword] = useState(false);
+
+    const [showModal, setShowModal] = useState(false);
 
     const validatePassword = (text) => {
         setInputPassword(text);
@@ -70,10 +73,17 @@ export default function LoginPassword({navigation}) {
                 </View>
 
                     <View style={styles.forgotContainer}>
-                        <TouchableOpacity onPress={() => {}} style={styles.forgotButton}>
+                        <TouchableOpacity onPress={() => {setShowModal(true)}} style={styles.forgotButton}>
                         <Text style={{color: '#B19ADE', fontSize: 12, textAlign: 'right'}}>비밀번호를 잊으셨나요?</Text>
                         </TouchableOpacity>
                     </View>
+
+                    <AlerModal
+                    visible={showModal}
+                    message={`본인 인증이 필요한 서비스입니다.\n계속하시겠습니까?`}
+                    onCancel={() => setShowModal(false)}
+                    />
+
                     {/* 로그인 버튼 */}
                     <View 
                     style={[!isValid && styles.disabled]} 
