@@ -31,6 +31,7 @@ import ReceivePassword from './login/ReceivePassword';
 
 import Main from './main/Main';
 import Home from './main/Home';
+import LetterEventScreen from './loveEvent/LetterEventScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -60,6 +61,7 @@ export default function App() {
           <Stack.Screen name='ReceiveEmail' component={ReceiveEmali} />
           <Stack.Screen name='ReceivePassword' component={ReceivePassword} />
           <Stack.Screen name='Home' component={Home} />
+          <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} />
 
 
 
