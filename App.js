@@ -26,6 +26,7 @@ import MyDice from './mypage/MyDice';
 import ChargeDice from './mypage/ChargeDice';
 import Chat from './chat/Chat';
 import ChatReport from './chat/ChatReport'
+import ReceiveEmali from './login/ReceiveEmail';
 
 
 const Stack = createNativeStackNavigator();
@@ -52,6 +53,7 @@ export default function App() {
           <Stack.Screen name='LoginEmail' component={LoginEmail} />
           <Stack.Screen name='LoginPassword' component={LoginPassword} />
           <Stack.Screen name='FindEmail' component={FindEmail} />
+          <Stack.Screen name='ReceiveEmail' component={ReceiveEmali} />
 
 
 
