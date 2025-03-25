@@ -30,6 +30,7 @@ import ReceiveEmali from './login/ReceiveEmail';
 import ReceivePassword from './login/ReceivePassword';
 
 import Main from './main/Main';
+import Home from './main/Home';
 
 
 const Stack = createNativeStackNavigator();
@@ -58,6 +59,7 @@ export default function App() {
           <Stack.Screen name='FindEmail' component={FindEmail} />
           <Stack.Screen name='ReceiveEmail' component={ReceiveEmali} />
           <Stack.Screen name='ReceivePassword' component={ReceivePassword} />
+          <Stack.Screen name='Home' component={Home} />
 
 
 
