@@ -22,7 +22,7 @@ export default function FindEmail() {
     //이메일 전송 핸들러 함수
     const handleSendEmail = async () => {
         try {
-            const result = await recoverEmail(txId); // 수정 필요 code와 maessage를 보낼 필요 X. email을 보내야 한다. +  Toss인증으로 바로 연결결
+            const result = await recoverEmail(txId); // 수정 필요 code와 maessage를 보낼 필요 X. email을 보내야 한다. +  Toss인증으로 바로 연결
             console.log('서버 응답:', result.email);
 
                 navigation.navigate('ReceiveEmail', {email: result.email});

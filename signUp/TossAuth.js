@@ -4,7 +4,7 @@ import * as Linking from "expo-linking";
 import * as Crypto from 'expo-crypto';
 import uuid from 'react-native-uuid';
 
-const BACKEND_URL = "http://172.30.1.3:8080"; // 이건 추후 로컬 주소로 수정 필요
+const BACKEND_URL = "http://192.168.0.12:8080"; // 이건 추후 로컬 주소로 수정 필요
 
 export default function TossAuth({ navigation }) {
   const [txId, setTxId] = useState(null);
@@ -62,7 +62,7 @@ const fetchUserInfo = async () => {
     setLoading(true);
     console.log("✅ 사용자 정보 조회 시작");
 
-    const res = await fetch(`${BACKEND_URL}/auth/result?txId=${txId}`, {
+    const res = await fetch(`${BACKEND_URL}/auth/cert?txId=${txId}`, {
       method: "POST",
     });
 

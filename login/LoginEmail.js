@@ -3,14 +3,14 @@ import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, TouchableWitho
 import LongButton from '../component/LongButton';
 import { FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { sendEmail } from '../utils/http/email.API';
-import { Alert } from 'react-native';
 import AlertModal from '../component/AlertModal';
+import { useEmail } from '../context/EmailContext';
 
 
 export default function LoginEmail({navigation}) {
     const [inputEmail, setInputEmail] = useState('');
     const [isValid, setIsValid] = useState(false); // 버튼 활성화 비활성화 + 이메일이 유효한지 check
+    const { setEmail } = useEmail();
 
     const [showModal, setShowModal] = useState(false);
 
@@ -22,19 +22,11 @@ export default function LoginEmail({navigation}) {
         setIsValid(emailRegex.test(text));
     }
 
-    //이메일 전송 핸들러 함수
-    const handleSendEmail = async () => {
-        try {
-            const result = await sendEmail(inputEmail); // 수정 필요 code와 maessage를 보낼 필요 X. email을 보내야 한다.
-            console.log('서버 응답:', result);
-
-                navigation.navigate('LoginPassword', {email: inputEmail});
-            } catch (error) {
-                const errMsg = error.response?.data?.error || '알 수 없는 오류입니다.';
-                Alert.alert('오류', errMsg);
-                }
-    };
-
+    // //이메일 전송 핸들러 함수
+    const handleConfirm = () => {
+        setEmail(inputEmail); // 전역에 저장
+        navigation.navigate('LoginPassword'); // 굳이 props로 email을 넘길 필요가 없다.
+    }
     return (
         <>
         <KeyboardAvoidingView 
@@ -82,7 +74,7 @@ export default function LoginEmail({navigation}) {
                     style={[!isValid && styles.disabledButton]} 
                     pointerEvents={!isValid ? "none" : "auto"}>
                         <LongButton 
-                        onPress={handleSendEmail}
+                        onPress={handleConfirm}
                         // 이메일이 올바르게 작성되지 않으면 비활성화
                         disabled={!isValid}// 비활성 상태일 때 스타일 변경
                         >

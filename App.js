@@ -39,6 +39,7 @@ import hihihi from './main/hihihi';
 import DropOutMember from './plus/DropOutMember';
 import UserCheckScreen from './screen/UserCheckScreen';
 import ModalAlert from './component/ModalAlert';
+import CheckDropOutMember from './plus/CheckDropOutMember';
 
 
 
@@ -97,6 +98,7 @@ export default function App() {
             <Stack.Screen name="DropOutMember" component={DropOutMember} />
             <Stack.Screen name="UserCheckScreen" component={UserCheckScreen} />
             <Stack.Screen name="ModalAlert" component={ModalAlert} />
+            <Stack.Screen name="CheckDropOutMember" component={CheckDropOutMember} />
 
 
           </Stack.Navigator>

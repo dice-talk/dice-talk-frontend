@@ -6,26 +6,29 @@ import { Alert } from "react-native";
 import CitySelectBox from '../component/CitySelectBox';
 import { useEmail } from '../context/EmailContext';
 import { LinearGradient } from "react-native-svg";
+//import { BACKEND_URL } from './TossAuth'
 
+const BACKEND_URL = "http://192.168.0.12:8080";
 
 export default function SignupInput({ route, navigation}) {
     const { email } = useEmail(); // 전역상태 가져오기
-    // // 토스에서 전달받은 사용자 정보 (이름, 성별 , 생년월일)
+    //  토스에서 전달받은 사용자 정보 (이름, 성별 , 생년월일)
     // const { userInfo } = route.params || {};
-    const userInfo = route?.params?.userInfo || {
-        name: '홍길동',
-        gender: '남성',
-        birth: '1939-03-30',
-      };
+    // null 또는 undefined 일 경우 기본값을 채워준다.
+    console.log("📥 userInfo:", route?.params?.userInfo);
+    const userInfo = route?.params?.userInfo || {};
+    const name = userInfo.name ?? '홍길동';
+    const gender = userInfo.gender ?? '남성';
+    const birth = userInfo.birth ?? '1939-03-30';
 
     if (!userInfo) {
         return <Text> 사용자 정보가 없습니다</Text>;
       };
-    const { name, gender, birth } = userInfo;
     // 비밀번호 관련 상태
     const [password, setPassword] = useState('');
     const [confirmpassword, setConfirmPassword] = useState('');
     //const [passwordValid, setPasswordValid] = useState(null); 
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{}[\]|;:'",.<>/?]).{8,16}$/;
     const handlePasswordChange = (text) => {
         setPassword(text);
         // 정규식 검사 필요 시 여기서 추가로 처리
@@ -41,11 +44,29 @@ export default function SignupInput({ route, navigation}) {
     const [selectedDistrict, setSelectedDistrict] = useState(null);
 
     //핸드폰번호 입력
-    const [phone, setPhone] =useState('');
+    const [phone, setPhone] = useState('');
+    const phoneRegex = /^010-\d{4}-\d{4}$/;
     const validatePhone = (value) => {
-        const onlyNumber = value.replace(/^01[0-9]{8,9}$/, '');
-        setPhone(onlyNumber);
-    }
+      // 숫자만 남기기
+      const onlyNumber = value.replace(/[^0-9]/g, '');
+      // 하이픈 자동 포맷: 010-1234-5678
+      let formatted = onlyNumber;
+      if (onlyNumber.length <= 3) {
+        formatted = onlyNumber;
+      } else if (onlyNumber.length <= 7) {
+        formatted = onlyNumber.replace(/(\d{3})(\d{1,4})/, '$1-$2');
+      } else {
+        formatted = onlyNumber.replace(/(\d{3})(\d{4})(\d{1,4})/, '$1-$2-$3');
+      }
+      setPhone(formatted);
+      // 검증
+      if (formatted.length === 13 && phoneRegex.test(formatted)) {
+        console.log('✅ 유효한 휴대폰 번호');
+      } else {
+        console.log('❌ 유효하지 않음');
+      }
+    };
+    
 
     //나이계산(생년월일로부터)
     const [age, setAge] = useState('');
@@ -65,8 +86,18 @@ export default function SignupInput({ route, navigation}) {
 
     
     const handleSignup = async () => {
+        console.log('🟢 handleSignup 시작됨!');
         const normalizedGender = gender === '남성' ? 'MALE' : 'FEMALE';
-
+        const region = selectedCity + " " + selectedDistrict;
+        console.log("🔗 보낸 데이터:", {
+            email,
+            name,
+            gender: normalizedGender,
+            birth,
+            password,
+            phone,
+            region
+          });
 
         try {
             const res = await fetch(`${BACKEND_URL}/auth/register`, {
@@ -81,11 +112,14 @@ export default function SignupInput({ route, navigation}) {
                     birth,
                     password, //  사용자가 입력
                     phone,    //  사용자가 입력
-                    region: selectedCity + " " + selectedDistrict,
+                    region
                 }),
               });
+              console.log('📡 응답 상태 코드:', res.status);
+              const responseText = await res.text(); // JSON 파싱 실패 대비
+              console.log('📦 응답 내용:', responseText);
 
-              if(!res.ok) throw new Error('서버오류');
+              if(!res.create) throw new Error('서버오류');
               const result = await res.json();
               console.log('회원가입 성공:', result);
 
@@ -98,9 +132,10 @@ export default function SignupInput({ route, navigation}) {
         };
 
     return (
-        <KeyboardAvoidingView
+        <KeyboardAvoidingView 
+        style={{ flex: 1 }}
         behavior="height">
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <ScrollView contentContainerStyle={[styles.scrollContainer, { paddingBottom: 100}]}>
         {/*<View style={styles.container}>*/}
             <View style={styles.headerSection}>
         <LinearGradient
@@ -182,7 +217,7 @@ export default function SignupInput({ route, navigation}) {
 
             {/* 가입버튼 */}
             <View style={{marginTop: 30, alignItems: 'center', opacity: isMatch ? 1 : 0.4}}>
-                <LongButton onPress={handleSignup} disabled={!isMatch}>
+                <LongButton onPress={handleSignup} /*disabled={!isMatch}*/>
                     <Text style={styles.buttonText}>가입하기</Text>
                 </LongButton>
             </View>
@@ -266,3 +301,17 @@ const styles = StyleSheet.create({
 // - showPassword 상태로 눈 아이콘 토글
 // - 실제 password, confirmPassword 값은 프론트에서 비교만 하고 저장 X
 // - 서버에서는 이 값 받아 hash 저장함 (bcrypt 등)
+
+// Toss 인증 요청
+// Toss 앱 실행
+// 앱 복귀 (딥링크 감지)
+// fetchUserInfo() → 인증 결과 받기
+// 받은 데이터로 userInfo 세팅 → SignupInput으로 전달
+// 그런데 4번에서 404 뜨면 → 5번에서 undefined 값이 되고
+// → 결국 회원가입 시 name, birth가 undefined로 들어가면서 서버 500 에러가 뜬다.
+
+// const userInfo = route?.params?.userInfo || {
+//     name: '홍길동',
+//     gender: '남성',
+//     birth: '1939-03-30',
+//   };  userInfo가 아예 undefined일 때만 동작하고, 내부 값이 null이면 안 채워진다.
