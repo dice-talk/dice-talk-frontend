@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, ScrollView } from 'react-native';
 import LongButton from '../component/LongButton';
 import { LinearGradient } from 'expo-linear-gradient';
+import DropOutMember from './DropOutMember';
+import DropOutModal from './DropOutModal';
 
 export default function CheckDropOutMember( {navigation} ) {
     const [password, setPassword] = useState('');
+    const [visible, setVisible] = useState(false);
     
     const handleWithdraw = () => {
         if (!password) {
@@ -17,6 +20,7 @@ export default function CheckDropOutMember( {navigation} ) {
     }
 
     return (
+      <>
         <KeyboardAvoidingView
             style={{ flex: 1 }}
             behavior= "height"
@@ -53,13 +57,21 @@ export default function CheckDropOutMember( {navigation} ) {
 
                     {/* 확인 버튼 */}
                 <View style={styles.buttonWrapper}>
-                    <LongButton onPress={() => navigation.navigate("CheckDropOutMember")}>
+                    <LongButton onPress={() => setVisible(true)}>
                     <Text style={styles.buttonText}>확인</Text>
                     </LongButton>
                 </View>
             </View>
         </ScrollView>
     </KeyboardAvoidingView>
+    <DropOutModal
+      visible={visible}
+      onCancel={() => setVisible(false)}
+      onConfirm={() => {setVisible(false);
+        alert('탈퇴 처리 완료');
+      }}
+      />
+      </>
     )
 };
 

@@ -146,7 +146,7 @@ export default function SignupInput({ route, navigation}) {
                 <Ionicons name='person-outline' size={30} color='white'/>
             </LinearGradient>
             <Text style={styles.title}>정보를 입력해주세요</Text>
-            //</View>
+            </View>
 
             {/* 이메일 - 고정 */}
             <Text style={styles.label}>이메일</Text>
