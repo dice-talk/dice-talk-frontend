@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import LongButton from "../component/LongButton";
 import { Alert } from "react-native";
-import { BACKEND_URL } from "../utils/mockSetup"; // 백엔드 주소 상수로 관리
 import CitySelectBox from '../component/CitySelectBox';
 import { useEmail } from '../context/EmailContext';
+import { LinearGradient } from "react-native-svg";
 
 
 export default function SignupInput({ route, navigation}) {
-    const { email } = useEmail(); // 전역상태 가져오기기
+    const { email } = useEmail(); // 전역상태 가져오기
     // // 토스에서 전달받은 사용자 정보 (이름, 성별 , 생년월일)
     // const { userInfo } = route.params || {};
     const userInfo = route?.params?.userInfo || {
@@ -26,7 +26,13 @@ export default function SignupInput({ route, navigation}) {
     const [password, setPassword] = useState('');
     const [confirmpassword, setConfirmPassword] = useState('');
     //const [passwordValid, setPasswordValid] = useState(null); 
-
+    const handlePasswordChange = (text) => {
+        setPassword(text);
+        // 정규식 검사 필요 시 여기서 추가로 처리
+        if (!passwordRegex.test(text)) {
+          console.log("유효하지 않은 비밀번호 형식입니다.");
+        }
+      };
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
 
@@ -36,6 +42,10 @@ export default function SignupInput({ route, navigation}) {
 
     //핸드폰번호 입력
     const [phone, setPhone] =useState('');
+    const validatePhone = (value) => {
+        const onlyNumber = value.replace(/^01[0-9]{8,9}$/, '');
+        setPhone(onlyNumber);
+    }
 
     //나이계산(생년월일로부터)
     const [age, setAge] = useState('');
@@ -88,8 +98,20 @@ export default function SignupInput({ route, navigation}) {
         };
 
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView
+        behavior="height">
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {/*<View style={styles.container}>*/}
+            <View style={styles.headerSection}>
+        <LinearGradient
+            colors={['#B28EF8', '#F476E5']}
+            start={{ x: 0, y: 0.5 }}
+            end={{ x: 1, y: 0.5 }}
+            style={styles.iconCircle}>
+                <Ionicons name='person-outline' size={30} color='white'/>
+            </LinearGradient>
             <Text style={styles.title}>정보를 입력해주세요</Text>
+            //</View>
 
             {/* 이메일 - 고정 */}
             <Text style={styles.label}>이메일</Text>
@@ -97,17 +119,15 @@ export default function SignupInput({ route, navigation}) {
 
             {/* 비밀번호 입력 */}
             <Text style={styles.label}>비밀번호</Text>
+            <Text style={styles.condition}>비밀번호는 영어 대문자 소문자 특수문자 1개씩 포함해야합니다.</Text>
             <View style={styles.inputRow}>
                 <TextInput
                     style={styles.inputFlex}
                     placeholder="비밀번호를 입력해주세요"
                     secureTextEntry={!showPassword}
                     value={password}
-                    onChangeText={setPassword}
+                    onChangeText={handlePasswordChange}
                     />
-                {/*<TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                    <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color='#666' />
-                </TouchableOpacity>*/}
             </View>
 
             {/* 비밀번호 확인*/}
@@ -138,7 +158,7 @@ export default function SignupInput({ route, navigation}) {
                 style={styles.input}
                 placeholder="휴대폰 번호를 입력해주세요"
                 value={phone}
-                onChangeText={setPhone}
+                onChangeText={validatePhone}
             />
 
             {/* 이름, 성별, 나이 - 모두 고정정 */}
@@ -166,7 +186,8 @@ export default function SignupInput({ route, navigation}) {
                     <Text style={styles.buttonText}>가입하기</Text>
                 </LongButton>
             </View>
-        </View>
+        </ScrollView>
+        </KeyboardAvoidingView>
     )
 }
 
@@ -209,6 +230,36 @@ const styles = StyleSheet.create({
       color: '#fff',
       fontWeight: 'bold',
     },
+    scrollContainer: {
+      flexGrow: 1,
+    },
+    condition: {
+      fontSize: 10,
+      color: '#B3B3B3'
+    },
+    headerSection: {
+        alignItems: 'center',
+        //marginBottom: 30,
+        paddingHorizontal: 20,
+      },
+      
+      iconCircle: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        backgroundColor: '#A078C2', // 보라색 원 배경
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20,
+      },
+      
+      title: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        borderBottomColor: '#34568B', // 파란 밑줄 색상
+        paddingBottom: 4,
+      },
+      
   });
 
 // - secureTextEntry: 입력 시 마스킹 처리 (●●●)
