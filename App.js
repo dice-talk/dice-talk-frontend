@@ -36,6 +36,7 @@ import LetterEventScreen from './loveEvent/LetterEventScreen';
 import DiceFriendsDs from './main/DiceFriendsDs'
 import SelectAge from './main/SelectAge';
 import hihihi from './main/hihihi';
+import DropOutMember from './plus/DropOutMember';
 
 
 
@@ -86,6 +87,15 @@ export default function App() {
           <Stack.Screen name="SelectAge" component={SelectAge} />
           <Stack.Screen name="SelectRegion" component={SelectRegion} />
           <Stack.Screen name="hihihi" component={hihihi} />
+
+
+
+
+
+
+          <Stack.Screen name="DropOutMember" component={DropOutMember} />
+
+
         </Stack.Navigator>
       </NavigationContainer>
     </EmailProvider>
