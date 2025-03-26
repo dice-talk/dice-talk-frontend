@@ -5,10 +5,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AlertModal from '../component/AlertModal';
-import { loginWithEmail } from '../utils/http/email.API';
+import { loginDiceTalk } from '../utils/http/email.API';
+import { useEmail } from '../context/EmailContext';
 
 
 export default function LoginPassword({navigation}) {
+    const { email } = useEmail // 전역상태로 관리되는 email
     const [inputPassword, setInputPassword] = useState('');
     const [isValid, setIsValid] = useState(false); // 버튼 활성화 비활성화 + 비밀번호가가 유효한지 check
     const [showPassword, setShowPassword] = useState(false);
@@ -26,7 +28,7 @@ export default function LoginPassword({navigation}) {
     //비밀번호 전송 핸들러 함수
     const handleSendPassword = async () => {
         try {
-            const result = await loginWithEmail( email, inputPassword);
+            const result = await loginDiceTalk( email, inputPassword);
             console.log('로그인 성공:', result);
             // 토큰을 저장하거나 context에 넣고 다음 페이지로 이동
                 navigation.navigate('Home', { token: result.token, user: result.user});
@@ -84,7 +86,6 @@ export default function LoginPassword({navigation}) {
                     message={`본인 인증이 필요한 서비스입니다.\n계속하시겠습니까?`}
                     onCancel={() => setShowModal(false)}
                     />
-t
                     {/* 로그인 버튼 */}
                     <View 
                     style={[!isValid && styles.disabled]} 

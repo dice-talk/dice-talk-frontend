@@ -2,7 +2,7 @@
 import axios from 'axios';
 // import { BACKEND_URL } from '../../signUp/VerifyCode';
 // 회원가입-이메일 인증
-const BACKEND_URL = 'http://172.30.1.3:8080';
+const BACKEND_URL = 'http://192.168.0.12:8080';
 
 export const sendEmail = async (email) => {
   
@@ -57,6 +57,7 @@ export const verifyCode = async({ email, code }) => {
   
 //로그인 요청 함수
 export const loginDiceTalk = async(email, password) => {
+  console.log('🔐 로그인 요청 URL:', `${BACKEND_URL}/auth/login`);
   try{
     const response = await axios.post(`${BACKEND_URL}/auth/login`, {
       username: email,
