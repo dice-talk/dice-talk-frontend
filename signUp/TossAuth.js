@@ -7,7 +7,7 @@ import uuid from 'react-native-uuid';
 
 import SignupInput from "./SignupInput";
 
-const BACKEND_URL = 'http://192.168.45.246:8080'; // 서버 주소
+const BACKEND_URL = 'http://172.30.1.3:8080'; // 서버 주소
 
 
 export default function TossAuth({navigation}) {
@@ -20,7 +20,7 @@ export default function TossAuth({navigation}) {
     useEffect(() => {
         const fetchAuthUrl = async () => {
             try {
-                const res = await fetch(`${BACKEND_URL}/auth/request`, {
+                const res = await fetch(`${BACKEND_URL}/auth/cert`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                 });

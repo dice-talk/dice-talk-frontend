@@ -5,6 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { sendEmail } from '../utils/http/email.API';
 import { Alert } from 'react-native';
+import { recoverEmail } from '../utils/http/email.API';
 
 export default function FindEmail() {
     const [inputEmail, setInputEmail] = useState('');
@@ -21,10 +22,10 @@ export default function FindEmail() {
     //이메일 전송 핸들러 함수
     const handleSendEmail = async () => {
         try {
-            const result = await sendEmail(inputEmail); // 수정 필요 code와 maessage를 보낼 필요 X. email을 보내야 한다. +  Toss인증으로 바로 연결결
-            console.log('서버 응답:', result);
+            const result = await recoverEmail(txId); // 수정 필요 code와 maessage를 보낼 필요 X. email을 보내야 한다. +  Toss인증으로 바로 연결결
+            console.log('서버 응답:', result.email);
 
-                navigation.navigate('LoginPassword', {email: inputEmail});
+                navigation.navigate('ReceiveEmail', {email: result.email});
             } catch (error) {
                 const errMsg = error.response?.data?.error || '알 수 없는 오류입니다.';
                 Alert.alert('오류', errMsg);

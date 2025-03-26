@@ -5,10 +5,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AlertModal from '../component/AlertModal';
-import { sendEmail } from '../utils/http/email.API';
+import { recoverPassword } from '../utils/http/email.API';
 
 
-export default function ReceivePassword({navigation}) {
+
+export default function ReceivePassword({ route, navigation}) {
+    const { email, txId } = route.params || {};
     const [inputPassword, setInputPassword] = useState('');
     const [confirmpassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -28,7 +30,7 @@ export default function ReceivePassword({navigation}) {
     //비밀번호 전송 핸들러 함수
     const handleSendPassword = async () => {
         try {
-            const result = await sendEmail(inputPassword);  //   =====> 이거 바꿔야해!!!!!!!
+            const result = await recoverPassword({email, txId, password: inputPassword});  
             console.log('서버 응답:', result);
                 setShowModal(true); // 모달을 띄우자자
                 //navigation.navigate('MainPage', {password: inputPassword});
