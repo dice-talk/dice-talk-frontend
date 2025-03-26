@@ -55,6 +55,9 @@ export default function SignupInput({ route, navigation}) {
 
     
     const handleSignup = async () => {
+        const normalizedGender = gender === '남성' ? 'MALE' : 'FEMALE';
+
+
         try {
             const res = await fetch(`${BACKEND_URL}/auth/register`, {
                 method: 'POST',
@@ -64,11 +67,11 @@ export default function SignupInput({ route, navigation}) {
                 body: JSON.stringify({
                     email,
                     name,
-                    gender,
+                    gender: normalizedGender,
                     birth,
                     password, //  사용자가 입력
                     phone,    //  사용자가 입력
-                    city: selectedCity + " " + selectedDistrict,
+                    region: selectedCity + " " + selectedDistrict,
                 }),
               });
 

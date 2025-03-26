@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "yourapp://auth-callback",
     "name": "DiceTalk",
     "slug": "DiceTalk",
     "version": "1.0.0",

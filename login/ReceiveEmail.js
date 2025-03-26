@@ -6,10 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AlertModal from '../component/AlertModal';
 
 export default function ReceiveEmali({ route, navigation }) {
-    const email = route.param // ??
-
-    const [inputEmail, setInputEmail] = useState('');
-    const [isValid, setIsValid] = useState(false); // 버튼 활성화 비활성화 + 이메일이 유효한지 check
+    const { email } = route.param 
 
     const [showModal, setShowModal] = useState(false);
     
