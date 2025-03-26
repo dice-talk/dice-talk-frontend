@@ -30,7 +30,7 @@ export default function ReceivePassword({ route, navigation}) {
     //비밀번호 전송 핸들러 함수
     const handleSendPassword = async () => {
         try {
-            const result = await recoverPassword({email, txId, password: inputPassword});  
+            const result = await resettingPassword({email, newPassword: inputPassword});  
             console.log('서버 응답:', result);
                 setShowModal(true); // 모달을 띄우자자
                 //navigation.navigate('MainPage', {password: inputPassword});

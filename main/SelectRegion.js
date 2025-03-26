@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, Pressable, StyleSheet, Dimensions } from "react-native";
-import Modal from "react-native-modal";
+import Modal from 'react-native-modal';
 import { useNavigation } from "@react-navigation/native";
 
 import Footer from "../component/Footer";
