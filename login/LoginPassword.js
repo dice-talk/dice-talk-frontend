@@ -29,7 +29,7 @@ export default function LoginPassword({navigation}) {
             const result = await loginWithEmail( email, inputPassword);
             console.log('로그인 성공:', result);
             // 토큰을 저장하거나 context에 넣고 다음 페이지로 이동
-                navigation.navigate('MainPage', { token: result.token, user: result.user});
+                navigation.navigate('Home', { token: result.token, user: result.user});
             } catch (error) {
                 const errMsg = error.response?.data?.error || '로그인 실패';
                 Alert.alert('로그인 실패', errMsg);

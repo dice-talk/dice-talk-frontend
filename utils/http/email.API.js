@@ -53,15 +53,8 @@ export const verifyCode = async({ email, code }) => {
     console.error('인증번호 검증 실패:', err.message);
     throw err;
   }
+}
   
-// 회원가입 - 인증번호 검증
-export const verifyCode = async({ email, code }) => {
-    //console.log('요청보냄!', {email, code});
-    const response = await axios.post(`${BACKEND_URL}/auth/verify-code`, {email, code});
-    //console.log('응답 받음!', response.status, response.data);
-    return response.data;
-};
-
 //로그인 요청 함수
 export const loginDiceTalk = async(email, password) => {
   try{
@@ -87,30 +80,98 @@ export const loginDiceTalk = async(email, password) => {
 };
 
 //이메일 찾기 API 요청함수
-export const recoverEmail = async(txId) => {
-  try{
-    const response = await axios.post(`${BACKEND_URL}/auth/recover/email`, {
-      txId: txId,
+export const recoverEmail = async (txId) => {
+  try {
+    const response = await fetch(`${BACKEND_URL}/auth/recover/email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ txId }),
     });
 
-    return response.data; // 응답 {email: "user@gmail.com"}
+    if (!response.ok) {
+      throw new Error('서버 응답 오류');
+    }
+
+    const data = await response.json(); // 응답 예: { email: "user@gmail.com" }
+    return data;
   } catch (error) {
     console.error('이메일 찾기 실패:', error);
     throw error;
   }
-}
+};
 
  
 // 패스워드 찾기
-export const recoverPassword = async({email, txId }) => {
-  const res = await axios.post(`${BACKEND_URL}/auth/recover/password`, { txId, email });
-  return res.data;
-}
+export const recoverPassword = async ({ email, txId }) => {
+  try {
+    const response = await fetch(`${BACKEND_URL}/auth/recover/password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ txId, email }),
+    });
+
+    if (!response.ok) {
+      throw new Error('패스워드 찾기 실패');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('패스워드 찾기 에러:', error);
+    throw error;
+  }
+};
+
 
 // 패스워드 재설정하기
-export const resettingPassword = async({email, newPassword}) => {
-  const res = await axios.post(`${BACKEND_URL}/auth/resetting/password`, { email, newPassword });
+export const resettingPassword = async ({ email, newPassword }) => {
+  try {
+    const response = await fetch(`${BACKEND_URL}/auth/resetting/password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, newPassword }),
+    });
 
+    if (!response.ok) {
+      throw new Error('비밀번호 재설정 실패');
+    }
 
+    // 응답 필요시 아래 라인 사용
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('비밀번호 재설정 에러:', error);
+    throw error;
+  }
+};
 
-
+// 로그아웃구현하기
+export const logout = async (token) => {
+  try {
+    const response = await fetch (`${BACKEND_URL}/auth/logout`, {
+      method: 'POST',
+      headers: {
+        'Authorization' : `Bearer ${token}`,
+        'Content-Type' : 'application/json', 
+      },
+      body: null, // 요청 바디 없음
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('로그아웃 실패:', errorData);
+      throw new Error(errorData.error || '로그아웃 실패');
+    }
+    const data = await response.json();
+    console.log('로그아웃 성공:', data);
+    return data;
+  } catch (err) {
+    console.error('로그아웃 요청 중 에러:', err.message);
+    throw err;
+  }
+};

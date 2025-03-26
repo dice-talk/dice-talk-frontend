@@ -14,7 +14,7 @@ const THEME_IMAGE_SIZE = 200;
 const ITEM_WIDTH = THEME_IMAGE_SIZE;
 const SPACING = 20;
 
-export default function Main() {
+export default function Home() {
   const scrollX = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation();
   const [heartModalVisible, setHeartModalVisible] = useState(false);
