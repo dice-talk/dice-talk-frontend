@@ -115,3 +115,110 @@ export const createBannedMemberQuestion = async (questionData) => {
     throw error;
   }
 };
+
+// 질문 등록
+export const postQuestion = async (question) => {
+  try {
+    const response = await fetchWithAuth('questions', {
+      method: 'POST',
+      body: JSON.stringify({question})
+    });
+
+    if (!response.created) {
+      const errorData = await response.json();
+      console.error('질문 등록 실패:', errorData);
+      throw new Error(errorData.error || '질문 등록 실패');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error('질문 등록 실패:', err.message);
+    throw err;
+  }
+};
+
+// 질문 수정
+export const updateQuestion = async (questionId, question) => {
+  try {
+    const response = await fetchWithAuth(`questions/${questionId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({question})
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('질문 수정 실패:', errorData);
+      throw new Error(errorData.error || '질문 수정 실패');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error('질문 수정 실패:', err.message);
+    throw err;
+  }
+};
+
+// 질문 단일 조회
+export const getQuestion = async (questionId) => {
+  try {
+    const response = await fetchWithAuth(`questions/${questionId}`, {
+      method: 'GET'
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('질문 조회 실패:', errorData);
+      throw new Error(errorData.error || '질문 조회 실패');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error('질문 조회 실패:', err.message);
+    throw err;
+  }
+};
+
+// 질문 전체 조회
+export const getQuestions = async (page, size) => {
+  try {
+    const response = await fetchWithAuth(`questions?page=${page}&size=${size}`, {
+      method: 'GET'
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('질문 전체 조회 실패:', errorData);
+      throw new Error(errorData.error || '질문 전체 조회 실패');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error('질문 전체 조회 실패:', err.message);
+    throw err;
+  }
+};
+
+// 질문 삭제
+export const deleteQuestion = async (questionId) => {
+  try {
+    const response = await fetchWithAuth(`questions/${questionId}`, {
+      method: 'DELETE'
+    });
+
+    if (!response.noContent) {
+      const errorData = await response.json();
+      console.error('질문 삭제 실패:', errorData);
+      throw new Error(errorData.error || '질문 삭제 실패');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error('질문 삭제 실패:', err.message);
+    throw err;
+  }
+};
