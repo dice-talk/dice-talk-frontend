@@ -2,7 +2,7 @@
 import axios from 'axios';
 // import { BACKEND_URL } from '../../signUp/VerifyCode';
 // 회원가입-이메일 인증
-const BACKEND_URL = 'http://172.30.1.86:8080';
+const BACKEND_URL = 'http://172.30.1.91:8080';
 
 export const sendEmail = async (email) => {
   

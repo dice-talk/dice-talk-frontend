@@ -1,7 +1,7 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 
-const BACK_URL = 'http://172.30.1.86:8080';
+const BACK_URL = 'http://172.30.1.91:8080';
 const mock = new MockAdapter(axios);
 
 // ✅ 목 데이터 정의

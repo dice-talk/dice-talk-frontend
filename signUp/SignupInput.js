@@ -8,7 +8,7 @@ import { useEmail } from '../context/EmailContext';
 import { LinearGradient } from "react-native-svg";
 //import { BACKEND_URL } from './TossAuth'
 
-const BACKEND_URL = "http://172.30.1.86:8080";
+const BACKEND_URL = "http://172.30.1.91:8080";
 
 export default function SignupInput({ route, navigation}) {
     const { email } = useEmail(); // 전역상태 가져오기
