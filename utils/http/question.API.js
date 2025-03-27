@@ -1,146 +1,133 @@
-import axios from 'axios';
-import MockAdapter from 'axios-mock-adapter';
+import { useAuth } from "./AuthContext";
+import { fetchWithAuth } from "./AuthContext";
 
-const BACK_URL = 'http://172.30.1.86:8080';
-const mock = new MockAdapter(axios);
+const BACKEND_URL = 'http://172.30.1.86:8080';
 
-// ✅ 목 데이터 정의
-const dummyQuestions = [
-  {
-    id: 1,
-    title: "욕설 신고합니다",
-    createAt: "2025-03-16",
-    content: "프로필 변경할게요",
-    question_status: "QUESTION_PENDING",
-    question_image: null,
-    answer: {
-        answerId: null,
-        memberId: null,
-        questionId: null,
-        content: null,
-        answerImage: null,
-        createAt: null
-      }
-  },
-  {
-    id: 2,
-    title: "이게 맞는건가요?",
-    createAt: "2025-02-03",
-    content: "집에 가고싶어요",
-    question_status: "QUESTION_ANSWERED",
-    question_image: null,
-    answer: {
-        answerId: 2,
-        memberId: 2,
-        questionId: 2,
-        content: "네 변경하세요~",
-        answerImage: null,
-        createAt: "2025-03-18"
-      }
+const {fetchWithAuth} = useAuth();
+
+// fetch로로 호출 함수 delete
+export const deleteMyQuestion = async (questionId, token) => {
+  try {
+    const response = await fetchWithAuth(`/questions/${questionId}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error(`삭제 실패: ${response.status}`);
+    }
+
+    return response; // 204 No Content일 경우 body 없음
+  } catch (error) {
+    console.error(' 에러:', error);
+    throw error;
   }
-]
+};
 
-// ✅ 단일 조회: /questions/:memberId/:questionId
-mock.onGet(new RegExp(`${BACK_URL}/questions/\\d+/\\d+$`)).reply(config => {
-    const parts = config.url.split('/');
-    const questionId = Number(parts[parts.length - 1]);
+// 내 문의 조회
+export const getMyQuestions = async (memberId, page, size = 4) => {
+  try {
+    // URLSearchParams를 사용하여 쿼리 파라미터 생성
+    const params = new URLSearchParams({
+      page: page,
+      size: size
+    });
 
-    const question = dummyQuestions.find(q => q.id === questionId);
-  
-    if (question) {
-        return [200, question];
-    } else {
-        return [404, { message: 'Question not found' }];
+    const response = await fetchWithAuth(`/questions/${memberId}?${params}`, {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      throw new Error(`문의 조회 실패: ${response.status}`);
     }
-});
 
-// ✅ 목록 조회:
-mock.onGet(new RegExp(`${BACK_URL}/questions/\\d+(\\?.*)?$`)).reply(config => {
-    const urlParts = config.url.split('/');
-    const memberId = parseInt(urlParts[urlParts.length - 1].split('?')[0]);
-    const { page = 1, size = 4 } = config.params || {};
-
-    // 페이징 처리
-    const startIndex = (page - 1) * size;
-    const endIndex = startIndex + size;
-    const paginatedQuestions = dummyQuestions.slice(startIndex, endIndex);
-
-    console.log(`📦 Mock 응답 - memberId: ${memberId}, page: ${page}, size: ${size}`);
-    return [200, paginatedQuestions];
-});
-
-// ✅ 요청 가로채서 응답 처리
-mock.onDelete(new RegExp(`${BACK_URL}/questions/\\d+`)).reply(config => {
-    const id = parseInt(config.url.split('/').pop());
-    return [204]; // 간단한 테스트용 mock 데이터
-});
-
-mock.onPost(`${BACK_URL}/questions`).reply(config => {
-    const newQuestion = JSON.parse(config.data);
-    newQuestion.id = dummyQuestions.length + 1;
-    newQuestion.createAt = new Date().toISOString().split('T')[0];
-    newQuestion.question_status = "QUESTION_PENDING";
-    newQuestion.answer = {
-      answerId: null,
-      memberId: null,
-      questionId: null,
-      content: null,
-      answerImage: null,
-      createAt: null
-    };
-    dummyQuestions.push(newQuestion);
-    return [201, newQuestion];
-});
-
-// ✅ 실제 axios 호출 함수 delete
-export const deleteMyQuestion = async (questionId) => {
-    try {
-      const response = await axios.delete(`${BACK_URL}/questions/${questionId}`);
-      return response;
-    } catch (error) {
-      console.error('❌ 에러:', error);
-      throw error;
-    }
+    const data = await response.json();
+    console.log('내 문의 목록:', data);
+    return data;
+  } catch (error) {
+    console.error('문의 조회 에러:', error);
+    throw error;
+  }
 };
 
 // question 단일 조회
-export const getQuestionDetail = async (questionId, memberId) => {
-    try {
-      const response = await axios.get(`${BACK_URL}/questions/${memberId}/${questionId}`);
-      console.log('✅ 단일조회 응답:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('❌ 단일조회 에러:', error);
-      throw error;
-    }
-};
-
-// ✅ 실제 axios 호출 함-
-export const getMyQuestions = async (memberId, page) => {
-    try {
-      const response = await axios.get(`${BACK_URL}/questions/${memberId}`, {
-        params: {
-          size: 4,
-          page: page
-        }
-      });
-  
-      console.log('✅ 응답 데이터:', response.data);
-      return response;
-    } catch (error) {
-      console.error('❌ 에러:', error);
-      throw error;
-    }
-};
-
-// ✅ 질문 등록 요청
-export const postQuestion = async (questionData) => {
+// 내 문의 상세 조회 API 요청 함수
+export const getMyQuestionDetail = async (memberId, questionId) => {
   try {
-    const response = await axios.post(`${BACK_URL}/questions`, questionData);
-    console.log('✅ 질문 작성 응답:', response.data);
-    return response.data;
+    const response = await fetchWithAuth(`/questions/${memberId}/${questionId}`, {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      throw new Error(`문의 상세 조회 실패: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('문의 상세 데이터:', data);
+    return data;
   } catch (error) {
-    console.error('❌ 질문 작성 에러:', error);
+    console.error('문의 상세 조회 에러:', error);
+    throw error;
+  }
+};
+
+// 질문 등록 요청
+// questionData 형식
+// {
+//   "title": "질문 제목",
+//   "content": "질문 내용",
+//   "memberId": "질문 작성자 ID"
+//   "question_image: "http:// .jpg"
+// }
+export const createMyQuestion = async (questionData) => {
+  try {
+    const response = await fetchWithAuth(`/questions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json', // 명시적으로 설정
+      },
+      body: JSON.stringify(questionData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`문의 등록 실패: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('문의 등록 완료:', data);
+    return data;
+  } catch (error) {
+    console.error('문의 등록 에러:', error);
+    throw error;
+  }
+};
+
+// 내 문의 등록(정지된 회원)
+// questionData 형식
+// {
+//   "email": "이메일",
+//   "title": "질문 제목",
+//   "content": "질문 내용",
+//   "question_image": "http:// .jpg"
+// }
+export const createBannedMemberQuestion = async (questionData) => {
+  try {
+    const response = await fetch(`/questions/bannedMember`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(questionData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`정지회원 문의 등록 실패: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('정지회원 문의 등록 완료:', data);
+    return data;
+  } catch (error) {
+    console.error('정지회원 문의 등록 에러:', error);
     throw error;
   }
 };
