@@ -158,9 +158,9 @@ export const recoverPassword = async ({ email, txId }) => {
 
 
 // 패스워드 재설정하기
-export const resettingPassword = async ({ email, newPassword }) => {
+export const resettingPassword = async ({ email, newPassword, memberId }) => {
   try {
-    const response = await fetch(`${BASE_URL}auth/resetting/password`, {
+    const response = await fetch(`${BASE_URL}auth/resetting/password/${memberId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
