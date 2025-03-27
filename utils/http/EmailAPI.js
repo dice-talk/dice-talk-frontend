@@ -4,7 +4,7 @@ export const sendEmail = async (email) => {
   
       try {
         console.log(email);
-        const response = await fetch(`${BASE_URL}/auth/email`, {
+        const response = await fetch(`${BASE_URL}auth/email`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

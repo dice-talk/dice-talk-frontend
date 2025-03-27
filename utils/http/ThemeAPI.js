@@ -1,10 +1,5 @@
-// 테마 등록j
-// theme 형식
-// {
-//   "name": "테마 이름",
-//   "description": "테마 설명",
-//   "image": "테마 이미지 URL"
-// }
+
+
 export const createTheme = async (theme) => {
   try {
     const response = await fetchWithAuth('themes', {
@@ -28,14 +23,7 @@ export const createTheme = async (theme) => {
   }
 };
 
-// 테마 수정
-// theme 형식
-// {
-//   "name": "테마 이름",
-//   "description": "테마 설명",
-//   "image": "테마 이미지 URL"
-//   "themeStatus" : "THEME_ON"
-// }
+
 export const updateTheme = async (themeId, theme) => {
   try {
     const response = await fetchWithAuth(`themes/${themeId}`, {
@@ -62,7 +50,7 @@ export const updateTheme = async (themeId, theme) => {
 // 테마 전체 조회
 export const getThemeList = async (page, size) => {
   try {
-    const response = await fetchWithAuth(`/themes?page=${page}&size=${size}`, {
+    const response = await fetchWithAuth(`themes?page=${page}&size=${size}`, {
       method: 'GET',
     });
 
@@ -82,7 +70,7 @@ export const getThemeList = async (page, size) => {
 // 테마 상세 조회
 export const getThemeDetail = async (themeId) => {
   try {
-    const response = await fetchWithAuth(`/themes/${themeId}`, {
+    const response = await fetchWithAuth(`themes/${themeId}`, {
       method: 'GET',
     });
 
@@ -102,7 +90,7 @@ export const getThemeDetail = async (themeId) => {
 // 테마 삭제    
 export const deleteTheme = async (themeId) => {
   try {
-    const response = await fetchWithAuth(`/themes/${themeId}`, {
+    const response = await fetchWithAuth(`themes/${themeId}`, {
       method: 'DELETE',
     });
 

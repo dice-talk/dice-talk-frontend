@@ -1,5 +1,6 @@
-
+import { BASE_URL } from './Config';
 import { fetchWithAuth } from './AuthContext';
+import { postQuestion, getQuestions } from '../utils/http/QuestionAPI';
 
 // 채팅방 생성
 export const chatRooms = async ({roomType, themeId, chatParts}) => {
