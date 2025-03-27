@@ -8,7 +8,7 @@ import { useEmail } from '../context/EmailContext';
 import { LinearGradient } from "react-native-svg";
 //import { BACKEND_URL } from './TossAuth'
 
-const BACKEND_URL = "http://192.168.0.12:8080";
+const BACKEND_URL = "http://172.30.1.86:8080";
 
 export default function SignupInput({ route, navigation}) {
     const { email } = useEmail(); // 전역상태 가져오기
@@ -116,12 +116,12 @@ export default function SignupInput({ route, navigation}) {
                 }),
               });
               console.log('📡 응답 상태 코드:', res.status);
-              const responseText = await res.text(); // JSON 파싱 실패 대비
-              console.log('📦 응답 내용:', responseText);
+              // const responseText = await res.text(); // JSON 파싱 실패 대비
+              // console.log('📦 응답 내용:', responseText);
 
               if(!res.ok) throw new Error('서버오류');
-              const result = await res.json();
-              console.log('회원가입 성공:', result);
+              // const result = await res.json();
+              // console.log('회원가입 성공:', result);
 
             navigation.navigate('Congratulate'); // 사용자 정보 넘김
 
