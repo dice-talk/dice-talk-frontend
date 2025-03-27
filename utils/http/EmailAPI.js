@@ -1,4 +1,4 @@
-import { BASE_URL } from '../config/Config';
+import { BASE_URL } from "./config";
 
 export const sendEmail = async (email) => {
   

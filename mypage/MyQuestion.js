@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import FriendIcon from '../assets/icon/profile/friends_01.svg';
 import Footer from "../component/Footer";
 import QuestionItem from "./QuestionItem";
-import { getMyQuestions } from "../utils/http/question.API";
+import { getMyQuestions } from "../utils/http/QuestionAPI";
 import Pagination from "../component/Pagination";
 import MyQuestionInputText from "./MyQuestionInputText";
 import { useNavigation } from '@react-navigation/native';

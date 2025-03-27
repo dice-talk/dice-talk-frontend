@@ -1,3 +1,3 @@
-import { BASE_URL } from './Config';
+// import { BASE_URL } from './Config';
 
-const backendUrl = BASE_URL; 
+// const backendUrl = BASE_URL; 

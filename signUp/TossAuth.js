@@ -3,7 +3,7 @@ import { ActivityIndicator, Alert, SafeAreaView, AppState } from "react-native";
 import * as Linking from "expo-linking";
 import * as Crypto from 'expo-crypto';
 import uuid from 'react-native-uuid';
-import { BASE_URL } from '../config/Config';
+import { BASE_URL } from "../utils/http/config";
 
 export default function TossAuth({ navigation }) {
   const [txId, setTxId] = useState(null);
@@ -15,7 +15,7 @@ export default function TossAuth({ navigation }) {
   useEffect(() => {
     const requestToss = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/auth/request`, {
+        const res = await fetch(`${BASE_URL}auth/request`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
         });
@@ -61,7 +61,7 @@ const fetchUserInfo = async () => {
     setLoading(true);
     console.log("✅ 사용자 정보 조회 시작");
 
-    const res = await fetch(`${BASE_URL}/auth/cert?txId=${txId}`, {
+    const res = await fetch(`${BASE_URL}auth/cert?txId=${txId}`, {
       method: "POST",
     });
 

@@ -1,13 +1,13 @@
-import { useAuth } from "./AuthContext";
-import { fetchWithAuth } from "./AuthContext";
-import { BASE_URL } from "../Config";
 
-const {fetchWithAuth} = useAuth();
+import { fetchWithAuth } from "./AuthContext";
+import { BASE_URL } from "./config";
+
+
 
 // fetch로로 호출 함수 delete
 export const deleteMyQuestion = async (questionId, token) => {
   try {
-    const response = await fetchWithAuth(`${BASE_URL}questions/${questionId}`, {
+    const response = await fetchWithAuth(`questions/${questionId}`, {
       method: 'DELETE',
     });
 
@@ -31,7 +31,7 @@ export const getMyQuestions = async (memberId, page, size = 4) => {
       size: size
     });
 
-    const response = await fetchWithAuth(`${BASE_URL}questions/${memberId}?${params}`, {
+    const response = await fetchWithAuth(`questions/${memberId}?${params}`, {
       method: 'GET',
     });
 
@@ -52,7 +52,7 @@ export const getMyQuestions = async (memberId, page, size = 4) => {
 // 내 문의 상세 조회 API 요청 함수
 export const getMyQuestionDetail = async (memberId, questionId) => {
   try {
-    const response = await fetchWithAuth(`${BASE_URL}questions/${memberId}/${questionId}`, {
+    const response = await fetchWithAuth(`questions/${memberId}/${questionId}`, {
       method: 'GET',
     });
 
@@ -71,7 +71,7 @@ export const getMyQuestionDetail = async (memberId, questionId) => {
 
 export const createMyQuestion = async (questionData) => {
   try {
-    const response = await fetchWithAuth(`${BASE_URL}questions`, {
+    const response = await fetchWithAuth(`questions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json', // 명시적으로 설정
