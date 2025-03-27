@@ -4,8 +4,8 @@ import { CodeField, Cursor,useClearByFocusCell, useBlurOnFulfill } from 'react-n
 import LongButton from '../component/LongButton';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome } from '@expo/vector-icons';
-import { sendEmail } from '../utils/http/email.API'; // 이메일 전송 및 코드 검증
-import { verifyCode } from '../utils/http/email.API';
+import { sendEmail } from '../utils/http/EmailAPI'; // 이메일 전송 및 코드 검증
+import { verifyCode } from '../utils/http/EmailAPI';
 import EmailExistModal from '../component/EmailExistsModal';
 import { useEmail } from '../context/EmailContext';
 // 인증 코드 자리 수

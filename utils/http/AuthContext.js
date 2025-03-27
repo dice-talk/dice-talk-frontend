@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect, useRef } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Keychain from 'react-native-keychain';
 import { Alert } from 'react-native';
-import { BASE_URL } from './Config';
+import { BASE_URL } from "./config";
 
 // 인증 관련 컨텍스트 생성
 const AuthContext = createContext();

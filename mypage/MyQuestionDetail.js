@@ -5,9 +5,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import Footer from "../component/Footer";
 import React, { useEffect } from 'react';
 import { useRoute } from '@react-navigation/native';
-import { getQuestionDetail } from '../utils/http/question.API';
+import { getQuestionDetail } from '../utils/http/QuestionAPI';
 import { useState } from 'react';
-import { deleteMyQuestion } from '../utils/http/question.API';
+import { deleteMyQuestion } from '../utils/http/QuestionAPI';
 
 export default function MyQuestionDetail () {
     const navigation = useNavigation();

@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AlertModal from '../component/AlertModal';
-import { loginDiceTalk } from '../utils/http/email.API';
+import { loginDiceTalk } from '../utils/http/EmailAPI';
 import { useEmail } from '../context/EmailContext';
 
 

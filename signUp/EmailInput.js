@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, TouchableWitho
 import LongButton from '../component/LongButton';
 import { FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { sendEmail } from '../utils/http/email.API';
+import { sendEmail } from '../utils/http/EmailAPI';
 import { Alert } from 'react-native';
 import { useEmail } from '../context/EmailContext';
 
