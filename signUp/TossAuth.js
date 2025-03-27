@@ -4,7 +4,7 @@ import * as Linking from "expo-linking";
 import * as Crypto from 'expo-crypto';
 import uuid from 'react-native-uuid';
 
-const BACKEND_URL = "http://172.30.1.86:8080"; // 이건 추후 로컬 주소로 수정 필요
+const BACKEND_URL = "http://172.30.1.91:8080"; // 이건 추후 로컬 주소로 수정 필요
 
 export default function TossAuth({ navigation }) {
   const [txId, setTxId] = useState(null);
