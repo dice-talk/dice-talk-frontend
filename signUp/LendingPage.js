@@ -25,8 +25,7 @@ export default function LendingPage({navigation}) {
             <Button title='Home' onPress={() => {navigation.navigate('Home')}} />
             <Button title='LetterEventScreen' onPress={() => {navigation.navigate('LetterEventScreen')}} />
             <Button title='DropOutMember' onPress={() => {navigation.navigate('DropOutMember')}} />
-            <Button title='SignupInput' onPress={() => {navigation.navigate('SignupInput')}} />
-            <Button title='ModalAlert' onPress={() => {navigation.navigate('ModalAlert')}} />
+            <Button title='ChatMain' onPress={() => {navigation.navigate('ChatMain')}} />
             <View style={styles.bottomContainer}>
                   <LongButton onPress={() => navigation.navigate('LoginEmail')}>
                   <FontAwesome name="envelope" size={20} color="white" style={styles.icon} /> 

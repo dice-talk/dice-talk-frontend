@@ -119,7 +119,7 @@ export default function SignupInput({ route, navigation}) {
               const responseText = await res.text(); // JSON 파싱 실패 대비
               console.log('📦 응답 내용:', responseText);
 
-              if(!res.create) throw new Error('서버오류');
+              if(!res.ok) throw new Error('서버오류');
               const result = await res.json();
               console.log('회원가입 성공:', result);
 
@@ -146,7 +146,7 @@ export default function SignupInput({ route, navigation}) {
                 <Ionicons name='person-outline' size={30} color='white'/>
             </LinearGradient>
             <Text style={styles.title}>정보를 입력해주세요</Text>
-            //</View>
+            </View>
 
             {/* 이메일 - 고정 */}
             <Text style={styles.label}>이메일</Text>

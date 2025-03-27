@@ -2,7 +2,7 @@
 import axios from 'axios';
 // import { BACKEND_URL } from '../../signUp/VerifyCode';
 // 회원가입-이메일 인증
-const BACKEND_URL = 'http://192.168.0.12:8080';
+const BACKEND_URL = 'http://172.30.1.44:8080';
 
 export const sendEmail = async (email) => {
   
@@ -56,29 +56,50 @@ export const verifyCode = async({ email, code }) => {
 }
   
 //로그인 요청 함수
-export const loginDiceTalk = async(email, password) => {
-  console.log('🔐 로그인 요청 URL:', `${BACKEND_URL}/auth/login`);
-  try{
-    const response = await axios.post(`${BACKEND_URL}/auth/login`, {
-      username: email,
-      password: password,
-    });
-    // 서버 응답 헤더에서 토큰 추출
-    const token = response.headers['authorization'] || response.headers['Authorization'];
+export const loginDiceTalk = async (email, password) => {
+  const loginUrl = `${BACKEND_URL}/auth/login`;
+  console.log('🔐 로그인 요청 URL:', loginUrl);
 
-    if(!token) {
+  try {
+    const response = await fetch(loginUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: email,
+        password: password,
+      }),
+    });
+
+    console.log('📡 응답 상태:', response.status);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('❌ 로그인 실패 응답:', errorData);
+      throw new Error(errorData.message || '로그인 실패');
+    }
+
+    // 헤더에서 토큰 추출
+    const token = response.headers.get('Authorization') || response.headers.get('authorization');
+
+    if (!token) {
       throw new Error('토큰이 응답에 포함되지 있지 않습니다.');
     }
 
-    //필요한 사용자 정보와 토큰 반환
+    const userData = await response.json();
+
     return {
-      token, user: response.data, // 서버가 유저 정보를 body에 담는 경우
-     };
+      token,
+      user: userData,
+    };
+
   } catch (error) {
-    console.error('로그인 요청 실패:', error);
+    console.error('❌ 로그인 요청 실패:', error);
     throw error;
   }
 };
+
 
 //이메일 찾기 API 요청함수
 export const recoverEmail = async (txId) => {

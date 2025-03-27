@@ -68,8 +68,8 @@ export default function DropOutMember({ navigation }) {
                     <View style={styles.buttonWrapper}>
                       <LongButton onPress={() => navigation.navigate("CheckDropOutMember")}>
                         <Text style={styles.buttonText}>확인</Text>
-                    </LongButton>
-                 </View>
+                      </LongButton>
+                    </View>
                 </View>
             </View>
         </View>

@@ -40,6 +40,7 @@ import DropOutMember from './plus/DropOutMember';
 import UserCheckScreen from './screen/UserCheckScreen';
 import ModalAlert from './component/ModalAlert';
 import CheckDropOutMember from './plus/CheckDropOutMember';
+import ChatMain from './chat/ChatMain';
 
 
 
@@ -99,6 +100,7 @@ export default function App() {
             <Stack.Screen name="UserCheckScreen" component={UserCheckScreen} />
             <Stack.Screen name="ModalAlert" component={ModalAlert} />
             <Stack.Screen name="CheckDropOutMember" component={CheckDropOutMember} />
+            <Stack.Screen name='ChatMain' component={ChatMain} />
 
 
           </Stack.Navigator>

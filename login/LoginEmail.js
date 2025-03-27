@@ -25,6 +25,7 @@ export default function LoginEmail({navigation}) {
     // //이메일 전송 핸들러 함수
     const handleConfirm = () => {
         setEmail(inputEmail); // 전역에 저장
+        setShowModal(false);
         navigation.navigate('LoginPassword'); // 굳이 props로 email을 넘길 필요가 없다.
     }
     return (
@@ -68,6 +69,7 @@ export default function LoginEmail({navigation}) {
                     visible={showModal}
                     message={`본인 인증이 필요한 서비스입니다.\n계속하시겠습니까?`}
                     onCancel={() => setShowModal(false)}
+                    onConfirm={() => {handleConfirm}}
                     />
 
                     <View 
