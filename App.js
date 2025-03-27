@@ -1,53 +1,16 @@
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
 import { EmailProvider } from './context/EmailContext';
-import { StyleSheet, Text, View } from 'react-native';
-import  { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator} from '@react-navigation/native-stack';
-import LendingPage from './signUp/LendingPage';
-import EmailInput from './signUp/EmailInput';
-import VerifyCode from './signUp/VerifyCode';
-import IdentityVerification from './signUp/IdentityVerification';
-import TossAuth from './signUp/TossAuth';
-import MyPage from './mypage/MyPage';
-import MyInfo from './mypage/MyInfo';
-import MyQuestion from './mypage/MyQuestion';
-import MyQuestionDetail from './mypage/MyQuestionDetail';
-import { setupMockAPI } from './utils/mockSetup';
-import Agreement from './signUp/Agreement';
-import DetailAgreement from './signUp/DetailAgreement';
-import MyQuestionInputText from './mypage/MyQuestionInputText';
-import SignupInput from './signUp/SignupInput';
-import Congratulate from './signUp/Congratulate';
-import LoginEmail from './login/LoginEmail';
-import LoginPassword from './login/LoginPassword';
-import FindEmail from './login/FindEmail';
-
-import EditMyInfo from './mypage/EditMyInfo';
-import MyDice from './mypage/MyDice';
-import ChargeDice from './mypage/ChargeDice';
-import Chat from './chat/Chat';
-import ChatReport from './chat/ChatReport'
-import ReceiveEmali from './login/ReceiveEmail';
-import ReceivePassword from './login/ReceivePassword';
-import SelectRegion from './main/SelectRegion';
-import Home from './main/Home';
-
-import LetterEventScreen from './loveEvent/LetterEventScreen';
-
-import DiceFriendsDs from './main/DiceFriendsDs'
-import SelectAge from './main/SelectAge';
-import hihihi from './main/hihihi';
-import DropOutMember from './plus/DropOutMember';
-import UserCheckScreen from './screen/UserCheckScreen';
-import ModalAlert from './component/ModalAlert';
-import CheckDropOutMember from './plus/CheckDropOutMember';
-import ChatMain from './chat/ChatMain';
 import { ChatProvider } from './context/ChatContext';
+import { setupMockAPI } from './utils/mockSetup';
 
-// Removed loadPartialConfig import as it is not needed
-const Stack = createNativeStackNavigator();
+// 네비게이션 구조 가져오기
+import AppNavigator from './navigation/AppNavigator';
 
-if(__DEV__) {
-  setupMockAPI(); // mock 등록 실행!
+// 개발 환경에서 mock API 설정
+if (__DEV__) {
+  setupMockAPI();
 }
 
 export default function App() { 
@@ -55,46 +18,7 @@ export default function App() {
     <EmailProvider>
       <ChatProvider>
         <NavigationContainer>
-          <Stack.Navigator>
-            <Stack.Screen name='LendingPage' component={LendingPage} />
-            <Stack.Screen name='EmailInput' component={EmailInput} />
-            <Stack.Screen name='VerifyCode' component={VerifyCode} />
-            <Stack.Screen name='IdentityVerification' component={IdentityVerification} />
-            <Stack.Screen name='TossAuth' component={TossAuth} />
-            <Stack.Screen name='Agreement' component={Agreement} />
-            <Stack.Screen name='DetailAgreement' component={DetailAgreement} />
-            <Stack.Screen name='SignupInput' component={SignupInput} />
-            <Stack.Screen name='Congratulate' component={Congratulate} options={{headerShown : false}}/>
-
-            <Stack.Screen name='LoginEmail' component={LoginEmail} />
-            <Stack.Screen name='LoginPassword' component={LoginPassword} />
-            <Stack.Screen name='FindEmail' component={FindEmail} />
-            <Stack.Screen name='ReceiveEmail' component={ReceiveEmali} />
-            <Stack.Screen name='ReceivePassword' component={ReceivePassword} />
-            <Stack.Screen name='Home' component={Home} />
-            <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} />
-
-            <Stack.Screen name='MyPage' component={MyPage} />
-            <Stack.Screen name='MyInfo' component={MyInfo} />
-            <Stack.Screen name='MyQuestion' component={MyQuestion} />
-            <Stack.Screen name='MyQuestionDetail' component={MyQuestionDetail} />
-            <Stack.Screen name='MyQuestionInputText' component={MyQuestionInputText} />
-            <Stack.Screen name="EditMyInfo" component={EditMyInfo} />
-            <Stack.Screen name="MyDice" component={MyDice} />
-            <Stack.Screen name="ChargeDice" component={ChargeDice} />
-            <Stack.Screen name="Chat" component={Chat} />
-            <Stack.Screen name="ChatReport" component={ChatReport} />
-            <Stack.Screen name="DiceFriendsDs" component={DiceFriendsDs} />
-            <Stack.Screen name="SelectAge" component={SelectAge} />
-            <Stack.Screen name="SelectRegion" component={SelectRegion} />
-            <Stack.Screen name="hihihi" component={hihihi} />
-
-            <Stack.Screen name="DropOutMember" component={DropOutMember} />
-            <Stack.Screen name="UserCheckScreen" component={UserCheckScreen} />
-            <Stack.Screen name="ModalAlert" component={ModalAlert} />
-            <Stack.Screen name="CheckDropOutMember" component={CheckDropOutMember} />
-            <Stack.Screen name='ChatMain' component={ChatMain} />
-          </Stack.Navigator>
+          <AppNavigator />
         </NavigationContainer>
       </ChatProvider>
     </EmailProvider>
