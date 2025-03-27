@@ -1,4 +1,4 @@
-import { BASE_URL } from './Config';
+import { BASE_URL } from './config';
 import { fetchWithAuth } from './AuthContext';
 
 // 상품 등록
