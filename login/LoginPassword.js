@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AlertModal from '../component/AlertModal';
-import { loginWithEmail } from '../utils/http/email.API';
+import { loginDiceTalk, loginWithEmail } from '../utils/http/email.API';
 
 
 export default function LoginPassword({navigation}) {
@@ -26,11 +26,13 @@ export default function LoginPassword({navigation}) {
     //비밀번호 전송 핸들러 함수
     const handleSendPassword = async () => {
         try {
-            const result = await loginWithEmail( email, inputPassword);
+            const result = await loginDiceTalk( email, inputPassword);
             console.log('로그인 성공:', result);
             // 토큰을 저장하거나 context에 넣고 다음 페이지로 이동
                 navigation.navigate('Home', { token: result.token, user: result.user});
             } catch (error) {
+                console.log(email);
+                console.log(inputPassword);
                 const errMsg = error.response?.data?.error || '로그인 실패';
                 Alert.alert('로그인 실패', errMsg);
                 }

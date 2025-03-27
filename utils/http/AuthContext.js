@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
   // axios 인스턴스 생성 (일반 API 담당)
   const api = axios.create({
     // 기본 URL 설정
-    baseURL: "http://localhost:8080/v11/",
+    baseURL: "http://172.30.1.17:8080",
     // 브라우저가 쿠키(세션 정보 등)를 요청에 포함하도록 설정
     withCredentials: true,
   });
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
 
   // axios 인스턴스 생성 (토큰 재발급 요청 담당)
   const refreshApi = axios.create({
-    baseURL: "http://localhost:8080/v11/",
+    baseURL: "http://172.30.1.17:8080",
     withCredentials: true,
   });
 
