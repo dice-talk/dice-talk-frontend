@@ -1,4 +1,4 @@
-import { BASE_URL } from './Config';
+
 import { fetchWithAuth } from './AuthContext';
 
 // 채팅방 생성
