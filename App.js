@@ -41,10 +41,7 @@ import UserCheckScreen from './screen/UserCheckScreen';
 import ModalAlert from './component/ModalAlert';
 import CheckDropOutMember from './plus/CheckDropOutMember';
 import ChatMain from './chat/ChatMain';
-
-
-
-
+import { ChatProvider } from './context/ChatContext';
 
 // Removed loadPartialConfig import as it is not needed
 const Stack = createNativeStackNavigator();
@@ -56,7 +53,8 @@ if(__DEV__) {
 export default function App() { 
   return (
     <EmailProvider>
-      <NavigationContainer>
+      <ChatProvider>
+        <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen name='LendingPage' component={LendingPage} />
             <Stack.Screen name='EmailInput' component={EmailInput} />
@@ -91,20 +89,14 @@ export default function App() {
             <Stack.Screen name="SelectRegion" component={SelectRegion} />
             <Stack.Screen name="hihihi" component={hihihi} />
 
-
-
-
-
-
             <Stack.Screen name="DropOutMember" component={DropOutMember} />
             <Stack.Screen name="UserCheckScreen" component={UserCheckScreen} />
             <Stack.Screen name="ModalAlert" component={ModalAlert} />
             <Stack.Screen name="CheckDropOutMember" component={CheckDropOutMember} />
             <Stack.Screen name='ChatMain' component={ChatMain} />
-
-
           </Stack.Navigator>
-      </NavigationContainer>
+        </NavigationContainer>
+      </ChatProvider>
     </EmailProvider>
   );
 }
