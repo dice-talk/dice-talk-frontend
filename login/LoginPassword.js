@@ -10,7 +10,7 @@ import { useEmail } from '../context/EmailContext';
 
 
 export default function LoginPassword({navigation}) {
-    const { email } = useEmail // 전역상태로 관리되는 email
+    const { email } = useEmail(); // 전역상태로 관리되는 email
     const [inputPassword, setInputPassword] = useState('');
     const [isValid, setIsValid] = useState(false); // 버튼 활성화 비활성화 + 비밀번호가가 유효한지 check
     const [showPassword, setShowPassword] = useState(false);
@@ -18,15 +18,16 @@ export default function LoginPassword({navigation}) {
     const [showModal, setShowModal] = useState(false);
 
     const validatePassword = (text) => {
-        setInputPassword(text);
         // 비밀번호 정규표현식 비밀번호는 8~16자 영문 대, 소문자, 숫자, 특수문자를 사용하세요.
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{}[\]|;:'",.<>/?]).{8,16}$/;
         // 비밀번호가 유효하면 true, 아니면 false
+        console.log('비밀번호 유효성:', passwordRegex.test(text));
         setIsValid(passwordRegex.test(text));
     }
 
     //비밀번호 전송 핸들러 함수
     const handleSendPassword = async () => {
+        console.log('login 함수 호출됨!')
         try {
             const result = await loginDiceTalk( email, inputPassword);
             console.log('로그인 성공:', result);
@@ -89,7 +90,8 @@ export default function LoginPassword({navigation}) {
                     {/* 로그인 버튼 */}
                     <View 
                     style={[!isValid && styles.disabled]} 
-                    pointerEvents={!isValid ? "none" : "auto"}>
+                    pointerEvents={!isValid ? "none" : "auto"}
+                    >
                         <LongButton 
                         onPress={handleSendPassword}
                         // 이메일이 올바르게 작성되지 않으면 비활성화
