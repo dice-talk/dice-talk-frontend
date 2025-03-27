@@ -1,9 +1,8 @@
 
-const BACKEND_URL = 'http://172.30.1.86:8080';
 // 마이페이지(익명) 조회
 const getAnonymousMyPage = async (memberId) => {
     try {
-      const response = await fetchWithAuth(`/my-page/${memberId}`, {
+      const response = await fetchWithAuth(`my-page/${memberId}`, {
         method: 'GET',
       });
   
@@ -23,7 +22,7 @@ const getAnonymousMyPage = async (memberId) => {
   // 내 정보 조회
   const getMyInfo = async (memberId) => {
     try {
-      const response = await fetchWithAuth(`/my-info/${memberId}`, {
+      const response = await fetchWithAuth(`${BASE_URL}my-info/${memberId}`, {
         method: 'GET',
       });
   
@@ -40,15 +39,10 @@ const getAnonymousMyPage = async (memberId) => {
     }
   };
 
-  // 회원정보 수정
-  // updateData 형식
-  // {
-  //   "phone": "010-1010-0202",
-  //   "region": "서울시 강남구"
-  // }
+ 
   export const updateMyInfo = async (memberId, updateData) => {
     try {
-      const response = await fetchWithAuth(`/my-info/${memberId}`, {
+      const response = await fetchWithAuth(`my-info/${memberId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +66,7 @@ const getAnonymousMyPage = async (memberId) => {
   // 회원 탈퇴
   export const deleteMember = async (memberId, reason) => {
     try {
-      const response = await fetchWithAuth(`/my-info/${memberId}`, {
+      const response = await fetchWithAuth(`my-info/${memberId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

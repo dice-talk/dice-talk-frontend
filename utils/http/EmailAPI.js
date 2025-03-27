@@ -1,12 +1,10 @@
-// import { BACKEND_URL } from '../../signUp/VerifyCode';
-// 회원가입-이메일 인증
-const BACKEND_URL = 'http://172.30.1.91:8080';
+import { BASE_URL } from '../config/Config';
 
 export const sendEmail = async (email) => {
   
       try {
         console.log(email);
-        const response = await fetch(`/auth/email`, {
+        const response = await fetch(`${BASE_URL}/auth/email`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -32,7 +30,7 @@ export const sendEmail = async (email) => {
 // 회원가입 - 인증번호 검증
 export const verifyCode = async({ email, code }) => {
     //console.log('요청보냄!', {email, code});
-    try { const response = await fetch(`/auth/verify-code`, {
+    try { const response = await fetch(`${BASE_URL}auth/verify-code`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -53,53 +51,9 @@ export const verifyCode = async({ email, code }) => {
   }
 }
   
-// //로그인 요청 함수
-// export const loginDiceTalk = async (email, password) => {
-//   const loginUrl = `${BACKEND_URL}/auth/login`;
-//   console.log('🔐 로그인 요청 URL:', loginUrl);
-
-//   try {
-//     const response = await fetch(loginUrl, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({
-//         username: email,
-//         password: password,
-//       }),
-//     });
-
-//     console.log('📡 응답 상태:', response.status);
-
-//     if (!response.ok) {
-//       const errorData = await response.json();
-//       console.error('❌ 로그인 실패 응답:', errorData);
-//       throw new Error(errorData.message || '로그인 실패');
-//     }
-
-//     // 헤더에서 토큰 추출
-//     const token = response.headers.get('Authorization') || response.headers.get('authorization');
-
-//     if (!token) {
-//       throw new Error('토큰이 응답에 포함되지 있지 않습니다.');
-//     }
-
-//     const userData = await response.json();
-
-//     return {
-//       token,
-//       user: userData,
-//     };
-
-//   } catch (error) {
-//     console.error('❌ 로그인 요청 실패:', error);
-//     throw error;
-//   }
-// };
 
 export const loginDiceTalk = async (email, password) => {
-  const loginUrl = `/auth/login`;
+  const loginUrl = `${BASE_URL}auth/login`;
   console.log('🔐 로그인 요청 URL:', loginUrl);
 
   try {
@@ -158,7 +112,7 @@ export const loginDiceTalk = async (email, password) => {
 //이메일 찾기 API 요청함수
 export const recoverEmail = async (txId) => {
   try {
-    const response = await fetch(`/auth/recover/email`, {
+    const response = await fetch(`${BASE_URL}auth/recover/email`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -182,7 +136,7 @@ export const recoverEmail = async (txId) => {
 // 패스워드 찾기
 export const recoverPassword = async ({ email, txId }) => {
   try {
-    const response = await fetch(`/auth/recover/password`, {
+    const response = await fetch(`${BASE_URL}auth/recover/password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -206,7 +160,7 @@ export const recoverPassword = async ({ email, txId }) => {
 // 패스워드 재설정하기
 export const resettingPassword = async ({ email, newPassword }) => {
   try {
-    const response = await fetch(`/auth/resetting/password`, {
+    const response = await fetch(`${BASE_URL}auth/resetting/password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -230,7 +184,7 @@ export const resettingPassword = async ({ email, newPassword }) => {
 // 로그아웃구현하기
 export const logout = async (token) => {
   try {
-    const response = await fetch (`/auth/logout`, {
+    const response = await fetch (`${BASE_URL}auth/logout`, {
       method: 'POST',
       headers: {
         'Authorization' : `Bearer ${token}`,

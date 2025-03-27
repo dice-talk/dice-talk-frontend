@@ -7,7 +7,7 @@
 // }
 export const createTheme = async (theme) => {
   try {
-    const response = await fetchWithAuth('/themes', {
+    const response = await fetchWithAuth('themes', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ export const createTheme = async (theme) => {
 // }
 export const updateTheme = async (themeId, theme) => {
   try {
-    const response = await fetchWithAuth(`/themes/${themeId}`, {
+    const response = await fetchWithAuth(`themes/${themeId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

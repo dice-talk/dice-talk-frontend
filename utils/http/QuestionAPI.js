@@ -1,14 +1,13 @@
 import { useAuth } from "./AuthContext";
 import { fetchWithAuth } from "./AuthContext";
-
-const BACKEND_URL = 'http://172.30.1.86:8080';
+import { BASE_URL } from "../Config";
 
 const {fetchWithAuth} = useAuth();
 
 // fetch로로 호출 함수 delete
 export const deleteMyQuestion = async (questionId, token) => {
   try {
-    const response = await fetchWithAuth(`/questions/${questionId}`, {
+    const response = await fetchWithAuth(`${BASE_URL}questions/${questionId}`, {
       method: 'DELETE',
     });
 
@@ -32,7 +31,7 @@ export const getMyQuestions = async (memberId, page, size = 4) => {
       size: size
     });
 
-    const response = await fetchWithAuth(`/questions/${memberId}?${params}`, {
+    const response = await fetchWithAuth(`${BASE_URL}questions/${memberId}?${params}`, {
       method: 'GET',
     });
 
@@ -53,7 +52,7 @@ export const getMyQuestions = async (memberId, page, size = 4) => {
 // 내 문의 상세 조회 API 요청 함수
 export const getMyQuestionDetail = async (memberId, questionId) => {
   try {
-    const response = await fetchWithAuth(`/questions/${memberId}/${questionId}`, {
+    const response = await fetchWithAuth(`${BASE_URL}questions/${memberId}/${questionId}`, {
       method: 'GET',
     });
 
@@ -70,17 +69,9 @@ export const getMyQuestionDetail = async (memberId, questionId) => {
   }
 };
 
-// 질문 등록 요청
-// questionData 형식
-// {
-//   "title": "질문 제목",
-//   "content": "질문 내용",
-//   "memberId": "질문 작성자 ID"
-//   "question_image: "http:// .jpg"
-// }
 export const createMyQuestion = async (questionData) => {
   try {
-    const response = await fetchWithAuth(`/questions`, {
+    const response = await fetchWithAuth(`${BASE_URL}questions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json', // 명시적으로 설정
@@ -101,17 +92,10 @@ export const createMyQuestion = async (questionData) => {
   }
 };
 
-// 내 문의 등록(정지된 회원)
-// questionData 형식
-// {
-//   "email": "이메일",
-//   "title": "질문 제목",
-//   "content": "질문 내용",
-//   "question_image": "http:// .jpg"
-// }
+
 export const createBannedMemberQuestion = async (questionData) => {
   try {
-    const response = await fetch(`/questions/bannedMember`, {
+    const response = await fetch(`${BASE_URL}questions/bannedMember`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
