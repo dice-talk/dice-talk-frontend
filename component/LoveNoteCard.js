@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions } from 'react-native'
 import HeartLetter from '../assets/event/heart_letter.svg';
+import { postEvent } from '../utils/http/eventAPI';
+import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 const svgWidth = width * 0.9;
@@ -8,6 +10,22 @@ const svgHeight = svgWidth * 1.2;
 
 export default function LoveNoteCard ({ onSubmit }) {
     const [text, setText] = useState('');
+    const navigation = useNavigation();
+
+    const handleSubmit = async () => {
+      const event = {
+        content: text,
+        timestamp: new Date().toISOString(),
+      };
+
+      try {
+        await postEvent(event);
+      } catch (error) {
+        console.error('이벤트 전송 실패:', error);
+      } finally {
+        navigation.navigate('Chat', { showSidebar: true });
+      }
+    };
 
     return (
         <View style={styles.container}>
@@ -24,7 +42,7 @@ export default function LoveNoteCard ({ onSubmit }) {
                     />
                 </View>
             </View>
-          <TouchableOpacity style={styles.button} onPress={() => onSubmit(text)}>
+          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
             <Text style={styles.buttonText}>보내기</Text>
           </TouchableOpacity>
         </View>

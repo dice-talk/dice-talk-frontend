@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, Dimensions, Button } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import SidebarBack from "../../assets/icon/logo/love_sidebar_back.svg";
 import HeartArrow from "../../assets/event/heart_arrow.svg";
 import Exit from "../../assets/icon/chat/exit.svg";
@@ -17,8 +18,9 @@ export default function ChatSidebar({
   onEventPress, 
   onExitPress, 
   onReportPress,
-  navigation
 }) {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       {/* 사이드바 내용 */}
@@ -57,6 +59,13 @@ export default function ChatSidebar({
               <Text style={styles.userName}>{item.name}</Text>
             </View>
           ))}
+          <View style={{ marginTop: 16 }}>
+            <Button
+              title="러브레터 이벤트로 이동"
+              onPress={() => navigation.navigate('LetterEventScreen')}
+              color="#A45C73"
+            />
+          </View>
         </ScrollView>
       </View>
       <View style={styles.footer}>
@@ -152,4 +161,4 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 20,
   },
-}); 
+});
