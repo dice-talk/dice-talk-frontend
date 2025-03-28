@@ -28,7 +28,10 @@ export default function LendingPage({navigation}) {
 
 
 
+
             <Button title='HeartChat' onPress={() => {navigation.navigate('HeartChat')}}/>
+
+
 
             <View style={styles.bottomContainer}>
                   <LongButton onPress={() => navigation.navigate('LoginEmail')}>
