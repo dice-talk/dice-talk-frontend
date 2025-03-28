@@ -1,5 +1,5 @@
-import React from "react";
-import { Modal, View, Text, Pressable, Sylesheet} from 'react-native';
+import React, {useState} from "react";
+import { Modal, View, Text, Pressable, StyleSheet} from 'react-native';
 // 이미지 컴포넌트 (import 또는 require 사용가능능)
 import Love_01 from "../assets/icon/profile/love_01.svg"; // 기본 흰색
 import Love_02 from "../assets/icon/profile/love_02.svg";
@@ -7,12 +7,12 @@ import Love_03 from "../assets/icon/profile/love_03.svg";
 import Love_04 from "../assets/icon/profile/love_04.svg";
 import Love_05 from "../assets/icon/profile/love_05.svg";
 import Love_06 from "../assets/icon/profile/love_06.svg";
-import Love_01_Selected from '../assets/icon/profile/Love_game_select_01';
-import Love_02_Selected from '../assets/icon/profile/Love_game_select_02';
-import Love_03_Selected from '../assets/icon/profile/Love_game_select_03';
-import Love_04_Selected from '../assets/icon/profile/Love_game_select_04';
-import Love_05_Selected from '../assets/icon/profile/Love_game_select_05';
-import Love_06_Selected from '../assets/icon/profile/Love_game_select_06';
+import Love_01_Selected from '../assets/icon/profile/love_game_select_01.svg';
+import Love_02_Selected from '../assets/icon/profile/love_game_select_02.svg';
+import Love_03_Selected from '../assets/icon/profile/love_game_select_03.svg';
+import Love_04_Selected from '../assets/icon/profile/love_game_select_04.svg';
+import Love_05_Selected from '../assets/icon/profile/love_game_select_05.svg';
+import Love_06_Selected from '../assets/icon/profile/love_game_select_06.svg';
 
 const diceOptions = [
     { id: 1, name: '한가로운 하나', DefaultIcon: Love_01, selectedIcon: Love_01_Selected },
@@ -37,16 +37,16 @@ export default function HeartVoteModal({ visible, onSelectDice, onClose }) {
                 <View style={styles.modalBox}>
                     <Text style={styles.title}> 하트 메세지를 보내고 싶은 사람을 선택하세요. </Text>    
 
-                    <View style={sytles.title}></View>
-                    {diceOptions.map(({ id, name, DefaultIco, SelectedIcon }) => {
+                    <View style={styles.title}></View>
+                    {diceOptions.map(({ id, name, DefaultIcon, SelectedIcon }) => {
                         const isSelected = selectedId === id;
                         const Icon = isSelected ? SelectedIcon : DefaultIcon;
 
                         return (
-                            <Pressible key={id} onPress={() => handleSelect(id)} style={styles.diceItem}>
+                            <Pressable key={id} onPress={() => handleSelect(id)} style={styles.diceItem}>
                                 <Icon width={50} height={50} />
-                                <Text style={Sylesheet.diceName}>{name}</Text>
-                            </Pressible>
+                                <Text style={styles.diceName}>{name}</Text>
+                            </Pressable>
                         );
                     })}    
             </View>

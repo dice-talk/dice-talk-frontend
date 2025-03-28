@@ -16,7 +16,10 @@ export default function ChatNavigator() {
       <Stack.Screen name='ChatMain' component={ChatMain} />
       <Stack.Screen name='Chat' component={Chat} />
       <Stack.Screen name='ChatReport' component={ChatReport} />
+
       <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} />
+
+
 
     </Stack.Navigator>
   );
