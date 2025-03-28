@@ -31,14 +31,15 @@ export default function LetterEventScreen() {
             {showCard && <LoveNoteCard onSubmit={handleSend} />}
         </View>
         )}
-    {showCard && (
+
+    {/* {showCard && (
     <LoveNoteCard
-        onSubmit={handle}
+        onSubmit={handleSend}
         onReport={() => {
             Alert.alert('신고 완료', '관리자에게 해당 내용이 전송되었습니다.')
         }} />
     )}
-        
+         */}
         </>
     );
 };
