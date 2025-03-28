@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { View, StyleSheet, ScrollView, Animated, Dimensions, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { useRoute } from '@react-navigation/native';
 
 import LoveBack from "../assets/icon/logo/love_back.svg";
 import LoveSideBar from "../assets/icon/logo/love_sidebar_nonClick.svg";
@@ -30,6 +31,7 @@ export default function Chat({ navigation }) {
   const scrollViewRef = useRef(null);
   
   const { currentRoomMessages, isConnected, sendMessage, joinRoom, leaveRoom } = useChat();
+  const route = useRoute();
 
   useEffect(() => {
     joinRoom("room_id");
@@ -38,6 +40,12 @@ export default function Chat({ navigation }) {
       leaveRoom();
     };
   }, [joinRoom, leaveRoom]);
+
+  useEffect(() => {
+    if (route.params?.showSidebar) {
+      setSidebarVisible(true);
+    }
+  }, [route.params]);
 
   useEffect(() => {
     Animated.timing(slideAnim, {

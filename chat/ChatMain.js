@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, Pressable, Modal } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { navigateToChat } from '../navigation/navigationUtils';
 
 // 🔹 더미 이미지 임포트 예시
 const bannerImages = [require('../assets/banner/banner_Ex_love.png')]; // 배너 이미지
 
 export default function ChatMain() {
+  const navigation = useNavigation();
   const [unreadCount, setUnreadCount] = useState(42);
   const [remainingTime, setRemainingTime] = useState(48 * 60 * 60); // 48시간 = 172800초
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -20,6 +24,10 @@ export default function ChatMain() {
     const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
     const secs = String(seconds % 60).padStart(2, '0');
     return `${hrs}:${mins}:${secs}`;
+  };
+
+  const handleConfirm = () => {
+    navigateToChat(navigation, 'Chat');
   };
 
   return (
@@ -41,7 +49,11 @@ export default function ChatMain() {
         <View style={styles.timerModal}>
           <Text style={styles.modalLabel}>채팅 종료까지</Text>
           <Text style={styles.timerText}>{formatTime(remainingTime)}</Text>
-          <Pressable style={styles.enterButton}>
+          <Pressable 
+            style={[styles.enterButton, isLoading && styles.buttonDisabled]} 
+            onPress={handleConfirm}
+            disabled={isLoading}
+          >
             <Text style={styles.enterButtonText}>입장</Text>
           </Pressable>
 
@@ -122,26 +134,6 @@ const styles = StyleSheet.create({
     color: '#888',
     marginBottom: 8,
   },
-  timerModal: {
-    position: 'absolute',
-    top: 100,
-    left: '5%',
-    right: '5%',
-    backgroundColor: '#fff',
-    borderRadius: 24,
-    paddingVertical: 40,
-    paddingHorizontal: 30,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
-  },
-  modalLabel: {
-    fontSize: 20,
-    color: '#888',
-    marginBottom: 12,
-  },
   timerText: {
     fontSize: 48,
     fontFamily: 'Courier',
@@ -188,5 +180,8 @@ const styles = StyleSheet.create({
   footerText: {
     marginTop: 4,
     fontSize: 12,
+  },
+  buttonDisabled: {
+    backgroundColor: '#ccc',
   },
 });
