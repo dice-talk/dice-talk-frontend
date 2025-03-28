@@ -26,9 +26,9 @@ const diceOptions = [
 export default function HeartVoteModal({ visible, onSelectDice, onClose }) {
     const [selectedId, setSelectedId] = useState(null);
 
-    const handleSelect = (id) => {
+    const handleSelect = (id, name) => {
         setSelectedId(id);
-        onSelectDice(id);
+        onSelectDice(id, name); // name도 같이 전달달
     }
 
     return(
