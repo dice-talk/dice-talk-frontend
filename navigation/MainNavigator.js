@@ -8,6 +8,7 @@ import SelectRegion from '../main/SelectRegion';
 import SelectAge from '../main/SelectAge';
 import DiceFriendsDs from '../main/DiceFriendsDs';
 import hihihi from '../main/hihihi';
+
 import LetterEventScreen from '../loveEvent/LetterEventScreen';
 
 import DropOutMember from '../plus/DropOutMember';
@@ -15,8 +16,8 @@ import CheckDropOutMember from '../plus/CheckDropOutMember';
 import LendingPage from '../signUp/LendingPage';
 
 
+const Stack = createNativeStackNavigator();
 
-const Stack = createStackNavigator();
 
 export default function MainNavigator() {
   return (
@@ -26,6 +27,7 @@ export default function MainNavigator() {
       <Stack.Screen name='SelectAge' component={SelectAge} />
       <Stack.Screen name='DiceFriendsDs' component={DiceFriendsDs} />
       <Stack.Screen name='hihihi' component={hihihi} />
+
 
       {/* <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} /> */}
 
@@ -47,6 +49,26 @@ export default function MainNavigator() {
 
 
       <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} />
+
+
+      <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} />
+
+      <Stack.Screen 
+        name='DropOutMember' 
+        component={DropOutMember}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name='CheckDropOutMember' 
+        component={CheckDropOutMember}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name='LendingPage' 
+        component={LendingPage}
+        options={{ headerShown: false }}
+      />
+
 
     </Stack.Navigator>
   );
