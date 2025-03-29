@@ -11,6 +11,7 @@ import HistoryNavigator from './HistoryNavigator';
 // 공통 컴포넌트
 import UserCheckScreen from '../screen/UserCheckScreen';
 import ModalAlert from '../component/ModalAlert';
+import LetterEventScreen from '../loveEvent/LetterEventScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +35,7 @@ export default function AppNavigator() {
       
       {/* 공통 컴포넌트 - 여러 화면에서 공유되는 모달 등 */}
       <Stack.Screen name='UserCheckScreen' component={UserCheckScreen} />
+      <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} />
       <Stack.Screen name='ModalAlert' component={ModalAlert} />
     </Stack.Navigator>
   );
