@@ -1,4 +1,5 @@
-import { Pressable, StyleSheet, View, Text, Image } from "react-native";
+import React from 'react';
+import { Pressable, StyleSheet, View, Text, Image, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Friends_03 from "../assets/icon/profile/friends_03.svg";
 import Footer from "../component/Footer";
@@ -12,8 +13,15 @@ import Plus from "../assets/public/plus.svg"
 import Logout from "../assets/public/logout.svg"
 import MyDice from "./MyDice";
 import ChargeDice from "./ChargeDice";
+import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../utils/http/AuthContext';
+import { logout } from '../utils/http/EmailAPI';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-function MyPage ({navigation}) {
+const MyPage = () => {
+    const navigation = useNavigation();
+    const { setAuth } = useAuth();
+
     return (
         <>
         <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'white', zIndex: -1 }} />
@@ -46,10 +54,37 @@ function MyPage ({navigation}) {
             </View>
 
             <View style={styles.bottomLine} />
-            <View style={styles.logout}>
+            <Pressable 
+                style={styles.logout}
+                onPress={async () => {
+                    try {
+                        const token = await AsyncStorage.getItem("accessToken");
+                        await logout(token);
+                        setAuth(null);
+                        navigation.reset({
+                            index: 0,
+                            routes: [
+                                {
+                                    name: 'Auth',
+                                    state: {
+                                        routes: [
+                                            {
+                                                name: 'LendingPage'
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        });
+                    } catch (error) {
+                        console.error('로그아웃 실패:', error);
+                        Alert.alert('로그아웃 실패', '로그아웃 처리 중 오류가 발생했습니다.');
+                    }
+                }}
+            >
                 <Logout />
                 <Text style={{color: '#715E7C', fontSize: 12}}>로그아웃</Text>
-            </View>
+            </Pressable>
             <Footer />
         </>
     )
@@ -131,6 +166,7 @@ const styles = StyleSheet.create({
         left: 20,
         flexDirection: 'row',
         gap: 7,
+        padding: 10,  // 터치 영역 확장
     },
     userName: {
         fontSize: 20,

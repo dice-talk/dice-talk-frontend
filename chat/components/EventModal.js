@@ -8,6 +8,8 @@ import FriendsGame_05 from "../../assets/icon/profile/friends_game_05";
 import LoveGameSelect_01 from "../../assets/icon/profile/love_game_select_01";
 import LoveGameSelect_02 from "../../assets/icon/profile/love_game_select_02";
 import LoveGameSelect_05 from "../../assets/icon/profile/love_game_select_05";
+import { postEvent } from '../../utils/http/eventAPI';
+import { useMemberContext } from '../../context/MemberContext';
 
 export default function EventModal({ 
   visible, 
@@ -15,8 +17,31 @@ export default function EventModal({
   onConfirm, 
   isConfirmed, 
   selectedIcon, 
-  onSelectIcon 
+  onSelectIcon,
+  chatRoomId
 }) {
+  const { memberId } = useMemberContext();
+
+  const handleIconSelect = async (iconId) => {
+    onSelectIcon(iconId);
+    
+    const eventData = {
+      receiverId: null,
+      senderId: memberId,
+      eventId: 1,
+      chatRoomId: chatRoomId,
+      message: "상대방을 선택했습니다.",
+      roomEventType: "PICK_MESSAGE"
+    };
+
+    try {
+      await postEvent(eventData);
+      console.log('이벤트 전송 성공:', eventData);
+    } catch (error) {
+      console.error('이벤트 전송 실패:', error);
+    }
+  };
+
   if (!visible) return null;
   
   return (
@@ -59,7 +84,11 @@ export default function EventModal({
                   const name = num === 1 ? "한가로운 하나" : num === 2 ? "세침한 세찌" : "단호한데 다정한 다오";
 
                   return (
-                    <Pressable key={num} onPress={() => onSelectIcon(num)} style={{ alignItems: 'center', marginLeft: num === 2 ? 20 : 10 }}>
+                    <Pressable 
+                      key={num} 
+                      onPress={() => handleIconSelect(num)} 
+                      style={{ alignItems: 'center', marginLeft: num === 2 ? 20 : 10 }}
+                    >
                       <Icon width={40} height={40} />
                       <Text style={{ marginTop: 4, fontSize: 10, color: '#fff' }}>{name}</Text>
                     </Pressable>

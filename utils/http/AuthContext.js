@@ -7,6 +7,15 @@ import { BASE_URL } from "./config";
 // 인증 관련 컨텍스트 생성
 const AuthContext = createContext();
 
+// useAuth hook 추가
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
 // AuthProvider 컴포넌트 정의 (자식 컴포넌트를 감싸서 인증 정보 제공)
 export const AuthProvider = ({ children }) => {
   // 인증 상태 관리
@@ -205,13 +214,46 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // 로그아웃 함수
+  const logout = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}auth/logout`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${authRef.current?.accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('로그아웃 실패');
+      }
+
+      // 로컬 상태 및 저장소 초기화
+      setAuth(null);
+      await AsyncStorage.removeItem("auth");
+      await AsyncStorage.removeItem("accessToken");
+      await Keychain.resetGenericPassword();
+
+      return true;
+    } catch (error) {
+      console.error('로그아웃 중 에러 발생:', error);
+      throw error;
+    }
+  };
+
   // 컨텍스트 제공자 반환
   return (
-    <AuthContext.Provider value={{ auth, setAuth, handleSignup, fetchWithAuth }}>
+    <AuthContext.Provider
+      value={{
+        auth,
+        setAuth,
+        fetchWithAuth,
+        handleSignup,
+        logout
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
-
-// 인증 컨텍스트 사용을 위한 커스텀 훅
-export const useAuth = () => useContext(AuthContext);

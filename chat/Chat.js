@@ -16,7 +16,7 @@ import EventModal from "./components/EventModal";
 import ResultModal from "./components/ResultModal";
 import SignalModal from "./components/SignalModal";
 
-import { useChat } from "../context/ChatContext";
+import { useChatContext } from "../context/ChatContext";
 
 export default function Chat({ navigation }) {
   const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -30,16 +30,18 @@ export default function Chat({ navigation }) {
   const slideAnim = useRef(new Animated.Value(Dimensions.get("window").width)).current;
   const scrollViewRef = useRef(null);
   
-  const { currentRoomMessages, isConnected, sendMessage, joinRoom, leaveRoom } = useChat();
+  const { chatRoomInfo, updateChatRoomInfo, addMessage } = useChatContext();
   const route = useRoute();
 
   useEffect(() => {
-    joinRoom("room_id");
+    if (chatRoomInfo.chatRoomId) {
+      console.log('Joined chat room:', chatRoomInfo.chatRoomId);
+    }
 
     return () => {
-      leaveRoom();
+      console.log('Leaving chat room');
     };
-  }, []);
+  }, [chatRoomInfo.chatRoomId]);
 
   useEffect(() => {
     if (route.params?.showSidebar) {
@@ -70,6 +72,17 @@ export default function Chat({ navigation }) {
     navigation.goBack();
   };
 
+  const handleSendMessage = async (message) => {
+    if (message.trim() && chatRoomInfo.chatRoomId) {
+      const newMessage = {
+        content: message,
+        sender: 'current_user',
+        timestamp: new Date().toISOString(),
+      };
+      await addMessage(newMessage);
+    }
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -85,7 +98,7 @@ export default function Chat({ navigation }) {
           ref={scrollViewRef}
           onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
         >
-          {currentRoomMessages.map((msg, index) => (
+          {chatRoomInfo.messages?.map((msg, index) => (
             <ChatMessage
               key={msg.id || index}
               message={msg.content}
@@ -97,7 +110,7 @@ export default function Chat({ navigation }) {
           ))}
         </ScrollView>
 
-        <ChatInput onSendMessage={sendMessage} />
+        <ChatInput onSendMessage={handleSendMessage} />
 
         <Animated.View
           style={[
