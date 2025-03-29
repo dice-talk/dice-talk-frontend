@@ -31,6 +31,7 @@ export default function LoginPassword({navigation}) {
     //비밀번호 전송 핸들러 함수
     const handleSendPassword = async () => {
         try {
+
             const result = await loginDiceTalk(email, inputPassword);
             console.log('서버 응답:', result);
             
