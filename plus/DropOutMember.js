@@ -6,7 +6,6 @@ import {
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
-  Platform,
   ScrollView,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -67,10 +66,10 @@ export default function DropOutMember({ navigation }) {
                 />
 
                     <View style={styles.buttonWrapper}>
-                      <LongButton onPress={() => navigation.navigate("LoginEmail")}>
+                      <LongButton onPress={() => navigation.navigate("CheckDropOutMember")}>
                         <Text style={styles.buttonText}>확인</Text>
-                    </LongButton>
-                 </View>
+                      </LongButton>
+                    </View>
                 </View>
             </View>
         </View>

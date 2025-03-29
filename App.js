@@ -37,11 +37,11 @@ import DiceFriendsDs from './main/DiceFriendsDs'
 import SelectAge from './main/SelectAge';
 import hihihi from './main/hihihi';
 import DropOutMember from './plus/DropOutMember';
-
-
-
-
-
+import UserCheckScreen from './screen/UserCheckScreen';
+import ModalAlert from './component/ModalAlert';
+import CheckDropOutMember from './plus/CheckDropOutMember';
+import ChatMain from './chat/ChatMain';
+import { ChatProvider } from './context/ChatContext';
 
 // Removed loadPartialConfig import as it is not needed
 const Stack = createNativeStackNavigator();
@@ -53,51 +53,50 @@ if(__DEV__) {
 export default function App() { 
   return (
     <EmailProvider>
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name='LendingPage' component={LendingPage} />
-          <Stack.Screen name='EmailInput' component={EmailInput} />
-          <Stack.Screen name='VerifyCode' component={VerifyCode} />
-          <Stack.Screen name='IdentityVerification' component={IdentityVerification} />
-          <Stack.Screen name='TossAuth' component={TossAuth} />
-          <Stack.Screen name='Agreement' component={Agreement} />
-          <Stack.Screen name='DetailAgreement' component={DetailAgreement} />
-          <Stack.Screen name='SignupInput' component={SignupInput} />
-          <Stack.Screen name='Congratulate' component={Congratulate} options={{headerShown : false}}/>
+      <ChatProvider>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen name='LendingPage' component={LendingPage} />
+            <Stack.Screen name='EmailInput' component={EmailInput} />
+            <Stack.Screen name='VerifyCode' component={VerifyCode} />
+            <Stack.Screen name='IdentityVerification' component={IdentityVerification} />
+            <Stack.Screen name='TossAuth' component={TossAuth} />
+            <Stack.Screen name='Agreement' component={Agreement} />
+            <Stack.Screen name='DetailAgreement' component={DetailAgreement} />
+            <Stack.Screen name='SignupInput' component={SignupInput} />
+            <Stack.Screen name='Congratulate' component={Congratulate} options={{headerShown : false}}/>
 
-          <Stack.Screen name='LoginEmail' component={LoginEmail} />
-          <Stack.Screen name='LoginPassword' component={LoginPassword} />
-          <Stack.Screen name='FindEmail' component={FindEmail} />
-          <Stack.Screen name='ReceiveEmail' component={ReceiveEmali} />
-          <Stack.Screen name='ReceivePassword' component={ReceivePassword} />
-          <Stack.Screen name='Home' component={Home} />
-          <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} />
+            <Stack.Screen name='LoginEmail' component={LoginEmail} />
+            <Stack.Screen name='LoginPassword' component={LoginPassword} />
+            <Stack.Screen name='FindEmail' component={FindEmail} />
+            <Stack.Screen name='ReceiveEmail' component={ReceiveEmali} />
+            <Stack.Screen name='ReceivePassword' component={ReceivePassword} />
+            <Stack.Screen name='Home' component={Home} />
+            <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} />
 
-          <Stack.Screen name='MyPage' component={MyPage} />
-          <Stack.Screen name='MyInfo' component={MyInfo} />
-          <Stack.Screen name='MyQuestion' component={MyQuestion} />
-          <Stack.Screen name='MyQuestionDetail' component={MyQuestionDetail} />
-          <Stack.Screen name='MyQuestionInputText' component={MyQuestionInputText} />
-          <Stack.Screen name="EditMyInfo" component={EditMyInfo} />
-          <Stack.Screen name="MyDice" component={MyDice} />
-          <Stack.Screen name="ChargeDice" component={ChargeDice} />
-          <Stack.Screen name="Chat" component={Chat} />
-          <Stack.Screen name="ChatReport" component={ChatReport} />
-          <Stack.Screen name="DiceFriendsDs" component={DiceFriendsDs} />
-          <Stack.Screen name="SelectAge" component={SelectAge} />
-          <Stack.Screen name="SelectRegion" component={SelectRegion} />
-          <Stack.Screen name="hihihi" component={hihihi} />
+            <Stack.Screen name='MyPage' component={MyPage} />
+            <Stack.Screen name='MyInfo' component={MyInfo} />
+            <Stack.Screen name='MyQuestion' component={MyQuestion} />
+            <Stack.Screen name='MyQuestionDetail' component={MyQuestionDetail} />
+            <Stack.Screen name='MyQuestionInputText' component={MyQuestionInputText} />
+            <Stack.Screen name="EditMyInfo" component={EditMyInfo} />
+            <Stack.Screen name="MyDice" component={MyDice} />
+            <Stack.Screen name="ChargeDice" component={ChargeDice} />
+            <Stack.Screen name="Chat" component={Chat} />
+            <Stack.Screen name="ChatReport" component={ChatReport} />
+            <Stack.Screen name="DiceFriendsDs" component={DiceFriendsDs} />
+            <Stack.Screen name="SelectAge" component={SelectAge} />
+            <Stack.Screen name="SelectRegion" component={SelectRegion} />
+            <Stack.Screen name="hihihi" component={hihihi} />
 
-
-
-
-
-
-          <Stack.Screen name="DropOutMember" component={DropOutMember} />
-
-
-        </Stack.Navigator>
-      </NavigationContainer>
+            <Stack.Screen name="DropOutMember" component={DropOutMember} />
+            <Stack.Screen name="UserCheckScreen" component={UserCheckScreen} />
+            <Stack.Screen name="ModalAlert" component={ModalAlert} />
+            <Stack.Screen name="CheckDropOutMember" component={CheckDropOutMember} />
+            <Stack.Screen name='ChatMain' component={ChatMain} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ChatProvider>
     </EmailProvider>
   );
 }
