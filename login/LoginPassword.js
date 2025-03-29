@@ -36,8 +36,8 @@ export default function LoginPassword({navigation}) {
     //비밀번호 전송 핸들러 함수
     const handleSendPassword = async () => {
         try {
-            const loginResult = await loginDiceTalk( email, inputPassword);
-            console.log('로그인 성공:', loginResult);
+            const result = await loginDiceTalk( email, inputPassword);
+            console.log('로그인 성공:', result);
 
             // 토큰을 저장
            // const token = loginResult?.token;
@@ -61,12 +61,16 @@ export default function LoginPassword({navigation}) {
                 navigateAfterLogin('Main');
             } else {
                 throw new Error('로그인처리 중 오류가 발생하였습니다.');
+            } 
+            
+            if (result.user && result.user.memberId) {
+                updateMemberId(result.user.memberId);
             }
-
-            } catch (error) {
+            
+        }catch (error) {
                 console.error('로그인 처리 중 오류:', error);
                 Alert.alert('로그인 실패', errMsg);
-                }
+        }
     };
 
 
