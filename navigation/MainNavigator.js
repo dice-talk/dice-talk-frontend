@@ -11,16 +11,17 @@ import hihihi from '../main/hihihi';
 
 
 import LetterEventScreen from '../loveEvent/LetterEventScreen';
-
 import DropOutMember from '../plus/DropOutMember';
 import CheckDropOutMember from '../plus/CheckDropOutMember';
 import LendingPage from '../signUp/LendingPage';
+
 
 import LetterEventScreen from '../loveEvent/LetterEventScreen';
 
 
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
+
 
 
 export default function MainNavigator() {
@@ -33,6 +34,9 @@ export default function MainNavigator() {
       <Stack.Screen name='hihihi' component={hihihi} />
 
       <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} />
+
+      {/* <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} /> */}
+
 
       <Stack.Screen 
         name='DropOutMember' 
