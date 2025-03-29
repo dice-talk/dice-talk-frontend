@@ -255,3 +255,4 @@ export const logout = async (token) => {
     throw err;
   }
 };
+

@@ -31,6 +31,7 @@ import SignalModal from './components/SignalModal';
 
 import { useChat } from '../context/ChatContext';
 
+
 export default function Chat({ navigation }) {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [exitModalVisible, setExitModalVisible] = useState(false);
@@ -116,6 +117,17 @@ export default function Chat({ navigation }) {
     navigation.replace('Queue');
   };
 
+  const handleSendMessage = async (message) => {
+    if (message.trim() && chatRoomInfo.chatRoomId) {
+      const newMessage = {
+        content: message,
+        sender: 'current_user',
+        timestamp: new Date().toISOString(),
+      };
+      await addMessage(newMessage);
+    }
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -142,6 +154,7 @@ export default function Chat({ navigation }) {
           )}
 
           {currentRoomMessages.map((msg, index) => (
+
             <ChatMessage
               key={msg.id || index}
               message={msg.content}

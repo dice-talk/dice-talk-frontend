@@ -14,7 +14,9 @@ import { Alert } from 'react-native';
 // 미리 정의된 닉네임 목록
 const PREDEFINED_NICKNAMES = ['하나', '두리', '세찌', '네몽', '다오', '육댕'];
 
+
 const ChatContext = createContext();
+const CHAT_STORAGE_KEY = '@chat_room_info';
 
 
 export const ChatProvider = ({ children }) => {
@@ -260,6 +262,7 @@ export const ChatProvider = ({ children }) => {
         joinRoom,
         leaveRoom,
         sendMessage,
+
       }}
     >
       {children}

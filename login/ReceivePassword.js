@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AlertModal from '../component/AlertModal';
-import { recoverPassword } from '../utils/http/email.API';
+import { recoverPassword } from '../utils/http/EmailAPI';
 
 
 

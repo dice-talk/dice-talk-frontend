@@ -5,7 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Footer from "../component/Footer";
 import React, { useEffect } from 'react';
 import { useState } from 'react';
-import { postQuestion } from '../utils/http/question.API'; // 실제 위치에 따라 경로 조정
+import { postQuestion } from '../utils/http/QuestionAPI'; // 실제 위치에 따라 경로 조정
 import * as DocumentPicker from 'expo-document-picker';
 
 export default function MyQuestionInputText () {

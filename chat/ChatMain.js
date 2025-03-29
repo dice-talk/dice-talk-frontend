@@ -1,16 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, Pressable, Modal } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { navigateToChat } from '../navigation/navigationUtils';
+import EventModal from './components/EventModal';
+import { postEvent } from '../utils/http/eventAPI';
+import { useChatContext } from '../context/ChatContext';
+import Footer from '../component/Footer';
 
 // 🔹 더미 이미지 임포트 예시
 const bannerImages = [require('../assets/banner/banner_Ex_love.png')]; // 배너 이미지
 
-export default function ChatMain() {
+export default function ChatMain({ memberId }) {
+  const navigation = useNavigation();
+  const { chatRoomInfo, updateChatRoomInfo } = useChatContext();
+  const { chatRoomId, chatPart } = chatRoomInfo;
+  
   const [unreadCount, setUnreadCount] = useState(42);
   const [remainingTime, setRemainingTime] = useState(48 * 60 * 60); // 48시간 = 172800초
+  const [isLoading, setIsLoading] = useState(false);
+  const [showEventModal, setShowEventModal] = useState(false);
+  const [selectedIcon, setSelectedIcon] = useState(null);
+  const [isConfirmed, setIsConfirmed] = useState(false);
+
+  // 선택된 아이콘에 해당하는 사용자의 memberId를 찾는 함수
+  const findSelectedUserMemberId = (iconId) => {
+    const selectedUser = chatPart.find(user => user.iconId === iconId);
+    return selectedUser ? selectedUser.memberId : null;
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setRemainingTime(prev => (prev > 0 ? prev - 1 : 0));
+      setRemainingTime(prev => {
+        const newTime = prev > 0 ? prev - 1 : 0;
+        // 8시간 = 28800초
+        if (newTime <= 28800) {
+          setShowEventModal(true);
+        }
+        return newTime;
+      });
     }, 1000);
     return () => clearInterval(interval);
   }, []);
@@ -20,6 +47,50 @@ export default function ChatMain() {
     const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
     const secs = String(seconds % 60).padStart(2, '0');
     return `${hrs}:${mins}:${secs}`;
+  };
+
+  const handleConfirm = () => {
+    navigateToChat(navigation, 'Chat');
+  };
+
+  const handleEventConfirm = async () => {
+    try {
+      if (!selectedIcon) return;
+      
+      const receiverMemberId = findSelectedUserMemberId(selectedIcon);
+      if (!receiverMemberId) {
+        console.error('선택된 사용자를 찾을 수 없습니다.');
+        return;
+      }
+
+      const response = await postEvent({
+        receiverId: receiverMemberId,
+        senderId: memberId,
+        eventId: 1,
+        chatRoomId: chatRoomId,
+        message: "상대방을 선택했습니다.",
+        roomEventType: "PICK_MESSAGE"
+      });
+      
+      // 이벤트 성공 시 Context 업데이트
+      if (response) {
+        await updateChatRoomInfo({
+          lastEventTime: new Date().toISOString(),
+          lastEventType: "PICK_MESSAGE",
+          selectedReceiverId: receiverMemberId
+        });
+      }
+      
+      setIsConfirmed(true);
+      setTimeout(() => {
+        setShowEventModal(false);
+        setIsConfirmed(false);
+        setSelectedIcon(null);
+      }, 2000);
+      
+    } catch (error) {
+      console.error('이벤트 등록 실패:', error);
+    }
   };
 
   return (
@@ -32,16 +103,17 @@ export default function ChatMain() {
       {/* 🔸 Body */}
       <View style={styles.chatBody}>
         {/* 채팅 배경 영역 */}
-        <View style={styles.chatBackground}>
-          {/* 예시 채팅 메시지 */}
-          <Text style={styles.chatBubble}>안녕하세요! 하늘놀늘 강하늘이에요!</Text>
-        </View>
+
 
         {/* 🔸 남은 시간 모달 */}
         <View style={styles.timerModal}>
           <Text style={styles.modalLabel}>채팅 종료까지</Text>
           <Text style={styles.timerText}>{formatTime(remainingTime)}</Text>
-          <Pressable style={styles.enterButton}>
+          <Pressable 
+            style={[styles.enterButton, isLoading && styles.buttonDisabled]} 
+            onPress={handleConfirm}
+            disabled={isLoading}
+          >
             <Text style={styles.enterButtonText}>입장</Text>
           </Pressable>
 
@@ -52,24 +124,19 @@ export default function ChatMain() {
         </View>
       </View>
 
-      {/* 🔹 Footer */}
-      <View style={styles.footer}>
-        <FooterButton title="Home" Icon={null} onPress={() => {}} />
-        <FooterButton title="History" Icon={null} onPress={() => {}} />
-        <FooterButton title="Chat" Icon={null} onPress={() => {}} />
-        <FooterButton title="Message" Icon={null} onPress={() => {}} />
-        <FooterButton title="Setting" Icon={null} onPress={() => {}} />
-      </View>
-    </View>
-  );
-}
+      {/* Footer 컴포넌트로 교체 */}
+      <Footer />
 
-function FooterButton({ title, Icon, onPress }) {
-  return (
-    <Pressable onPress={onPress} style={styles.footerButton}>
-      {Icon && <Icon width={35} height={35} />}
-      <Text style={styles.footerText}>{title}</Text>
-    </Pressable>
+      <EventModal
+        visible={showEventModal}
+        onClose={() => setShowEventModal(false)}
+        onConfirm={handleEventConfirm}
+        isConfirmed={isConfirmed}
+        selectedIcon={selectedIcon}
+        onSelectIcon={setSelectedIcon}
+        chatRoomId={chatRoomId}
+      />
+    </View>
   );
 }
 
@@ -122,26 +189,6 @@ const styles = StyleSheet.create({
     color: '#888',
     marginBottom: 8,
   },
-  timerModal: {
-    position: 'absolute',
-    top: 100,
-    left: '5%',
-    right: '5%',
-    backgroundColor: '#fff',
-    borderRadius: 24,
-    paddingVertical: 40,
-    paddingHorizontal: 30,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
-  },
-  modalLabel: {
-    fontSize: 20,
-    color: '#888',
-    marginBottom: 12,
-  },
   timerText: {
     fontSize: 48,
     fontFamily: 'Courier',
@@ -188,5 +235,8 @@ const styles = StyleSheet.create({
   footerText: {
     marginTop: 4,
     fontSize: 12,
+  },
+  buttonDisabled: {
+    backgroundColor: '#ccc',
   },
 });
