@@ -1,4 +1,4 @@
-import { BASE_URL } from './Config';
+import { BASE_URL } from './config';
 import { fetchWithAuth } from './AuthContext';
 import { postQuestion, getQuestions } from '../utils/http/QuestionAPI';
 

@@ -6,6 +6,7 @@ import AuthNavigator from './AuthNavigator';
 import MainNavigator from './MainNavigator';
 import ChatNavigator from './ChatNavigator';
 import MyPageNavigator from './MyPageNavigator';
+import HistoryNavigator from './HistoryNavigator';
 
 // 공통 컴포넌트
 import UserCheckScreen from '../screen/UserCheckScreen';
@@ -24,6 +25,9 @@ export default function AppNavigator() {
       
       {/* 채팅 네비게이터 - 채팅 관련 화면들 */}
       <Stack.Screen name='ChatTab' component={ChatNavigator} />
+      
+      {/* 히스토리 네비게이터 - 히스토리 관련 화면들 */}
+      <Stack.Screen name='History' component={HistoryNavigator} />
       
       {/* 마이페이지 네비게이터 - 사용자 관련 화면들 */}
       <Stack.Screen name='MyPageTab' component={MyPageNavigator} />
