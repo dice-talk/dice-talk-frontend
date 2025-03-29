@@ -30,8 +30,6 @@ export default function MainNavigator() {
       <Stack.Screen name='hihihi' component={hihihi} />
       <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} />
 
-      {/* <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} /> */}
-
 
       <Stack.Screen 
         name='DropOutMember' 

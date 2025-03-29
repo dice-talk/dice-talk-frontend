@@ -9,6 +9,7 @@ import { loginDiceTalk } from '../utils/http/EmailAPI';
 import { useEmail } from '../context/EmailContext';
 import { useMemberContext } from '../context/MemberContext';
 import { navigateAfterLogin } from '../navigation/navigationUtils';
+
 import { BASE_URL } from '../utils/http/config';
 import { useAuth } from '../utils/http/AuthContext';
 import BannedModal from '../banned/BannedModal';
@@ -36,6 +37,7 @@ export default function LoginPassword({navigation}) {
     //비밀번호 전송 핸들러 함수
     const handleSendPassword = async () => {
         try {
+
             const result = await loginDiceTalk( email, inputPassword);
             console.log('로그인 성공:', result);
 
@@ -62,14 +64,30 @@ export default function LoginPassword({navigation}) {
             } else {
                 throw new Error('로그인처리 중 오류가 발생하였습니다.');
             } 
+
             
-            if (result.user && result.user.memberId) {
-                updateMemberId(result.user.memberId);
+            // 토큰 저장
+            if (result.token) {
+                await AsyncStorage.setItem('accessToken', result.token);
+                console.log('토큰 저장됨:', result.token);
+            }
+            
+            // memberid (소문자)로 접근
+            if (result.user && result.user.memberid) {
+                console.log('updateMemberId 호출 전');
+                updateMemberId(result.user.memberid);
+                console.log('updateMemberId 호출 후');
+            } else {
+                console.log('memberid가 응답에 없음');
             }
             
         }catch (error) {
                 console.error('로그인 처리 중 오류:', error);
                 Alert.alert('로그인 실패', errMsg);
+
+            console.log('네비게이션 시작 전');
+            navigateAfterLogin(navigation);
+            console.log('네비게이션 완료');
         }
     };
 

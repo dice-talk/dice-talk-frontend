@@ -10,6 +10,14 @@ import LoveGameSelect_02 from "../../assets/icon/profile/love_game_select_02";
 import LoveGameSelect_05 from "../../assets/icon/profile/love_game_select_05";
 import { postEvent } from '../../utils/http/eventAPI';
 import { useMemberContext } from '../../context/MemberContext';
+import { useGroupContext } from '../../context/GroupContext';
+
+
+const DEFAULT_NAMES = {
+  1: "한가로운 하나",
+  2: "세침한 세찌",
+  3: "단호한데 다정한 다오"
+};
 
 export default function EventModal({ 
   visible, 
@@ -20,17 +28,26 @@ export default function EventModal({
   onSelectIcon,
   chatRoomId
 }) {
+
   const { memberId } = useMemberContext();
+  const { groupInfo } = useGroupContext();
 
   const handleIconSelect = async (iconId) => {
     onSelectIcon(iconId);
     
+    // groupInfo에서 선택된 아이콘에 해당하는 참여자 찾기
+    const selectedParticipant = groupInfo.chatParts[iconId - 1];
+    
     const eventData = {
-      receiverId: null,
+      // receiverId: selectedParticipant?.memberId || null,
+      receiverId: 2,
       senderId: memberId,
       eventId: 1,
-      chatRoomId: chatRoomId,
-      message: "상대방을 선택했습니다.",
+      // chatRoomId: chatRoomId,
+      chatRoomId: 1,
+      message: selectedParticipant 
+        ? `${selectedParticipant.nickName}를 선택했습니다.`
+        : `${DEFAULT_NAMES[iconId]}를 선택했습니다.`,
       roomEventType: "PICK_MESSAGE"
     };
 
@@ -38,7 +55,7 @@ export default function EventModal({
       await postEvent(eventData);
       console.log('이벤트 전송 성공:', eventData);
     } catch (error) {
-      console.error('이벤트 전송 실패:', error);
+      console.log('이벤트 전송 실패:', error);
     }
   };
 
@@ -81,7 +98,9 @@ export default function EventModal({
                     : num === 2 ? FriendsGame_02
                     : FriendsGame_05;
 
-                  const name = num === 1 ? "한가로운 하나" : num === 2 ? "세침한 세찌" : "단호한데 다정한 다오";
+                  // GroupContext에서 참가자 정보가 있으면 사용, 없으면 기본 이름 사용
+                  const participant = groupInfo.chatParts[num - 1];
+                  const name = participant?.nickName || DEFAULT_NAMES[num];
 
                   return (
                     <Pressable 

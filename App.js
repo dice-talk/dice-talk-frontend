@@ -5,6 +5,7 @@ import { EmailProvider } from './context/EmailContext';
 import { ChatProvider } from './context/ChatContext';
 import { AuthProvider } from './utils/http/AuthContext';
 import { MemberProvider } from './context/MemberContext';
+import { GroupProvider } from './context/GroupContext';
 import { setupMockAPI } from './utils/mockSetup';
 
 // 네비게이션 구조 가져오기
@@ -21,9 +22,11 @@ export default function App() {
       <MemberProvider>
         <EmailProvider>
           <ChatProvider>
-            <NavigationContainer>
-              <AppNavigator />
-            </NavigationContainer>
+            <GroupProvider>
+              <NavigationContainer>
+                <AppNavigator />
+              </NavigationContainer>
+            </GroupProvider>
           </ChatProvider>
         </EmailProvider>
       </MemberProvider>
