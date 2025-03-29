@@ -18,6 +18,7 @@ import LoginPassword from '../login/LoginPassword';
 import FindEmail from '../login/FindEmail';
 import ReceiveEmali from '../login/ReceiveEmail';
 import ReceivePassword from '../login/ReceivePassword';
+import BannedFatch from '../banned/BannedModal';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,6 +43,7 @@ export default function AuthNavigator() {
       <Stack.Screen name='FindEmail' component={FindEmail} />
       <Stack.Screen name='ReceiveEmail' component={ReceiveEmali} />
       <Stack.Screen name='ReceivePassword' component={ReceivePassword} />
+      <Stack.Screen name='BannedFetch' component={BannedFatch} />
     </Stack.Navigator>
   );
 } 

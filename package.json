@@ -8,9 +8,15 @@
     "ios": "expo start --ios"
   },
   "dependencies": {
+<<<<<<< HEAD
+    "@react-native-async-storage/async-storage": "1.23.1",
+    "@react-native-picker/picker": "^2.9.0",
+    "@react-navigation/native": "^7.0.17",
+=======
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-picker/picker": "^2.11.0",
     "@react-navigation/native": "^7.0.19",
+>>>>>>> 45d3c12e472f313a6f0de7e76e44dddd6f37cbb4
     "@react-navigation/native-stack": "^7.3.1",
     "@react-navigation/stack": "^7.2.3",
     "@stomp/stompjs": "^7.1.0",

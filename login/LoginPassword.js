@@ -9,7 +9,11 @@ import { loginDiceTalk } from '../utils/http/EmailAPI';
 import { useEmail } from '../context/EmailContext';
 import { useMemberContext } from '../context/MemberContext';
 import { navigateAfterLogin } from '../navigation/navigationUtils';
-
+import { BASE_URL } from '../utils/http/config';
+import { useAuth } from '../utils/http/AuthContext';
+import BannedModal from '../banned/BannedModal';
+import cation from '../assets/fire/cation.svg';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginPassword({navigation}) {
     const { email } = useEmail(); // 전역상태로 관리되는 email
@@ -17,6 +21,7 @@ export default function LoginPassword({navigation}) {
     const [inputPassword, setInputPassword] = useState('');
     const [isValid, setIsValid] = useState(false); // 버튼 활성화 비활성화 + 비밀번호가가 유효한지 check
     const [showPassword, setShowPassword] = useState(false);
+    const [showBannedModal, setShowBannedModal] = useState(false); 
 
     const [showModal, setShowModal] = useState(false);
 
@@ -31,20 +36,43 @@ export default function LoginPassword({navigation}) {
     //비밀번호 전송 핸들러 함수
     const handleSendPassword = async () => {
         try {
+            const result = await loginDiceTalk( email, inputPassword);
+            console.log('로그인 성공:', result);
 
-            const result = await loginDiceTalk(email, inputPassword);
-            console.log('서버 응답:', result);
+            // 토큰을 저장
+           // const token = loginResult?.token;
+            const token = AsyncStorage.getItem('accessToken');
+            console.log('토큰:', token)
+            // await AsyncStorage.setItem('accessToken', token);
+
+            const response = await fetch(`${BASE_URL}home`, {
+                method: 'GET',
+                headers: {
+                    Authorization: token,
+                    'Content-Type': 'application/json',
+                },
+            });
+            console.log('응답 상태:', response.status); // 응답 상태 확인
+            console.log('응답 데이터:', await response.json()); 
+
+            if (response.status === 403) {
+                setShowBannedModal(true);
+            } else if (response.status === 200) {
+                navigateAfterLogin('Main');
+            } else {
+                throw new Error('로그인처리 중 오류가 발생하였습니다.');
+            } 
             
             if (result.user && result.user.memberId) {
                 updateMemberId(result.user.memberId);
             }
-
-            navigateAfterLogin(navigation);
-        } catch (error) {
-            const errMsg = error.response?.data?.error || '로그인 실패';
-            Alert.alert('로그인 실패', errMsg);
+            
+        }catch (error) {
+                console.error('로그인 처리 중 오류:', error);
+                Alert.alert('로그인 실패', errMsg);
         }
     };
+
 
     return (
         <>
@@ -110,6 +138,14 @@ export default function LoginPassword({navigation}) {
                 </View>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
+
+        <BannedModal
+            visible={showBannedModal}
+            onClose={() => setShowBannedModal(false)}
+            text="회원 정지 처리되었습니다."
+            SvgComponent={cation}
+            onConfirm={() => navigation.navigate('LendingPage')}
+        />
         </>
     )
 }
