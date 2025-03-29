@@ -62,7 +62,7 @@ export default function AppEntryChecker() {
         visible={isBanned}
         onClose={() => {
           setIsBanned(false);
-          navigation.replace('Login'); // 혹은 앱 종료 처리
+          navigation.replace('LendingPage'); // 혹은 앱 종료 처리
         }}
       />
     </>
