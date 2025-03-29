@@ -28,8 +28,10 @@ export default function HeartVoteModal({ visible, onSelectDice, onClose }) {
 
     const handleSelect = (id, name) => {
         setSelectedId(id);
-        onSelectDice(id, name); // name도 같이 전달달
+        onSelectDice(id, name); // name도 같이 전달
     }
+
+    
 
     return(
         <Modal visible={visible} transparent animationType="fade">
@@ -43,10 +45,14 @@ export default function HeartVoteModal({ visible, onSelectDice, onClose }) {
                         const Icon = isSelected ? SelectedIcon : DefaultIcon;
 
                         return (
+                          <>
                             <Pressable key={id} onPress={() => handleSelect(id)} style={styles.diceItem}>
                                 <Icon width={50} height={50} />
                                 <Text style={styles.diceName}>{name}</Text>
                             </Pressable>
+
+                            <Button title="선택" onPress={() => handleSelect(id)} />
+                            </>
                         );
                     })}    
             </View>
