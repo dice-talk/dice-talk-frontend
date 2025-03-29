@@ -3,6 +3,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import Footer from "../component/Footer";
 
 export default function EditMyInfo({ navigation }) {
+  const handleConfirm = () => {
+    // 여기에 비밀번호 확인 로직을 추가할 수 있습니다.
+    navigation.navigate('EditMyInfoInput');
+  };
+
   return (
     <>
       <View style={styles.container}>
@@ -17,7 +22,7 @@ export default function EditMyInfo({ navigation }) {
           <Text style={[styles.label, { marginTop: 32 }]}>비밀번호 확인</Text>
           <TextInput style={styles.input} placeholder="비밀번호를 입력해주세요." placeholderTextColor="#aaa" secureTextEntry/>
 
-          <Pressable style={styles.button}>
+          <Pressable style={styles.button} onPress={handleConfirm}>
             <LinearGradient colors={["#B28EF8", "#F9A8D4"]} style={styles.gradientButton}>
               <Text style={styles.buttonText}>확인</Text>
             </LinearGradient>

@@ -1,8 +1,9 @@
 import React from "react";
 import { View, Text, Pressable, StyleSheet, Modal } from "react-native";
-import Dice from "../assets/icon/logo/friends_icon.svg";
+import ExFriendsLogo from "../assets/icon/logo/exFriends_icon.svg";
+import ExFriendsLogo2 from "../assets/icon/logo/exFriends_icon2.svg";
 
-export default function DiceFriendsDs({ visible, onClose, onParticipate }) {
+export default function ExFriendsDs({ visible, onClose, onParticipate }) {
   return (
     <Modal
       visible={visible}
@@ -14,27 +15,28 @@ export default function DiceFriendsDs({ visible, onClose, onParticipate }) {
         <View style={styles.container}>
           <View style={styles.content}>
             <View style={{ alignItems: "center" }}>
-              <Dice width={36} height={36} />
+              <View style={styles.logoContainer}>
+                <ExFriendsLogo width={36} height={36} style={styles.tintedLogo} />
+              </View>
               <Pressable onPress={onClose} style={styles.closeButton}>
                 <Text style={styles.closeText}>X</Text>
               </Pressable>
             </View>
-            <Text style={styles.title}>다이스프렌즈</Text>
-            <Text style={styles.subtitle}>게임 규칙</Text>
-            <Text style={styles.description}>
-              다이스 프렌즈에 참여하는 플레이어는 6명 입니다{"\n\n"}
-              다이스 프렌즈는 2일간 진행됩니다.{"\n\n"}
-              24시간 후 단 한명의 플레이어에게 메시지를 보낼 수 있습니다.{"\n"}
-              (단, 발신자의 닉네임은 표시되지 않습니다.)
-            </Text>
+            <Text style={styles.title}>Ex-Friends</Text>
+            <Text style={styles.subtitle}>환승연애</Text>
+            <View style={styles.iconContainer}>
+              <ExFriendsLogo2 width={120} height={120} />
+            </View>
           </View>
-          <View style={styles.buttonRow}>
-            <Pressable style={styles.button} onPress={onParticipate}>
-              <Text style={styles.buttonText}>참여하기</Text>
-            </Pressable>
-            <Pressable style={styles.button} onPress={onClose}>
-              <Text style={styles.buttonText}>창 닫기</Text>
-            </Pressable>
+          <View style={styles.bottomSection}>
+            <Text style={styles.openDateText}>
+              2025. 04. 05일에 open 됩니다!
+            </Text>
+            <View style={styles.buttonRow}>
+              <Pressable style={styles.button} onPress={onClose}>
+                <Text style={styles.buttonText}>창 닫기</Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       </View>
@@ -49,7 +51,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   container: {
-    backgroundColor: "#558EDD",
+    backgroundColor: "#DEC2DB",
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     padding: 20,
@@ -94,13 +96,12 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flexDirection: "row",
-    justifyContent: "space-evenly",
+    justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 20,
-    marginTop: 'auto',
+    paddingVertical: 10,
   },
   button: {
-    backgroundColor: "#BFA7F3",
+    backgroundColor: "#C4A7C1",
     borderWidth: 1,
     borderColor: "#fff",
     borderRadius: 10,
@@ -113,4 +114,26 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
-});
+  logoContainer: {
+    borderRadius: 20,
+  },
+  tintedLogo: {
+    tintColor: '#fff',
+  },
+  iconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 40,
+    flex: 1,
+  },
+  bottomSection: {
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  openDateText: {
+    color: "#fff",
+    fontSize: 18,
+    textAlign: "center",
+    marginBottom: 20,
+  },
+}); 
