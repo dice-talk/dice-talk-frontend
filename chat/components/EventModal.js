@@ -73,7 +73,7 @@ export default function EventModal({
               </Text>
             </>
           )}
-        </View>
+        </View> 
 
         {/* 확인 버튼은 보드 아래 위치 */}
         <Pressable
