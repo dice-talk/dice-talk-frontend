@@ -39,7 +39,7 @@ export default function Chat({ navigation }) {
     return () => {
       leaveRoom();
     };
-  }, [joinRoom, leaveRoom]);
+  }, []);
 
   useEffect(() => {
     if (route.params?.showSidebar) {

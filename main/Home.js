@@ -1,8 +1,10 @@
 import React, { useRef, useState } from "react";
-import { View, StyleSheet, Dimensions, Animated, ScrollView, Text, Image, Pressable, Modal, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Dimensions, Animated, ScrollView, Text, Image, Pressable } from "react-native";
 import { BlurView } from "expo-blur";
 import { useNavigation } from "@react-navigation/native";
-import HeartSignalLogo from "../assets/icon/logo/hsDs.svg"
+import DiceFriendsDs from "./DiceFriendsDs";
+import HeartSignalDs from "./HeartSignalDs";
+import ExFriendsDs from "./ExFriendsDs";
 
 // SVG 테마 컴포넌트
 import ExFriendsTheme from "../assets/theme/exFriendsTheme.svg";
@@ -19,6 +21,23 @@ export default function Home() {
   const scrollX = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation();
   const [heartModalVisible, setHeartModalVisible] = useState(false);
+  const [diceFriendsVisible, setDiceFriendsVisible] = useState(false);
+  const [exModalVisible, setExModalVisible] = useState(false);
+
+  const handleDiceFriendsParticipate = () => {
+    setDiceFriendsVisible(false);
+    navigation.navigate("SelectRegion");
+  };
+
+  const handleHeartSignalParticipate = () => {
+    setHeartModalVisible(false);
+    navigation.navigate("SelectRegion");
+  };
+
+  const handleExFriendsParticipate = () => {
+    setExModalVisible(false);
+    navigation.navigate("SelectRegion");
+  };
 
   // 배너 이미지들
   const bannerImages = [
@@ -38,7 +57,7 @@ export default function Home() {
       {/* 🔹 배너 섹션 */}
       <View style={styles.bannerContainer}>
         <Image
-          source={bannerImages[0]} // 원하는대로 currentIndex 연결 가능
+          source={bannerImages[0]}
           style={styles.bannerImage}
         />
       </View>
@@ -104,9 +123,11 @@ export default function Home() {
                 <Pressable
                   onPress={() => {
                     if (item.id === 0) {
-                      navigation.navigate("DiceFriendsDs");
+                      setDiceFriendsVisible(true);
                     } else if (item.id === 1) {
                       setHeartModalVisible(true);
+                    } else if (item.id === 2) {
+                      setExModalVisible(true);
                     }
                   }}>
                   <BlurView intensity={opacity.__getValue() < 1 ? 60 : 0} style={styles.blurWrapper}>
@@ -120,25 +141,26 @@ export default function Home() {
         </Animated.ScrollView>
       </View>
 
-      {/* Heart Signal Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
+      {/* DiceFriends Modal */}
+      <DiceFriendsDs
+        visible={diceFriendsVisible}
+        onClose={() => setDiceFriendsVisible(false)}
+        onParticipate={handleDiceFriendsParticipate}
+      />
+
+      {/* HeartSignal Modal */}
+      <HeartSignalDs
         visible={heartModalVisible}
-        onRequestClose={() => setHeartModalVisible(false)}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity style={styles.closeButton} onPress={() => setHeartModalVisible(false)}>
-              <Text style={styles.closeButtonText}>X</Text>
-            </TouchableOpacity>
-            <HeartSignalLogo width={100} height={100} />
-            <Text style={styles.modalText}>Join the Heart Signal community!</Text>
-            <Pressable style={styles.joinButton} onPress={() => navigation.navigate("SelectRegion")}>
-              <Text style={styles.joinButtonText}>참여하기</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
+        onClose={() => setHeartModalVisible(false)}
+        onParticipate={handleHeartSignalParticipate}
+      />
+
+      <ExFriendsDs
+        visible={exModalVisible}
+        onClose={() => setExModalVisible(false)}
+        onParticipate={handleExFriendsParticipate}
+      />
+
       <Footer />
     </View>
   );
@@ -182,42 +204,5 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#555",
     textAlign: "center",
-  },
-  // Modal styles
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    width: 300,
-    padding: 20,
-    backgroundColor: "white",
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  closeButton: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-  },
-  closeButtonText: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  modalText: {
-    marginVertical: 20,
-    fontSize: 16,
-    textAlign: "center",
-  },
-  joinButton: {
-    backgroundColor: "#007BFF",
-    padding: 10,
-    borderRadius: 5,
-  },
-  joinButtonText: {
-    color: "white",
-    fontSize: 16,
   },
 });

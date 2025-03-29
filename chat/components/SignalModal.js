@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
-import ArrowBoard03 from "../../assets/event/arrowBoard_03";
+import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 import Love01 from "../../assets/icon/profile/love_01.svg";
 import Love02 from "../../assets/icon/profile/love_02.svg";
 import Signal from "../../assets/event/signal.svg";
@@ -12,8 +11,10 @@ export default function SignalModal({ visible, onClose }) {
     <Pressable style={styles.overlay} onPress={onClose}>
       <View style={{ alignItems: "center" }}>
         <View style={{ width: 520, height: 400, position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
-          <ArrowBoard03 width={520} height={400} />
-
+          <Image 
+            source={require("../../assets/event/board.png")} 
+            style={{ width: 400, height: 280 }}
+          />
           <Pressable onPress={onClose} style={{ position: 'absolute', top: 8, right: 10, zIndex: 1 }}>
             <Text style={{ color: "white", fontSize: 16 }}>X</Text>
           </Pressable>

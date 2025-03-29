@@ -5,6 +5,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MyPage from '../mypage/MyPage';
 import MyInfo from '../mypage/MyInfo';
 import EditMyInfo from '../mypage/EditMyInfo';
+import EditMyInfoInput from '../component/EditMyInfoInput';
+import EditMyInfoClear from '../mypage/EditMyInfoClear';
 import MyQuestion from '../mypage/MyQuestion';
 import MyQuestionDetail from '../mypage/MyQuestionDetail';
 import MyQuestionInputText from '../mypage/MyQuestionInputText';
@@ -23,6 +25,8 @@ export default function MyPageNavigator() {
       <Stack.Screen name='MyPage' component={MyPage} />
       <Stack.Screen name='MyInfo' component={MyInfo} />
       <Stack.Screen name='EditMyInfo' component={EditMyInfo} />
+      <Stack.Screen name='EditMyInfoInput' component={EditMyInfoInput} />
+      <Stack.Screen name='EditMyInfoClear' component={EditMyInfoClear} />
       <Stack.Screen name='MyQuestion' component={MyQuestion} />
       <Stack.Screen name='MyQuestionDetail' component={MyQuestionDetail} />
       <Stack.Screen name='MyQuestionInputText' component={MyQuestionInputText} />
