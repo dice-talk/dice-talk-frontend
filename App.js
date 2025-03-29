@@ -3,8 +3,9 @@ import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { EmailProvider } from './context/EmailContext';
 import { ChatProvider } from './context/ChatContext';
-import { setupMockAPI } from './utils/mockSetup';
 import { AuthProvider } from './utils/http/AuthContext';
+import { MemberProvider } from './context/MemberContext';
+import { setupMockAPI } from './utils/mockSetup';
 
 // 네비게이션 구조 가져오기
 import AppNavigator from './navigation/AppNavigator';
@@ -17,13 +18,15 @@ if (__DEV__) {
 export default function App() { 
   return (
     <AuthProvider>
-      <EmailProvider>
-        <ChatProvider>
-          <NavigationContainer>
-            <AppNavigator />
-          </NavigationContainer>
-        </ChatProvider>
-      </EmailProvider>
+      <MemberProvider>
+        <EmailProvider>
+          <ChatProvider>
+            <NavigationContainer>
+              <AppNavigator />
+            </NavigationContainer>
+          </ChatProvider>
+        </EmailProvider>
+      </MemberProvider>
     </AuthProvider>
   );
 }

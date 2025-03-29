@@ -20,8 +20,18 @@ export default function LendingPage({navigation}) {
                 <LogoText width={300} height={300}/>
             </View>
 
-            <Button title='LetterEventScreen' onPress={() => {navigation.navigate('LetterEventScreen')}} />
             <Button title='DropOutMember' onPress={() => {navigation.navigate('DropOutMember')}} />
+
+
+
+            <Button title='ChatMain' onPress={() => {navigation.navigate('ChatMain')}} />
+
+
+
+
+            <Button title='HeartChat' onPress={() => {navigation.navigate('HeartChat')}}/>
+
+
 
             <View style={styles.bottomContainer}>
                   <LongButton onPress={() => navigation.navigate('LoginEmail')}>

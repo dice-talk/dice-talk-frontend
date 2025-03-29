@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { navigateToChat } from '../navigation/navigationUtils';
 import EventModal from './components/EventModal';
 import { postEvent } from '../utils/http/eventAPI';
-import { useChat } from '../context/ChatContext';
+import { useChatContext } from '../context/ChatContext';
 import Footer from '../component/Footer';
 
 // 🔹 더미 이미지 임포트 예시
@@ -12,7 +12,7 @@ const bannerImages = [require('../assets/banner/banner_Ex_love.png')]; // 배너
 
 export default function ChatMain({ memberId }) {
   const navigation = useNavigation();
-  const { chatRoomInfo, updateChatRoomInfo } = useChat();
+  const { chatRoomInfo, updateChatRoomInfo } = useChatContext();
   const { chatRoomId, chatPart } = chatRoomInfo;
   
   const [unreadCount, setUnreadCount] = useState(42);
@@ -74,23 +74,20 @@ export default function ChatMain({ memberId }) {
       
       // 이벤트 성공 시 Context 업데이트
       if (response) {
-        try {
-          await updateChatRoomInfo({
-            lastEventTime: new Date().toISOString(),
-            lastEventType: "PICK_MESSAGE",
-            selectedReceiverId: receiverMemberId
-          });
-          
-          setIsConfirmed(true);
-          setTimeout(() => {
-            setShowEventModal(false);
-            setIsConfirmed(false);
-            setSelectedIcon(null);
-          }, 2000);
-        } catch (updateError) {
-          console.error('채팅방 정보 업데이트 실패:', updateError);
-        }
+        await updateChatRoomInfo({
+          lastEventTime: new Date().toISOString(),
+          lastEventType: "PICK_MESSAGE",
+          selectedReceiverId: receiverMemberId
+        });
       }
+      
+      setIsConfirmed(true);
+      setTimeout(() => {
+        setShowEventModal(false);
+        setIsConfirmed(false);
+        setSelectedIcon(null);
+      }, 2000);
+      
     } catch (error) {
       console.error('이벤트 등록 실패:', error);
     }
@@ -106,10 +103,7 @@ export default function ChatMain({ memberId }) {
       {/* 🔸 Body */}
       <View style={styles.chatBody}>
         {/* 채팅 배경 영역 */}
-        <View style={styles.chatBackground}>
-          {/* 예시 채팅 메시지 */}
-          <Text style={styles.chatBubble}>안녕하세요! 하늘놀늘 강하늘이에요!</Text>
-        </View>
+
 
         {/* 🔸 남은 시간 모달 */}
         <View style={styles.timerModal}>
@@ -140,6 +134,7 @@ export default function ChatMain({ memberId }) {
         isConfirmed={isConfirmed}
         selectedIcon={selectedIcon}
         onSelectIcon={setSelectedIcon}
+        chatRoomId={chatRoomId}
       />
     </View>
   );

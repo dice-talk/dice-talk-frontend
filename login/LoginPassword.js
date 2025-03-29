@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AlertModal from '../component/AlertModal';
 import { loginDiceTalk } from '../utils/http/EmailAPI';
 import { useEmail } from '../context/EmailContext';
+import { useMemberContext } from '../context/MemberContext';
 import { navigateAfterLogin } from '../navigation/navigationUtils';
 import { BASE_URL } from '../utils/http/config';
 import { useAuth } from '../utils/http/AuthContext';
@@ -16,6 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginPassword({navigation}) {
     const { email } = useEmail(); // 전역상태로 관리되는 email
+    const { updateMemberId } = useMemberContext(); // memberId 관리를 위한 context
     const [inputPassword, setInputPassword] = useState('');
     const [isValid, setIsValid] = useState(false); // 버튼 활성화 비활성화 + 비밀번호가가 유효한지 check
     const [showPassword, setShowPassword] = useState(false);
@@ -33,7 +35,6 @@ export default function LoginPassword({navigation}) {
 
     //비밀번호 전송 핸들러 함수
     const handleSendPassword = async () => {
-        console.log('login 함수 호출됨!')
         try {
             const loginResult = await loginDiceTalk( email, inputPassword);
             console.log('로그인 성공:', loginResult);
