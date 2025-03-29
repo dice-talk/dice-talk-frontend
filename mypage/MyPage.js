@@ -50,41 +50,42 @@ const MyPage = () => {
                     <MyPageButton title="나의 문의 조회" onPress={() => navigation.navigate('MyQuestion')} Icon={MyQuestion}/>
                     <MyPageButton title="DICE 사용 내역" onPress={() => navigation.navigate('MyDice')} Icon={DiceHistory}/>
                     <MyPageButton title="DICE 충전하기" onPress={() => navigation.navigate('ChargeDice')} Icon={DicePayment}/>
+                    
+                    <Pressable 
+                        style={styles.logout}
+                        onPress={async () => {
+                            try {
+                                const token = await AsyncStorage.getItem("accessToken");
+                                await logout(token);
+                                setAuth(null);
+                                navigation.reset({
+                                    index: 0,
+                                    routes: [
+                                        {
+                                            name: 'Auth',
+                                            state: {
+                                                routes: [
+                                                    {
+                                                        name: 'LendingPage'
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                });
+                            } catch (error) {
+                                console.error('로그아웃 실패:', error);
+                                Alert.alert('로그아웃 실패', '로그아웃 처리 중 오류가 발생했습니다.');
+                            }
+                        }}
+                    >
+                        <Logout />
+                        <Text style={{color: '#715E7C', fontSize: 12}}>로그아웃</Text>
+                    </Pressable>
                 </View>
             </View>
 
             <View style={styles.bottomLine} />
-            <Pressable 
-                style={styles.logout}
-                onPress={async () => {
-                    try {
-                        const token = await AsyncStorage.getItem("accessToken");
-                        await logout(token);
-                        setAuth(null);
-                        navigation.reset({
-                            index: 0,
-                            routes: [
-                                {
-                                    name: 'Auth',
-                                    state: {
-                                        routes: [
-                                            {
-                                                name: 'LendingPage'
-                                            }
-                                        ]
-                                    }
-                                }
-                            ]
-                        });
-                    } catch (error) {
-                        console.error('로그아웃 실패:', error);
-                        Alert.alert('로그아웃 실패', '로그아웃 처리 중 오류가 발생했습니다.');
-                    }
-                }}
-            >
-                <Logout />
-                <Text style={{color: '#715E7C', fontSize: 12}}>로그아웃</Text>
-            </Pressable>
             <Footer />
         </>
     )

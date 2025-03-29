@@ -56,51 +56,6 @@ export const verifyCode = async({ email, code }) => {
     throw err;
   }
 }
-  
-// //로그인 요청 함수
-// export const loginDiceTalk = async (email, password) => {
-//   const loginUrl = `${BACKEND_URL}/auth/login`;
-//   console.log('🔐 로그인 요청 URL:', loginUrl);
-
-//   try {
-//     const response = await fetch(loginUrl, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({
-//         username: email,
-//         password: password,
-//       }),
-//     });
-
-//     console.log('📡 응답 상태:', response.status);
-
-//     if (!response.ok) {
-//       const errorData = await response.json();
-//       console.error('❌ 로그인 실패 응답:', errorData);
-//       throw new Error(errorData.message || '로그인 실패');
-//     }
-
-//     // 헤더에서 토큰 추출
-//     const token = response.headers.get('Authorization') || response.headers.get('authorization');
-
-//     if (!token) {
-//       throw new Error('토큰이 응답에 포함되지 있지 않습니다.');
-//     }
-
-//     const userData = await response.json();
-
-//     return {
-//       token,
-//       user: userData,
-//     };
-
-//   } catch (error) {
-//     console.error('❌ 로그인 요청 실패:', error);
-//     throw error;
-//   }
-// };
 
 export const loginDiceTalk = async (email, password) => {
   const loginUrl = `${BACKEND_URL}/auth/login`;

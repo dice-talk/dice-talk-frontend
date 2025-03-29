@@ -22,16 +22,9 @@ export default function LendingPage({navigation}) {
 
             <Button title='DropOutMember' onPress={() => {navigation.navigate('DropOutMember')}} />
 
-
-
             <Button title='ChatMain' onPress={() => {navigation.navigate('ChatMain')}} />
 
-
-
-
             <Button title='HeartChat' onPress={() => {navigation.navigate('HeartChat')}}/>
-
-
 
             <View style={styles.bottomContainer}>
                   <LongButton onPress={() => navigation.navigate('LoginEmail')}>
