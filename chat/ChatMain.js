@@ -134,6 +134,7 @@ export default function ChatMain({ memberId }) {
         isConfirmed={isConfirmed}
         selectedIcon={selectedIcon}
         onSelectIcon={setSelectedIcon}
+        chatRoomId={chatRoomId}
       />
     </View>
   );
