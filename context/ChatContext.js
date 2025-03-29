@@ -16,6 +16,7 @@ const PREDEFINED_NICKNAMES = ['하나', '두리', '세찌', '네몽', '다오', 
 
 const ChatContext = createContext();
 
+
 export const ChatProvider = ({ children }) => {
   const [currentRoomMessages, setCurrentRoomMessages] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
