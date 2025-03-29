@@ -20,7 +20,6 @@ export default function LendingPage({navigation}) {
                 <LogoText width={300} height={300}/>
             </View>
 
-            <Button title='LetterEventScreen' onPress={() => {navigation.navigate('LetterEventScreen')}} />
             <Button title='DropOutMember' onPress={() => {navigation.navigate('DropOutMember')}} />
 
             <View style={styles.bottomContainer}>
