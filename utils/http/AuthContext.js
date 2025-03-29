@@ -64,40 +64,7 @@ export const AuthProvider = ({ children }) => {
     syncStorage();
   }, [auth]);
 
-  // axios 인스턴스 생성 (일반 API 담당)
-  const api = axios.create({
-    // 기본 URL 설정
-    baseURL: "http://172.30.1.17:8080",
-    // 브라우저가 쿠키(세션 정보 등)를 요청에 포함하도록 설정
-    withCredentials: true,
-  });
-
-  // 설정해둔 axios 인스턴스로 나가는 요청을 가로챈다
-  api.interceptors.request.use((config) => {
-    // authRef의 현재 값이 accessToken을 포함하고있다면
-    if (authRef.current?.accessToken) {
-      // 헤더의 "authorization" 필드를 추가하여 Bearer 토큰을 포함시킴
-      config.headers["authorization"] = `Bearer ${authRef.current.accessToken}`;
-    }
-    // 변경된 설정을 반환하여 요청을 계속 진행
-    return config;
-    // 요청 설정 중 에러가 발생하면, 그대로 거부(Promise.reject)하여 오류를 반환
-  }, (error) => Promise.reject(error));
-
-  // axios 인스턴스 생성 (토큰 재발급 요청 담당)
-  const refreshApi = axios.create({
-    baseURL: "http://172.30.1.17:8080",
-    withCredentials: true,
-  });
-
-  // 현재 토큰이 갱신 중인지 여부를 나타내는 플래그 변수
-  let isRefreshing = false;
-  // 토큰 갱신이 실패한 요청을 저장할 큐 (배열)
-  // 나중에 새 토큰이 생성되면 이 큐에 있는 요청을 다시 실행할 수 있도록 한다.
-  let failedQueue = [];
-// 요청이 실패했을때 저장된 요청을 다시 처리하는 함수
-// error와 새로운 token을 받는 processQueue 생성
-
+  // 실패한 요청 큐 처리 함수
   const processQueue = (error, token = null) => {
     failedQueue.forEach(prom => {
       if (error) {
