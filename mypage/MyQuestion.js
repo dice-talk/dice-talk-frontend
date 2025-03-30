@@ -85,7 +85,7 @@ export default function MyQuestion({ navigation }) {
               key={q.questionId}
               id={q.questionId}
               title={q.title}
-              date={q.createdAt}
+              createdAt={q.createdAt}
               isAnswered={
                 q.question_status === 'QUESTION_ANSWERED' || q.isAnswered
               }
