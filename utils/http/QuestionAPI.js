@@ -2,8 +2,6 @@
 import { BASE_URL } from "./config";
 import { fetchWithAuth } from "./fetchWithAuth";
 
-
-
 // fetch로로 호출 함수 delete
 export const deleteMyQuestion = async (questionId, token) => {
   try {
@@ -23,26 +21,21 @@ export const deleteMyQuestion = async (questionId, token) => {
 };
 
 // 내 문의 조회
-export const getMyQuestions = async (memberId, page, size = 4) => {
+export const getMyQuestions = async (memberId, page) => {
   try {
-    // URLSearchParams를 사용하여 쿼리 파라미터 생성
-    const params = new URLSearchParams({
-      page: page,
-      size: size
-    });
-
-
-    const response = await fetchWithAuth(`questions/my-questions/${memberId}?page=${page}&size=${size}`, {
+    console.log(memberId, page);
+    const response = await fetchWithAuth(`questions/my-questions/${memberId}?page=${page}&size=4`, {
       method: 'GET',
     });
     console.log(
       '요청 URL:',
-      `${BASE_URL}my-questions/${memberId}?page=${page}&size=${size}`,
+      `${BASE_URL}my-questions/${memberId}?page=${page}&size=4`,
     );
+    console.log(response);
 
-    if (!response.ok) {
-      throw new Error(`문의 조회 실패: ${response.status}`);
-    }
+    // if (!response.ok) {
+    //   throw new Error(`문의 조회 실패: ${response.status}`);
+    // }
 
     const data = await response.json();
     console.log('내 문의 목록:', data);

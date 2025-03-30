@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, Pressable, Modal, Button } from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable, Modal, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { navigateToChat } from '../navigation/navigationUtils';
 import EventModal from './components/EventModal';
 import { usePostEvent } from '../utils/http/eventAPI';
-import { useChatContext } from '../context/ChatContext';
 import Footer from '../component/Footer';
 
 // 🔹 더미 이미지 임포트 예시
@@ -16,6 +15,7 @@ export default function ChatMain({ memberId }) {
   const { chatRoomInfo, updateChatRoomInfo } = useChatContext();
   const chatRoomId = chatRoomInfo?.chatRoomId;
   const chatPart = chatRoomInfo?.chatPart || [];
+
   
   const [unreadCount, setUnreadCount] = useState(42);
   const [remainingTime, setRemainingTime] = useState(48 * 60 * 60); // 48시간 = 172800초
@@ -26,7 +26,7 @@ export default function ChatMain({ memberId }) {
 
   // 선택된 아이콘에 해당하는 사용자의 memberId를 찾는 함수
   const findSelectedUserMemberId = (iconId) => {
-    const selectedUser = chatPart.find(user => user.iconId === iconId);
+    const selectedUser = chatRoomInfo.chatPart.find(user => user.iconId === iconId);
     return selectedUser ? selectedUser.memberId : null;
   };
 
@@ -70,7 +70,7 @@ export default function ChatMain({ memberId }) {
       
       const receiverMemberId = findSelectedUserMemberId(selectedIcon);
       if (!receiverMemberId) {
-        console.error('선택된 사용자를 찾을 수 없습니다.');
+        Alert.alert('오류', '선택된 사용자를 찾을 수 없습니다.');
         return;
       }
 
@@ -78,18 +78,18 @@ export default function ChatMain({ memberId }) {
         receiverId: receiverMemberId,
         senderId: memberId,
         eventId: 1,
-        chatRoomId: chatRoomId,
+        chatRoomId: chatRoomInfo.chatRoomId,
         message: "상대방을 선택했습니다.",
         roomEventType: "PICK_MESSAGE"
       });
       
-      // 이벤트 성공 시 Context 업데이트
       if (response) {
-        await updateChatRoomInfo({
+        setChatRoomInfo(prev => ({
+          ...prev,
           lastEventTime: new Date().toISOString(),
           lastEventType: "PICK_MESSAGE",
           selectedReceiverId: receiverMemberId
-        });
+        }));
       }
       
       setIsConfirmed(true);
@@ -100,7 +100,7 @@ export default function ChatMain({ memberId }) {
       }, 2000);
       
     } catch (error) {
-      console.error('이벤트 등록 실패:', error);
+      Alert.alert('오류', '이벤트 등록에 실패했습니다.');
     }
   };
 
@@ -145,7 +145,7 @@ export default function ChatMain({ memberId }) {
         isConfirmed={isConfirmed}
         selectedIcon={selectedIcon}
         onSelectIcon={setSelectedIcon}
-        chatRoomId={chatRoomId}
+        chatRoomId={chatRoomInfo.chatRoomId}
       />
     </View>
   );

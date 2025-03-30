@@ -1,5 +1,3 @@
-
-
 export const createTheme = async (theme) => {
   try {
     const response = await fetchWithAuth('themes', {
@@ -15,10 +13,8 @@ export const createTheme = async (theme) => {
     }
 
     const data = await response.json();
-    console.log('✅ 테마 등록 성공:', data);
     return data;    
   } catch (error) {
-    console.error('❌ 테마 등록 에러:', error);
     throw error;
   }
 };

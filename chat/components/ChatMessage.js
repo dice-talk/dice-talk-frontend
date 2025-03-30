@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 export default function ChatMessage({ message, type, sender, icon: Icon, time }) {
+  
   return (
     <View style={type === "left" ? styles.leftMessageBlock : styles.rightMessageBlock}>
       {type === "left" && (

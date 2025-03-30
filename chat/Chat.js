@@ -29,9 +29,6 @@ import EventModal from './components/EventModal';
 import ResultModal from './components/ResultModal';
 import SignalModal from './components/SignalModal';
 
-import { useChat } from '../context/ChatContext';
-
-
 export default function Chat({ navigation }) {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [exitModalVisible, setExitModalVisible] = useState(false);
@@ -40,41 +37,13 @@ export default function Chat({ navigation }) {
   const [selectedGameIcon, setSelectedGameIcon] = useState(null);
   const [resultModalVisible, setResultModalVisible] = useState(false);
   const [thirdModalVisible, setThirdModalVisible] = useState(false);
+  const [messages, setMessages] = useState([]);
 
   const slideAnim = useRef(
     new Animated.Value(Dimensions.get('window').width),
   ).current;
   const scrollViewRef = useRef(null);
 
-  const {
-    currentRoomMessages,
-    isConnected,
-    sendMessage,
-    leaveRoom,
-    nickname,
-    currentRoom,
-  } = useChat();
-
-  // 토큰 확인 및 로그인 상태 체크
-  useEffect(() => {
-    const checkAuth = async () => {
-      const token = await AsyncStorage.getItem('accessToken');
-      if (!token) {
-        navigation.replace('Login');
-      }
-    };
-
-    checkAuth();
-  }, [navigation]);
-
-  // 채팅방이 없으면 대기열 화면으로 이동
-  useEffect(() => {
-    if (!currentRoom) {
-      navigation.replace('Queue');
-    }
-  }, [currentRoom, navigation]);
-
-  // 사이드바 애니메이션
   useEffect(() => {
     Animated.timing(slideAnim, {
       toValue: sidebarVisible
@@ -85,16 +54,29 @@ export default function Chat({ navigation }) {
     }).start();
   }, [sidebarVisible, slideAnim]);
 
-  // 메시지가 추가될 때마다 스크롤 아래로 이동
   useEffect(() => {
-    if (currentRoomMessages.length > 0) {
+    if (messages.length > 0) {
       scrollViewRef.current?.scrollToEnd({ animated: true });
     }
-  }, [currentRoomMessages]);
+  }, [messages]);
 
-  // const handleSendMessage = (messageText) => {
-  //   sendMessage(messageText);
-  // };
+  const handleSendMessage = async (messageText) => {
+    if (!messageText.trim()) return;
+    
+    try {
+      const newMessage = {
+        id: `local_${Date.now()}`,
+        content: messageText,
+        sender: 'current_user',
+        timestamp: new Date().toISOString(),
+      };
+      
+      setMessages(prev => [...prev, newMessage]);
+      
+    } catch (error) {
+      Alert.alert('오류', '메시지 전송에 실패했습니다.');
+    }
+  };
 
   const handleEventConfirm = () => {
     setEventModalVisible(false);
@@ -112,22 +94,9 @@ export default function Chat({ navigation }) {
   };
 
   const handleExitConfirm = () => {
-    leaveRoom();
     setExitModalVisible(false);
     navigation.replace('Queue');
   };
-
-  const handleSendMessage = async (message) => {
-    if (message.trim() && chatRoomInfo.chatRoomId) {
-      const newMessage = {
-        content: message,
-        sender: 'current_user',
-        timestamp: new Date().toISOString(),
-      };
-      await sendMessage(newMessage);
-    }
-  };
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -135,8 +104,6 @@ export default function Chat({ navigation }) {
           title='DICETALK'
           onBack={handleBack}
           onToggleSidebar={() => setSidebarVisible(!sidebarVisible)}
-          isConnected={isConnected}
-          nickname={nickname}
         />
 
         <ScrollView
@@ -147,14 +114,13 @@ export default function Chat({ navigation }) {
             scrollViewRef.current?.scrollToEnd({ animated: true })
           }
         >
-          {currentRoomMessages.length === 0 && (
+          {messages.length === 0 && (
             <View style={styles.emptyChat}>
               <Text style={styles.emptyChatText}>대화를 시작해보세요!</Text>
             </View>
           )}
 
-          {currentRoomMessages.map((msg, index) => (
-
+          {messages.map((msg, index) => (
             <ChatMessage
               key={msg.id || index}
               message={msg.content}

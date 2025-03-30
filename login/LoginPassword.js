@@ -161,9 +161,7 @@ const styles = StyleSheet.create({
     titleText: {
         marginBottom: 16,
     },
-    // button: {
-    //     opacity: 1
-    // },
+  
     disabled: { // 버튼 비활성화 상태이 때 투명도 적용
         opacity: 0.5,
     },

@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { EmailProvider } from './context/EmailContext';
-import { ChatProvider } from './context/ChatContext';
 import { AuthProvider } from './utils/http/AuthContext';
 import { MemberProvider } from './context/MemberContext';
 import { GroupProvider } from './context/GroupContext';

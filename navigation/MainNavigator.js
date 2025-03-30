@@ -10,15 +10,12 @@ import DiceFriendsDs from '../main/DiceFriendsDs';
 import hihihi from '../main/hihihi';
 //import LetterEventScreen from '../loveEvent/LetterEventScreen';
 
+
 import DropOutMember from '../plus/DropOutMember';
 import CheckDropOutMember from '../plus/CheckDropOutMember';
 import LendingPage from '../signUp/LendingPage';
 
-
-
 const Stack = createStackNavigator();
-
-
 
 export default function MainNavigator() {
   return (
@@ -29,8 +26,6 @@ export default function MainNavigator() {
       <Stack.Screen name='DiceFriendsDs' component={DiceFriendsDs} />
       <Stack.Screen name='hihihi' component={hihihi} />
       {/* <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} /> */}
-
-
       <Stack.Screen 
         name='DropOutMember' 
         component={DropOutMember}

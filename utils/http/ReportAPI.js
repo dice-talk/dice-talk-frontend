@@ -13,10 +13,8 @@ export const postReport = async (report) => {
     }
 
     const data = await response.json();
-    console.log('📌 신고 등록:', data);
     return data;
   } catch (error) {
-    console.error('❌ 신고 등록 에러:', error);
     throw error;
   }
 };
@@ -33,10 +31,8 @@ export const getReportDetail = async (reportId) => {
     }
 
     const data = await response.json();
-    console.log('📌 신고 상세 조회:', data);
     return data;
   } catch (error) {
-    console.error('❌ 신고 상세 조회 에러:', error);
     throw error;
   }
 };
@@ -53,10 +49,8 @@ export const getReportList = async (page, size) => {
     }
 
     const data = await response.json();
-    console.log('📌 신고 전체 조회:', data);
     return data;
   } catch (error) {
-    console.error('❌ 신고 전체 조회 에러:', error);
     throw error;
   }
 };
@@ -73,10 +67,8 @@ export const deleteReport = async (reportId) => {
     }
 
     const data = await response.json();
-    console.log('📌 신고 삭제:', data);
     return data;
   } catch (error) {
-    console.error('❌ 신고 삭제 에러:', error);
     throw error;
   }
 };

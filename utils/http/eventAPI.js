@@ -3,7 +3,6 @@ import { useAuth } from '../http/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 채팅방 이벤트 등록
-
 export const usePostEvent = () => {
   const {fetchWithAuth} = useAuth();
 
