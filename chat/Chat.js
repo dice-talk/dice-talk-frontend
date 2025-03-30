@@ -124,7 +124,7 @@ export default function Chat({ navigation }) {
         sender: 'current_user',
         timestamp: new Date().toISOString(),
       };
-      await addMessage(newMessage);
+      await sendMessage(newMessage);
     }
   };
 

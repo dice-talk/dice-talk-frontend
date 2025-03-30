@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import MyQuestionDetail from './MyQuestionDetail'
 import { useNavigation } from '@react-navigation/native';
 // 제목, 날짜, 답변 상태 받기
-export default function QuestionItem({ id, title, date, isAnswered }) {
+export default function QuestionItem({ id, title, createdAt, isAnswered }) {
     const navigation = useNavigation();
 
     function handlePress() {
@@ -13,17 +13,17 @@ export default function QuestionItem({ id, title, date, isAnswered }) {
 
   return (
     <TouchableOpacity onPress={handlePress}>
-        <View style={styles.container}>
+      <View style={styles.container}>
         <Text style={styles.title}>[Title] {title}</Text>
         <View style={styles.row}>
-            <Text style={styles.date}>등록일 : {date}</Text>
-            {isAnswered && (
+          <Text style={styles.date}>등록일 : {createdAt}</Text>
+          {isAnswered && (
             <View style={styles.badge}>
-                <Text style={styles.badgeText}>답변완료</Text>
+              <Text style={styles.badgeText}>답변완료</Text>
             </View>
-            )}
+          )}
         </View>
-        </View>
+      </View>
     </TouchableOpacity>
   );
 }

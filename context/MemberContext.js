@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const MemberContext = createContext();
 
@@ -13,22 +14,29 @@ export function useMemberContext() {
 export function MemberProvider({ children }) {
   const [memberId, setMemberId] = useState(null);
 
-  const updateMemberId = (id) => {
-    const numericId = Number(id);
-    setMemberId(numericId);
-    console.log('현재 저장된 memberId:', numericId);
+  useEffect(() => {
+    const loadMemberId = async () => {
+      const storedId = await AsyncStorage.getItem('memberId');
+      if(storedId) setMemberId(Number(storedId));
+    };
+    loadMemberId();
+  }, []);
+
+  const updateMemberId = async (id) => {
+    await AsyncStorage.setItem('memberId', String(id));
+    setMemberId(id);
   };
 
-  const clearMemberId = () => {
-    setMemberId(null);
-  };
+  // const clearMemberId = () => {
+  //   setMemberId(null);
+  // };
 
   return (
     <MemberContext.Provider 
       value={{
         memberId,
-        updateMemberId,
-        clearMemberId
+        updateMemberId
+        // clearMemberId
       }}
     >
       {children}
