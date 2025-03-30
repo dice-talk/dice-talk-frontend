@@ -8,6 +8,7 @@ import { getMyQuestions } from "../utils/http/QuestionAPI";
 import Pagination from "../component/Pagination";
 import MyQuestionInputText from "./MyQuestionInputText";
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function Button({ title, onPress }) {
   return (
@@ -28,22 +29,24 @@ export default function MyQuestion({ navigation }) {
     setCurrentPage(page);
   };
   
-  const memberId = 123; // 실제 ID로 교체
-  const page = 1;
 
   useEffect(() => {
     const fetchQuestions = async () => {
+      const memberId = await AsyncStorage.getItem('memberId');
       const response = await getMyQuestions(memberId, currentPage);
   
       if (response && response.data) {
+        const pageInfo = response.pageInfo;
+
         // 총 페이지 수 계산을 위해 전체 데이터 길이를 넘겨주는 방법 (가짜 API니까 총 개수를 직접 처리해줘야 함)
-        const totalCount = 70; // 실제로는 백엔드에서 총 개수 넘겨주는 게 이상적
+        const totalCount = pageInfo.totalElements; // 실제로는 백엔드에서 총 개수 넘겨주는 게 이상적
         const size = 4;
-        setTotalPages(Math.ceil(totalCount / size));
+        setTotalPages(pageInfo.totalPages);
   
         const sorted = response.data.sort((a, b) => {
           return new Date(b.createAt || b.date) - new Date(a.createAt || a.date);
         });
+        console.log(sorted);
         setQuestions(sorted);
       }
     };
@@ -54,32 +57,46 @@ export default function MyQuestion({ navigation }) {
   return (
     <>
       <View style={styles.container}>
-        <LinearGradient colors={["#D7C0FA", "#F8B4F1"]} style={styles.backgroundShape}/>
-          <View style={styles.profileContainer}>
-            <Text style={{fontSize: 25, color: '#715E7C', bottom: 30}}>나의 문의</Text>
-            <FriendIcon width={90} height={90}/>
-            <Text style={styles.userName}>새침한 세찌</Text>
-            <View style={styles.separator} />
-            
-            <View style={styles.buttonContainer}>
-              <Button title={"1:1 문의글 작성"} onPress={() => navigation.navigate('MyQuestionInputText')} />
-            </View>
+        <LinearGradient
+          colors={['#D7C0FA', '#F8B4F1']}
+          style={styles.backgroundShape}
+        />
+        <View style={styles.profileContainer}>
+          <Text style={{ fontSize: 25, color: '#715E7C', bottom: 30 }}>
+            나의 문의
+          </Text>
+          <FriendIcon width={90} height={90} />
+          <Text style={styles.userName}>새침한 세찌</Text>
+          <View style={styles.separator} />
+
+          <View style={styles.buttonContainer}>
+            <Button
+              title={'1:1 문의글 작성'}
+              onPress={() => navigation.navigate('MyQuestionInputText')}
+            />
           </View>
+        </View>
       </View>
       <View style={{ flex: 1, backgroundColor: 'white' }}>
         <ScrollView style={{ paddingTop: 10, marginBottom: 60 }}>
-          {questions.map(q => (
+          {questions.map((q) => (
             <QuestionItem
-              key={q.id}
-              id={q.id}
+              key={q.questionId}
+              id={q.questionId}
               title={q.title}
-              date={q.createAt || q.date}
-              isAnswered={q.question_status === 'QUESTION_ANSWERED' || q.isAnswered}
+              date={q.createdAt}
+              isAnswered={
+                q.question_status === 'QUESTION_ANSWERED' || q.isAnswered
+              }
             />
           ))}
         </ScrollView>
         <View style={{ position: 'absolute', bottom: 80, width: '100%' }}>
-          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange}/>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </View>
       </View>
       <Footer />
