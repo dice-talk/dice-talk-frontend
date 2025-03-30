@@ -1,10 +1,6 @@
 
-import { fetchWithAuth } from "./AuthContext";
-
 import { BASE_URL } from "./config";
 import { fetchWithAuth } from "./fetchWithAuth";
-
-
 
 // fetch로로 호출 함수 delete
 export const deleteMyQuestion = async (questionId, token) => {
@@ -25,26 +21,21 @@ export const deleteMyQuestion = async (questionId, token) => {
 };
 
 // 내 문의 조회
-export const getMyQuestions = async (memberId, page, size = 4) => {
+export const getMyQuestions = async (memberId, page) => {
   try {
-    // URLSearchParams를 사용하여 쿼리 파라미터 생성
-    const params = new URLSearchParams({
-      page: page,
-      size: size
-    });
-
-
-    const response = await fetchWithAuth(`questions/my-questions/${memberId}?page=${page}&size=${size}`, {
+    console.log(memberId, page);
+    const response = await fetchWithAuth(`questions/my-questions/${memberId}?page=${page}&size=4`, {
       method: 'GET',
     });
     console.log(
       '요청 URL:',
-      `${BASE_URL}my-questions/${memberId}?page=${page}&size=${size}`,
+      `${BASE_URL}my-questions/${memberId}?page=${page}&size=4`,
     );
+    console.log(response);
 
-    if (!response.ok) {
-      throw new Error(`문의 조회 실패: ${response.status}`);
-    }
+    // if (!response.ok) {
+    //   throw new Error(`문의 조회 실패: ${response.status}`);
+    // }
 
     const data = await response.json();
     console.log('내 문의 목록:', data);
@@ -81,7 +72,7 @@ export const createMyQuestion = async (questionData) => {
     const response = await fetchWithAuth(`questions`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json', // 명시적으로 설정
       },
       body: JSON.stringify(questionData),
     });
@@ -91,8 +82,10 @@ export const createMyQuestion = async (questionData) => {
     }
 
     const data = await response.json();
+    console.log('문의 등록 완료:', data);
     return data;
   } catch (error) {
+    console.error('문의 등록 에러:', error);
     throw error;
   }
 };
@@ -174,12 +167,14 @@ export const getQuestion = async (questionId) => {
 
     if (!response.ok) {
       const errorData = await response.json();
+      console.error('질문 조회 실패:', errorData);
       throw new Error(errorData.error || '질문 조회 실패');
     }
 
     const data = await response.json();
     return data;
   } catch (err) {
+    console.error('질문 조회 실패:', err.message);
     throw err;
   }
 };
@@ -214,12 +209,14 @@ export const deleteQuestion = async (questionId) => {
 
     if (!response.noContent) {
       const errorData = await response.json();
+      console.error('질문 삭제 실패:', errorData);
       throw new Error(errorData.error || '질문 삭제 실패');
     }
 
     const data = await response.json();
     return data;
   } catch (err) {
+    console.error('질문 삭제 실패:', err.message);
     throw err;
   }
 };

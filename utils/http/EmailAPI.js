@@ -2,29 +2,35 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BASE_URL } from "./config";
 
 export const sendEmail = async (email) => {
-  try {
-    const response = await fetch(`${BASE_URL}auth/email`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({email})
-    });
+  
+      try {
+        console.log(email);
+        const response = await fetch(`${BASE_URL}auth/email`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({email})
+        });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || '이메일 전송 실패');
-    }
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('이메일 전송 실패:', errorData);
+        throw new Error(errorData.error || '이메일 전송 실패');
+      }
 
-    const data = await response.json();
-    return data;
-  } catch (err) {
-    throw err;
+      const data = await response.json();
+      return data;
+    } catch (err) {
+      console.error('이메일 전송 실패:', err.message);
+      throw err;
   }
 };
 
+
 // 회원가입 - 인증번호 검증
 export const verifyCode = async({ email, code }) => {
+    //console.log('요청보냄!', {email, code});
     try { const response = await fetch(`${BASE_URL}auth/verify-code`, {
       method: 'POST',
       headers: {
@@ -41,6 +47,7 @@ export const verifyCode = async({ email, code }) => {
     const data = await response.json();
     return data;
   } catch (err) {
+    console.error('인증번호 검증 실패:', err.message);
     throw err;
   }
 }
@@ -48,6 +55,7 @@ export const verifyCode = async({ email, code }) => {
 
 export const loginDiceTalk = async (email, password) => {
   const loginUrl = `${BASE_URL}auth/login`;
+  console.log('🔐 로그인 요청 URL:', loginUrl);
 
   try {
     const response = await fetch(loginUrl, {
@@ -61,6 +69,9 @@ export const loginDiceTalk = async (email, password) => {
       }),
     });
 
+    // 헤더에서 토큰 추출 (대소문자 통일)
+    const token = response.headers.get('Authorization')?.replace('Bearer ', '') || response.headers.get('authorization')?.replace('Bearer ', '');
+
     // 바디에서 memberId 추출
     const responseData = await response.json();
     console.log('리스폰스 데이터 : ', responseData)
@@ -72,34 +83,9 @@ export const loginDiceTalk = async (email, password) => {
       ['memberId', String(memberId)]
     ]);
 
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || '로그인 실패');
-    }
-
-    const responseText = await response.text();
-    
-    let userData;
-    try {
-      userData = responseText ? JSON.parse(responseText) : {};
-    } catch (parseError) {
-      userData = {};
-    }
-
-    const token = response.headers.get('Authorization') || response.headers.get('authorization');
-
-    if (!token) {
-      throw new Error('토큰이 응답에 포함되지 있지 않습니다.');
-    }
-
-    return {
-      token,
-      user: userData,
-    };
-
-  } catch (error) {
-
+    return { token, memberId };
+  } catch(error){
+    console.error('❌ 로그인 요청 실패:', error);
     throw error;
   }
 };
@@ -122,6 +108,7 @@ export const recoverEmail = async (txId) => {
     const data = await response.json(); // 응답 예: { email: "user@gmail.com" }
     return data;
   } catch (error) {
+    console.error('이메일 찾기 실패:', error);
     throw error;
   }
 };
@@ -145,6 +132,7 @@ export const recoverPassword = async ({ email, txId }) => {
     const data = await response.json();
     return data;
   } catch (error) {
+    console.error('패스워드 찾기 에러:', error);
     throw error;
   }
 };
@@ -169,6 +157,7 @@ export const resettingPassword = async ({ email, newPassword, memberId }) => {
     const data = await response.json();
     return data;
   } catch (error) {
+    console.error('비밀번호 재설정 에러:', error);
     throw error;
   }
 };
@@ -182,15 +171,18 @@ export const logout = async (token) => {
         'Authorization' : `Bearer ${token}`,
         'Content-Type' : 'application/json', 
       },
-      body: null,
+      body: null, // 요청 바디 없음
     });
     if (!response.ok) {
       const errorData = await response.json();
+      console.error('로그아웃 실패:', errorData);
       throw new Error(errorData.error || '로그아웃 실패');
     }
     const data = await response.json();
+    console.log('로그아웃 성공:', data);
     return data;
   } catch (err) {
+    console.error('로그아웃 요청 중 에러:', err.message);
     throw err;
   }
 };

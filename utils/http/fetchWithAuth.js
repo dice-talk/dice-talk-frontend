@@ -15,37 +15,15 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
     .replace(/:member-id/gi, memberId);
   
   try {
-    const token = await AsyncStorage.getItem('accessToken');
-    
-    if (!token) {
-      throw new Error('인증 토큰이 없습니다.');
-    }
-
-    const authToken = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
-
-    const mergedOptions = {
+    const response = await fetch(`${BASE_URL}${parsedEndpoint}`, {
       ...options,
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': authToken,
-
+        Authorization: `Bearer ${token}`,
         ...options.headers,
       },
-    };
-    
-    if (mergedOptions.body && typeof mergedOptions.body === 'object') {
-      mergedOptions.body = JSON.stringify(mergedOptions.body);
-    }
+    });
 
-    const response = await fetch(`${BASE_URL}${endpoint}`, mergedOptions);
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ message: '요청 실패' }));
-      throw new Error(errorData.message || `HTTP Error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
+    return response;
 
   } catch (error) {
     throw error;
