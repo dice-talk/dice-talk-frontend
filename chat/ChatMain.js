@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, Pressable, Modal } from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable, Modal, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { navigateToChat } from '../navigation/navigationUtils';
 import EventModal from './components/EventModal';
@@ -34,6 +34,7 @@ export default function ChatMain({ memberId }) {
     return (
       <View style={styles.container}>
         <Text>채팅방 정보를 불러오는 중입니다...</Text>
+        <Button title='결과보기'/>
       </View>
     )
   }
