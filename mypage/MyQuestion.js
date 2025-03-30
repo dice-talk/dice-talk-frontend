@@ -33,17 +33,19 @@ export default function MyQuestion({ navigation }) {
 
   useEffect(() => {
     const fetchQuestions = async () => {
+      const memberId = await AsyncStorage.getItem('memberId');
       const response = await getMyQuestions(memberId, currentPage);
   
       if (response && response.data) {
         // 총 페이지 수 계산을 위해 전체 데이터 길이를 넘겨주는 방법 (가짜 API니까 총 개수를 직접 처리해줘야 함)
         const totalCount = 70; // 실제로는 백엔드에서 총 개수 넘겨주는 게 이상적
         const size = 4;
-        setTotalPages(Math.ceil(totalCount / size));
+        setTotalPages(pageInfo.totalElements);
   
         const sorted = response.data.sort((a, b) => {
           return new Date(b.createAt || b.date) - new Date(a.createAt || a.date);
         });
+        console.log('sorted:', sorted);
         setQuestions(sorted);
       }
     };

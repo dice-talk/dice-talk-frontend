@@ -16,7 +16,13 @@ export const usePostEvent = () => {
         },
         body: JSON.stringify(eventData)
       })  
-      return await response.json();
+
+      if(!response.ok) {
+        throw new Error(`Http error! status: ${response.status}`)
+      } 
+
+      const text = await response.text();
+      return text ? JSON.parse(text) : {};
     } catch (error) {
       console.error('이벤트 등록 실패:', error);
       throw error;

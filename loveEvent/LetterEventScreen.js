@@ -22,17 +22,15 @@ export default function LetterEventScreen() {
         console.log('보낸 편지 내용:', text);
         try {
             const eventPayload = {
-                receiverId,
-                senderId,
-                eventId,
-                chatRoomId,
+                receiverId : 2,
+                senderId : 1,
+                eventId : 2,
+                chatRoomId : 5,
                 message: text,
                 roomEventType: 'PICK_MESSAGE',
             };
             console.log('[HANDLE SEND] Payload:', eventPayload);
             const result = await postEvent(eventPayload);
-            console.log('이벤트 전송 결과:', result);
-
 
         } catch (error) {
             console.error('이벤트 전송 실패:', error);

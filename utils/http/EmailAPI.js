@@ -97,7 +97,7 @@ export const loginDiceTalk = async (email, password) => {
     if (!token) {
       throw new Error('토큰이 응답에 포함되지 있지 않습니다.');
     }
-
+    
     return {
       token,
       user: userData,
