@@ -2,6 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 
+
 // 메인 화면 관련 컴포넌트
 import Home from '../main/Home';
 import SelectRegion from '../main/SelectRegion';
@@ -17,10 +18,13 @@ import LendingPage from '../signUp/LendingPage';
 
 const Stack = createStackNavigator();
 
-export default function MainNavigator() {
+
+export default function MainNavigator({route}) {
+  const initialParams = route?.params || {};
+
   return (
     <Stack.Navigator>
-      <Stack.Screen name='Home' component={Home} />
+      <Stack.Screen name='Home' component={Home} initialParams={initialParams}/>
       <Stack.Screen name='SelectRegion' component={SelectRegion} />
       <Stack.Screen name='SelectAge' component={SelectAge} />
       <Stack.Screen name='DiceFriendsDs' component={DiceFriendsDs} />

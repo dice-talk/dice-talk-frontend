@@ -5,16 +5,11 @@ import { EmailProvider } from './context/EmailContext';
 import { AuthProvider } from './utils/http/AuthContext';
 import { MemberProvider } from './context/MemberContext';
 import { GroupProvider } from './context/GroupContext';
-import { setupMockAPI } from './utils/mockSetup';
 import { EventProvider } from './context/EventContext';
 
 // 네비게이션 구조 가져오기
 import AppNavigator from './navigation/AppNavigator';
 
-// 개발 환경에서 mock API 설정
-if (__DEV__) {
-  setupMockAPI();
-}
 
 export default function App() { 
   return (
@@ -22,13 +17,13 @@ export default function App() {
       <MemberProvider>
         <EventProvider>
           <EmailProvider>
-            <ChatProvider>
+
               <GroupProvider>
                 <NavigationContainer>
                   <AppNavigator />
                 </NavigationContainer>
               </GroupProvider>
-            </ChatProvider>
+
           </EmailProvider>
           </EventProvider>
       </MemberProvider>
