@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
 import ArrowBoard01 from "../../assets/event/arrowBoard_01.svg";
 import ArrowBoard02 from "../../assets/event/arrowBoard_02.svg";
 import FriendsGame_01 from "../../assets/icon/profile/friends_game_01";
@@ -11,7 +11,7 @@ import LoveGameSelect_05 from "../../assets/icon/profile/love_game_select_05";
 import { postEvent } from '../../utils/http/eventAPI';
 import { useMemberContext } from '../../context/MemberContext';
 import { useGroupContext } from '../../context/GroupContext';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DEFAULT_NAMES = {
   1: "한가로운 하나",
@@ -28,34 +28,44 @@ export default function EventModal({
   onSelectIcon,
   chatRoomId
 }) {
-
   const { memberId } = useMemberContext();
   const { groupInfo } = useGroupContext();
 
-  const handleIconSelect = async (iconId) => {
+  const handleIconSelect = (iconId) => {
     onSelectIcon(iconId);
-    
-    // groupInfo에서 선택된 아이콘에 해당하는 참여자 찾기
-    const selectedParticipant = groupInfo.chatParts[iconId - 1];
-    
-    const eventData = {
-      // receiverId: selectedParticipant?.memberId || null,
-      receiverId: 2,
-      senderId: memberId,
-      eventId: 1,
-      // chatRoomId: chatRoomId,
-      chatRoomId: 1,
-      message: selectedParticipant 
-        ? `${selectedParticipant.nickName}를 선택했습니다.`
-        : `${DEFAULT_NAMES[iconId]}를 선택했습니다.`,
-      roomEventType: "PICK_MESSAGE"
-    };
+  };
 
+  const handleConfirm = async () => {
+    if (!selectedIcon) return;
+    
     try {
-      await postEvent(eventData);
-      console.log('이벤트 전송 성공:', eventData);
+      // 토큰 확인
+      const token = await AsyncStorage.getItem('accessToken');
+      console.log('🔑 현재 토큰:', token);
+      console.log('👤 현재 memberId:', memberId);
+      
+      // groupInfo에서 선택된 아이콘에 해당하는 참여자 찾기
+      const selectedParticipant = groupInfo.chatParts[selectedIcon - 1];
+      
+      const eventData = {
+        receiverId: selectedParticipant?.memberId || 1,
+        senderId: memberId,
+        eventId: 1,
+        chatRoomId: chatRoomId || 2,
+        message: "테스트입니다.",
+        roomEventType: "PICK_MESSAGE"
+      };
+
+      console.log('📤 이벤트 데이터:', eventData);
+
+      // 이벤트 전송
+      const eventResponse = await postEvent(eventData);
+      console.log('✅ 이벤트 전송 응답:', eventResponse);
+
+      onConfirm();
     } catch (error) {
-      console.log('이벤트 전송 실패:', error);
+      console.error('❌ 에러 발생:', error);
+      Alert.alert('오류', error.message || '요청 처리 중 오류가 발생했습니다.');
     }
   };
 
@@ -130,7 +140,7 @@ export default function EventModal({
             { backgroundColor: selectedIcon ? "#F8B4C4" : "gray", marginTop: 16 }
           ]}
           disabled={!selectedIcon}
-          onPress={onConfirm}
+          onPress={handleConfirm}
         >
           <Text style={styles.confirmText}>확인</Text>
         </Pressable>

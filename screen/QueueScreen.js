@@ -7,15 +7,14 @@ import {
   ActivityIndicator,
   Image,
 } from 'react-native';
-import { useChat } from '../context/ChatContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 이미지 자산 import
 import DiceIcon from '../assets/icon/logo/dice_icon.svg';
 
 export default function QueueScreen({ navigation }) {
-  const { joinQueue, isInQueue, currentRoom } = useChat();
   const [username, setUsername] = useState('');
+  const [isInQueue, setIsInQueue] = useState(false);
 
   useEffect(() => {
     // 사용자 정보 가져오기
@@ -26,15 +25,12 @@ export default function QueueScreen({ navigation }) {
     getUserInfo();
   }, []);
 
-  // 채팅방이 할당되면 채팅 화면으로 이동
-  useEffect(() => {
-    if (currentRoom) {
-      navigation.navigate('Chat');
-    }
-  }, [currentRoom, navigation]);
-
   const handleJoinQueue = () => {
-    joinQueue();
+    setIsInQueue(true);
+    // 임시로 3초 후에 채팅 화면으로 이동
+    setTimeout(() => {
+      navigation.navigate('Chat');
+    }, 3000);
   };
 
   return (

@@ -13,8 +13,8 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
   const parsedEndpoint = endpoint
     .replace(/:memberId/gi, memberId) // 대소문자 구분 없이 치환
     .replace(/:member-id/gi, memberId);
+  
   try {
-
     const response = await fetch(`${BASE_URL}${parsedEndpoint}`, {
       ...options,
       headers: {
@@ -22,12 +22,10 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
         ...options.headers,
       },
     });
-    
 
     return response;
-    
+
   } catch (error) {
-    console.log('API 요청 실패:', error);
     throw error;
   }
 }; 
