@@ -34,7 +34,7 @@ export default function ChatMain({ memberId }) {
     return (
       <View style={styles.container}>
         <Text>채팅방 정보를 불러오는 중입니다...</Text>
-        <Button title='결과보기'/>
+        <Button title='결과보기' onPress={() => navigation.navigate('LetterResult')}/>
       </View>
     )
   }
