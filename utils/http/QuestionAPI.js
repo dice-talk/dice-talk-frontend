@@ -1,6 +1,6 @@
 
-import { fetchWithAuth } from "./AuthContext";
 import { BASE_URL } from "./config";
+import { fetchWithAuth } from "./fetchWithAuth";
 
 
 
@@ -31,9 +31,14 @@ export const getMyQuestions = async (memberId, page, size = 4) => {
       size: size
     });
 
-    const response = await fetchWithAuth(`questions/${memberId}?${params}`, {
+
+    const response = await fetchWithAuth(`questions/my-questions/${memberId}?page=${page}&size=${size}`, {
       method: 'GET',
     });
+    console.log(
+      '요청 URL:',
+      `${BASE_URL}my-questions/${memberId}?page=${page}&size=${size}`,
+    );
 
     if (!response.ok) {
       throw new Error(`문의 조회 실패: ${response.status}`);

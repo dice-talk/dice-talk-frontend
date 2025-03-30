@@ -92,9 +92,9 @@ export default function Chat({ navigation }) {
     }
   }, [currentRoomMessages]);
 
-  const handleSendMessage = (messageText) => {
-    sendMessage(messageText);
-  };
+  // const handleSendMessage = (messageText) => {
+  //   sendMessage(messageText);
+  // };
 
   const handleEventConfirm = () => {
     setEventModalVisible(false);
@@ -124,7 +124,7 @@ export default function Chat({ navigation }) {
         sender: 'current_user',
         timestamp: new Date().toISOString(),
       };
-      await addMessage(newMessage);
+      await sendMessage(newMessage);
     }
   };
 

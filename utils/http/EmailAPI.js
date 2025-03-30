@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BASE_URL } from "./config";
 
 export const sendEmail = async (email) => {
@@ -68,42 +69,22 @@ export const loginDiceTalk = async (email, password) => {
       }),
     });
 
-    console.log('📡 응답 상태:', response.status);
-    
-    // 응답 헤더 확인
-    console.log('📡 응답 헤더:', Object.fromEntries(response.headers.entries()));
+    // 헤더에서 토큰 추출 (대소문자 통일)
+    const token = response.headers.get('Authorization')?.replace('Bearer ', '') || response.headers.get('authorization')?.replace('Bearer ', '');
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('❌ 로그인 실패 응답:', errorData);
-      throw new Error(errorData.message || '로그인 실패');
-    }
+    // 바디에서 memberId 추출
+    const responseData = await response.json();
+    console.log('리스폰스 데이터 : ', responseData)
+    const memberId = responseData.memberid;
 
-    // 응답 본문 확인
-    const responseText = await response.text();
-    console.log('📡 응답 본문:', responseText);
-    
-    let userData;
-    try {
-      userData = responseText ? JSON.parse(responseText) : {};
-    } catch (parseError) {
-      console.error('❌ JSON 파싱 에러:', parseError);
-      userData = {};
-    }
+    // 동시 저장
+    await AsyncStorage.multiSet([
+      ['accessToken', token],
+      ['memberId', String(memberId)]
+    ]);
 
-    // 헤더에서 토큰 추출
-    const token = response.headers.get('Authorization') || response.headers.get('authorization');
-
-    if (!token) {
-      throw new Error('토큰이 응답에 포함되지 있지 않습니다.');
-    }
-
-    return {
-      token,
-      user: userData,
-    };
-
-  } catch (error) {
+    return { token, memberId };
+  } catch(error){
     console.error('❌ 로그인 요청 실패:', error);
     throw error;
   }

@@ -9,6 +9,7 @@ import { loginDiceTalk } from '../utils/http/EmailAPI';
 import { useEmail } from '../context/EmailContext';
 import { useMemberContext } from '../context/MemberContext';
 import { navigateAfterLogin } from '../navigation/navigationUtils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function LoginPassword({navigation}) {
@@ -34,9 +35,14 @@ export default function LoginPassword({navigation}) {
             const result = await loginDiceTalk(email, inputPassword);
             console.log('서버 응답:', result);
             
-            if (result.user && result.user.memberId) {
-                updateMemberId(result.user.memberId);
+            if (result.user && result.user.memberid) {
+                updateMemberId(result.user.memberid);
             }
+            AsyncStorage.setItem('accessToken', result.token);
+            const acToken = AsyncStorage.getItem('accessToken');
+            console.log(acToken);
+            // await AsyncStorage.setItem('accessToken', result.token);
+            // console.log('토큰 저장 완료', accessToken);
 
             navigateAfterLogin(navigation);
         } catch (error) {

@@ -46,7 +46,6 @@ export default function MainNavigator() {
         component={LendingPage}
         options={{ headerShown: false }}
       />
-      <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} />
     </Stack.Navigator>
   );
 } 
