@@ -12,6 +12,7 @@ import { usePostEvent } from '../utils/http/eventAPI';
 export default function LetterEventScreen() {
     const { postEvent } = usePostEvent();
     console.log('[DEBUG] postEvent:', postEvent);
+    const navigation = useNavigation();
     const [showCard, setShowCard] = useState(false);
     const [isVoteModalVisible, setVoteModalVisible] = useState(true); 
     const route = useRoute();
@@ -36,6 +37,9 @@ export default function LetterEventScreen() {
             console.error('이벤트 전송 실패:', error);
             Alert.alert('오류', '하트 메세지 전송 중 오류가 발생했어요.');
         }
+        navigation.navigate('ChatTab', {
+            screen: 'ChatMain',
+        });
     };
 
     return (

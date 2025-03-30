@@ -14,7 +14,8 @@ export default function ChatMain({ memberId }) {
   const { postEvent } = usePostEvent();
   const navigation = useNavigation();
   const { chatRoomInfo, updateChatRoomInfo } = useChatContext();
-  const { chatRoomId, chatPart } = chatRoomInfo;
+  const chatRoomId = chatRoomInfo?.chatRoomId;
+  const chatPart = chatRoomInfo?.chatPart || [];
   
   const [unreadCount, setUnreadCount] = useState(42);
   const [remainingTime, setRemainingTime] = useState(48 * 60 * 60); // 48시간 = 172800초
@@ -28,6 +29,14 @@ export default function ChatMain({ memberId }) {
     const selectedUser = chatPart.find(user => user.iconId === iconId);
     return selectedUser ? selectedUser.memberId : null;
   };
+
+  if(!chatRoomId) {
+    return (
+      <View style={styles.container}>
+        <Text>채팅방 정보를 불러오는 중입니다...</Text>
+      </View>
+    )
+  }
 
   useEffect(() => {
     const interval = setInterval(() => {
