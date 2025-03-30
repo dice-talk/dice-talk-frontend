@@ -1,4 +1,6 @@
 
+import { fetchWithAuth } from "./AuthContext";
+
 import { BASE_URL } from "./config";
 import { fetchWithAuth } from "./fetchWithAuth";
 
@@ -79,7 +81,7 @@ export const createMyQuestion = async (questionData) => {
     const response = await fetchWithAuth(`questions`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json', // 명시적으로 설정
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(questionData),
     });
@@ -89,10 +91,8 @@ export const createMyQuestion = async (questionData) => {
     }
 
     const data = await response.json();
-    console.log('문의 등록 완료:', data);
     return data;
   } catch (error) {
-    console.error('문의 등록 에러:', error);
     throw error;
   }
 };
@@ -174,14 +174,12 @@ export const getQuestion = async (questionId) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('질문 조회 실패:', errorData);
       throw new Error(errorData.error || '질문 조회 실패');
     }
 
     const data = await response.json();
     return data;
   } catch (err) {
-    console.error('질문 조회 실패:', err.message);
     throw err;
   }
 };
@@ -216,14 +214,12 @@ export const deleteQuestion = async (questionId) => {
 
     if (!response.noContent) {
       const errorData = await response.json();
-      console.error('질문 삭제 실패:', errorData);
       throw new Error(errorData.error || '질문 삭제 실패');
     }
 
     const data = await response.json();
     return data;
   } catch (err) {
-    console.error('질문 삭제 실패:', err.message);
     throw err;
   }
 };

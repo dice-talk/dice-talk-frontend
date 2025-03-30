@@ -10,6 +10,8 @@ import { useEmail } from '../context/EmailContext';
 import { useMemberContext } from '../context/MemberContext';
 import { navigateAfterLogin } from '../navigation/navigationUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Keychain from 'react-native-keychain';
+
 
 
 export default function LoginPassword({navigation}) {
@@ -32,11 +34,29 @@ export default function LoginPassword({navigation}) {
     //비밀번호 전송 핸들러 함수
     const handleSendPassword = async () => {
         try {
+            if (!email || !inputPassword) {
+                throw new Error('필수 정보가 누락되었습니다.');
+            }
             const result = await loginDiceTalk(email, inputPassword);
             console.log('서버 응답:', result);
             
+            // memberId 저장
             if (result.user && result.user.memberid) {
+                console.log('👤 memberId 저장:', result.user.memberId);
                 updateMemberId(result.user.memberid);
+            } else {
+                console.error('❌ memberId가 응답에 없습니다:', result);
+                throw new Error('사용자 정보가 없습니다.');
+            }
+
+            // 토큰 저장
+            if (result.token) {
+                await AsyncStorage.setItem('accessToken', result.token);
+                console.log('🔑 토큰 저장 완료');
+            } else {
+                console.error('❌ 토큰이 응답에 없습니다:', result);
+                throw new Error('인증 토큰이 없습니다.');
+
             }
             AsyncStorage.setItem('accessToken', result.token);
             const acToken = AsyncStorage.getItem('accessToken');
@@ -46,8 +66,30 @@ export default function LoginPassword({navigation}) {
 
             navigateAfterLogin(navigation);
         } catch (error) {
+            console.error('❌ 로그인 실패:', error);
             const errMsg = error.response?.data?.error || '로그인 실패';
             Alert.alert('로그인 실패', errMsg);
+        }
+    };
+
+    const loadAuth = async () => {
+        try {
+            const storedAuth = await AsyncStorage.getItem("auth");
+            const refreshToken = await Keychain.getGenericPassword();
+            
+            if (storedAuth) {
+                const parsedAuth = JSON.parse(storedAuth);
+                // 토큰 유효성 검사 추가
+                if (isTokenValid(parsedAuth.accessToken)) {
+                    setAuth({ ...parsedAuth, refreshToken: refreshToken?.password });
+                } else {
+                    // 토큰이 만료된 경우 refreshToken으로 갱신 시도
+                    await refreshTokenIfNeeded(parsedAuth.refreshToken);
+                }
+            }
+        } catch (error) {
+            console.error('Auth loading error:', error);
+            // 에러 상태 처리
         }
     };
 

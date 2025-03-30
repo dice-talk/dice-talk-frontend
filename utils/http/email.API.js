@@ -59,7 +59,6 @@ export const verifyCode = async({ email, code }) => {
 
 export const loginDiceTalk = async (email, password) => {
   const loginUrl = `${BACKEND_URL}/auth/login`;
-  console.log('🔐 로그인 요청 URL:', loginUrl);
 
   try {
     const response = await fetch(loginUrl, {
@@ -73,30 +72,20 @@ export const loginDiceTalk = async (email, password) => {
       }),
     });
 
-    console.log('📡 응답 상태:', response.status);
-    
-    // 응답 헤더 확인
-    console.log('📡 응답 헤더:', Object.fromEntries(response.headers.entries()));
-
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('❌ 로그인 실패 응답:', errorData);
       throw new Error(errorData.message || '로그인 실패');
     }
 
-    // 응답 본문 확인
     const responseText = await response.text();
-    console.log('📡 응답 본문:', responseText);
     
     let userData;
     try {
       userData = responseText ? JSON.parse(responseText) : {};
     } catch (parseError) {
-      console.error('❌ JSON 파싱 에러:', parseError);
       userData = {};
     }
 
-    // 헤더에서 토큰 추출
     const token = response.headers.get('Authorization') || response.headers.get('authorization');
 
     if (!token) {
@@ -109,7 +98,6 @@ export const loginDiceTalk = async (email, password) => {
     };
 
   } catch (error) {
-    console.error('❌ 로그인 요청 실패:', error);
     throw error;
   }
 };
@@ -195,18 +183,15 @@ export const logout = async (token) => {
         'Authorization' : `Bearer ${token}`,
         'Content-Type' : 'application/json', 
       },
-      body: null, // 요청 바디 없음
+      body: null,
     });
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('로그아웃 실패:', errorData);
       throw new Error(errorData.error || '로그아웃 실패');
     }
     const data = await response.json();
-    console.log('로그아웃 성공:', data);
     return data;
   } catch (err) {
-    console.error('로그아웃 요청 중 에러:', err.message);
     throw err;
   }
 };

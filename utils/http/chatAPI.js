@@ -170,14 +170,12 @@ export const startChat = async (roomId) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('채팅 시작 실패:', errorData);
       throw new Error(errorData.error || '채팅 시작 실패');
     }
 
     const data = await response.json();
     return data;
   } catch (err) {
-    console.error('채팅 시작 실패:', err.message);
     throw err;
   }
 };

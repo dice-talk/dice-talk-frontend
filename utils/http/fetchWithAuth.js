@@ -13,21 +13,41 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
   const parsedEndpoint = endpoint
     .replace(/:memberId/gi, memberId) // 대소문자 구분 없이 치환
     .replace(/:member-id/gi, memberId);
+  
   try {
+    const token = await AsyncStorage.getItem('accessToken');
+    
+    if (!token) {
+      throw new Error('인증 토큰이 없습니다.');
+    }
 
-    const response = await fetch(`${BASE_URL}${parsedEndpoint}`, {
+    const authToken = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+
+    const mergedOptions = {
       ...options,
       headers: {
-        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Authorization': authToken,
+
         ...options.headers,
       },
-    });
+    };
     
+    if (mergedOptions.body && typeof mergedOptions.body === 'object') {
+      mergedOptions.body = JSON.stringify(mergedOptions.body);
+    }
 
-    return response;
-    
+    const response = await fetch(`${BASE_URL}${endpoint}`, mergedOptions);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: '요청 실패' }));
+      throw new Error(errorData.message || `HTTP Error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+
   } catch (error) {
-    console.log('API 요청 실패:', error);
     throw error;
   }
 }; 
