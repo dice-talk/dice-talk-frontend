@@ -44,8 +44,9 @@ export default function LoginPassword({navigation}) {
             // await AsyncStorage.setItem('accessToken', result.token);
             // console.log('토큰 저장 완료', accessToken);
 
-            navigateAfterLogin(navigation);
+            navigation.replace('Main');
         } catch (error) {
+            console.log('로그인 실패:', error);
             const errMsg = error.response?.data?.error || '로그인 실패';
             Alert.alert('로그인 실패', errMsg);
         }

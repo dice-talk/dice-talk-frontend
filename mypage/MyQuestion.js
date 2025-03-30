@@ -42,10 +42,11 @@ export default function MyQuestion({ navigation }) {
         const totalCount = pageInfo.totalElements; // 실제로는 백엔드에서 총 개수 넘겨주는 게 이상적
         const size = 4;
         setTotalPages(pageInfo.totalPages);
-  
+
         const sorted = response.data.sort((a, b) => {
           return new Date(b.createAt || b.date) - new Date(a.createAt || a.date);
         });
+
         console.log(sorted);
         setQuestions(sorted);
       }
@@ -84,7 +85,7 @@ export default function MyQuestion({ navigation }) {
               key={q.questionId}
               id={q.questionId}
               title={q.title}
-              date={q.createdAt}
+              createdAt={q.createdAt}
               isAnswered={
                 q.question_status === 'QUESTION_ANSWERED' || q.isAnswered
               }

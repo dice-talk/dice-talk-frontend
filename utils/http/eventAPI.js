@@ -1,36 +1,50 @@
-// screens/PostEventScreen.tsx
-import { fetchWithAuth } from './fetchWithAuth';
+//import { fetchWithAuth } from './fetchWithAuth';
+import { useAuth } from '../http/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 채팅방 이벤트 등록
-export const postEvent = async (eventData) => {
-  try {
-    console.log('🎯 이벤트 전송 시작:', eventData);
-    
-    // chatRoomId를 문자열로 변환
-    const formattedData = {
-      eventData,
-    };
+export const usePostEvent = () => {
+  const {fetchWithAuth} = useAuth();
 
-    console.log('📦 포맷된 이벤트 데이터:', formattedData);
+  const postEvent = async (eventData) => {
+    try {
+      const response = await fetchWithAuth('room-event', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData)
+      })  
 
-    const response = await fetchWithAuth('room-event', {
-      method: 'POST',
-      body: eventData
-    });
+      if(!response.ok) {
+        throw new Error(`Http error! status: ${response.status}`)
+      } 
 
-    console.log('✅ 이벤트 전송 성공:', response);
-
-    if (!response) {
-      throw new Error('서버 응답이 없습니다.');
+      const text = await response.text();
+      return text ? JSON.parse(text) : {};
+    } catch (error) {
+      console.error('이벤트 등록 실패:', error);
+      throw error;
     }
-
-    return response;
-  } catch (error) {
-    console.error('❌ 이벤트 전송 실패:', error);
-    throw error;
   }
-};
+
+  return {postEvent};
+}
+// export const postEvent = async (eventData) => {
+//   try {
+//     const response = await fetchWithAuth('room-event', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json' // 반드시 필요요
+//       },
+//       body: JSON.stringify(eventData) // stringify 해줘야 서버가 이해
+//     });
+//     return await response.json();
+//   } catch (error) {
+//     console.error('이벤트 등록 실패:', error);
+//     throw error;
+//   }
+// };
 
 // 특정 채팅방 이벤트 결과 조회
 export const getEventResult = async (chatRoomId) => {

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions } from 'react-native'
 import HeartLetter from '../assets/event/heart_letter.svg';
-import { postEvent } from '../utils/http/eventAPI';
+import { usePostEvent } from '../utils/http/eventAPI';
 import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
@@ -9,6 +9,7 @@ const svgWidth = width * 0.9;
 const svgHeight = svgWidth * 1.2;
 
 export default function LoveNoteCard ({ onSubmit }) {
+    const { postEvent } = usePostEvent();
     const [text, setText] = useState('');
     const navigation = useNavigation();
 
@@ -32,6 +33,7 @@ export default function LoveNoteCard ({ onSubmit }) {
             {/*<Image source={require('../assets/event/love_letter_main.png')} style={styles.bgImage} />*/}
             <View style={styles.svgWrapper}>
                 <HeartLetter width={svgWidth} height={svgHeight} />
+                {/*<View style={{width: svgWidth, height: svgHeight, backgroundColor: 'red'}}></View>*/}
                 <View style={styles.inputOverlay}>
                      <TextInput
                         placeholder="마음에 드는 상대에게 보낼 내용을 작성해주세요"
@@ -42,7 +44,7 @@ export default function LoveNoteCard ({ onSubmit }) {
                     />
                 </View>
             </View>
-          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <TouchableOpacity style={styles.button} onPress={() => onSubmit(text)}>
             <Text style={styles.buttonText}>보내기</Text>
           </TouchableOpacity>
         </View>

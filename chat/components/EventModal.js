@@ -8,7 +8,7 @@ import FriendsGame_05 from "../../assets/icon/profile/friends_game_05";
 import LoveGameSelect_01 from "../../assets/icon/profile/love_game_select_01";
 import LoveGameSelect_02 from "../../assets/icon/profile/love_game_select_02";
 import LoveGameSelect_05 from "../../assets/icon/profile/love_game_select_05";
-import { postEvent } from '../../utils/http/eventAPI';
+import { usePostEvent } from '../../utils/http/eventAPI';
 import { useMemberContext } from '../../context/MemberContext';
 import { useGroupContext } from '../../context/GroupContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';

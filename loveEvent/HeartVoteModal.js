@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { Modal, View, Text, Pressable, StyleSheet} from 'react-native';
+import { Modal, View, Text, Pressable, StyleSheet, Button} from 'react-native';
 // 이미지 컴포넌트 (import 또는 require 사용가능능)
 import Love_01 from "../assets/icon/profile/love_01.svg"; // 기본 흰색
 import Love_02 from "../assets/icon/profile/love_02.svg";
@@ -26,9 +26,9 @@ const diceOptions = [
 export default function HeartVoteModal({ visible, onSelectDice, onClose }) {
     const [selectedId, setSelectedId] = useState(null);
 
-    const handleSelect = (id, name) => {
+    const handleSelect = (id) => {
         setSelectedId(id);
-        onSelectDice(id, name); // name도 같이 전달
+        onSelectDice(id); // name도 같이 전달
     }
 
     
@@ -48,6 +48,7 @@ export default function HeartVoteModal({ visible, onSelectDice, onClose }) {
                           <>
                             <Pressable key={id} onPress={() => handleSelect(id)} style={styles.diceItem}>
                                 <Icon width={50} height={50} />
+                                {/*<View style={{width: 50, height: 50, backgroundColor: 'red'}}></View>*/}
                                 <Text style={styles.diceName}>{name}</Text>
                             </Pressable>
 

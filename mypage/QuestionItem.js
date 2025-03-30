@@ -3,6 +3,16 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import MyQuestionDetail from './MyQuestionDetail'
 import { useNavigation } from '@react-navigation/native';
+
+
+const formatDate = (dateString) => {
+  if (!dateString) return '날짜 오류';
+
+  const datePart = dateString.split('T')[0]; // '2025-03-31'
+  //const year = date.getFullYear(); // '2025.03.31
+  
+  return datePart.replace(/-/g, '.');
+}
 // 제목, 날짜, 답변 상태 받기
 export default function QuestionItem({ id, title, createdAt, isAnswered }) {
     const navigation = useNavigation();
@@ -16,7 +26,7 @@ export default function QuestionItem({ id, title, createdAt, isAnswered }) {
       <View style={styles.container}>
         <Text style={styles.title}>[Title] {title}</Text>
         <View style={styles.row}>
-          <Text style={styles.date}>등록일 : {createdAt}</Text>
+          <Text style={styles.date}>등록일 : {formatDate(createdAt)}</Text>
           {isAnswered && (
             <View style={styles.badge}>
               <Text style={styles.badgeText}>답변완료</Text>

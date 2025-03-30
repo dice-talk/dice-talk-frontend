@@ -3,18 +3,19 @@ import { View, Text, StyleSheet, Image, Pressable, Modal, Alert } from 'react-na
 import { useNavigation } from '@react-navigation/native';
 import { navigateToChat } from '../navigation/navigationUtils';
 import EventModal from './components/EventModal';
-import { postEvent } from '../utils/http/eventAPI';
+import { usePostEvent } from '../utils/http/eventAPI';
 import Footer from '../component/Footer';
 
 // 🔹 더미 이미지 임포트 예시
 const bannerImages = [require('../assets/banner/banner_Ex_love.png')]; // 배너 이미지
 
 export default function ChatMain({ memberId }) {
+  const { postEvent } = usePostEvent();
   const navigation = useNavigation();
-  const [chatRoomInfo, setChatRoomInfo] = useState({
-    chatRoomId: null,
-    chatPart: [],
-  });
+  const { chatRoomInfo, updateChatRoomInfo } = useChatContext();
+  const chatRoomId = chatRoomInfo?.chatRoomId;
+  const chatPart = chatRoomInfo?.chatPart || [];
+
   
   const [unreadCount, setUnreadCount] = useState(42);
   const [remainingTime, setRemainingTime] = useState(48 * 60 * 60); // 48시간 = 172800초
@@ -28,6 +29,15 @@ export default function ChatMain({ memberId }) {
     const selectedUser = chatRoomInfo.chatPart.find(user => user.iconId === iconId);
     return selectedUser ? selectedUser.memberId : null;
   };
+
+  if(!chatRoomId) {
+    return (
+      <View style={styles.container}>
+        <Text>채팅방 정보를 불러오는 중입니다...</Text>
+        <Button title='결과보기' onPress={() => navigation.navigate('LetterResult')}/>
+      </View>
+    )
+  }
 
   useEffect(() => {
     const interval = setInterval(() => {
