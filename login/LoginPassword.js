@@ -34,12 +34,13 @@ export default function LoginPassword({navigation}) {
             const result = await loginDiceTalk(email, inputPassword);
             console.log('서버 응답:', result);
             
-            if (result.user && result.user.memberId) {
-                updateMemberId(result.user.memberId);
+            if (result.user && result.user.memberid) {
+                updateMemberId(result.user.memberid);
             }
 
-            navigateAfterLogin(navigation);
+            navigation.replace('Main');
         } catch (error) {
+            console.log('로그인 실패:', error);
             const errMsg = error.response?.data?.error || '로그인 실패';
             Alert.alert('로그인 실패', errMsg);
         }

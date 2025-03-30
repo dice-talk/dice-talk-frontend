@@ -1,20 +1,45 @@
-// screens/PostEventScreen.tsx
-import { fetchWithAuth } from './fetchWithAuth';
+//import { fetchWithAuth } from './fetchWithAuth';
+import { useAuth } from '../http/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 채팅방 이벤트 등록
-export const postEvent = async (eventData) => {
-  try {
-    const response = await fetchWithAuth('room-event', {
-      method: 'POST',
-      body: eventData
-    });
-    return await response.json();
-  } catch (error) {
-    console.error('이벤트 등록 실패:', error);
-    throw error;
+
+export const usePostEvent = () => {
+  const {fetchWithAuth} = useAuth();
+
+  const postEvent = async (eventData) => {
+    try {
+      const response = await fetchWithAuth('room-event', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData)
+      })  
+      return await response.json();
+    } catch (error) {
+      console.error('이벤트 등록 실패:', error);
+      throw error;
+    }
   }
-};
+
+  return {postEvent};
+}
+// export const postEvent = async (eventData) => {
+//   try {
+//     const response = await fetchWithAuth('room-event', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json' // 반드시 필요요
+//       },
+//       body: JSON.stringify(eventData) // stringify 해줘야 서버가 이해
+//     });
+//     return await response.json();
+//   } catch (error) {
+//     console.error('이벤트 등록 실패:', error);
+//     throw error;
+//   }
+// };
 
 // 특정 채팅방 이벤트 결과 조회
 export const getEventResult = async (chatRoomId) => {

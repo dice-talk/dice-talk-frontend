@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import DiceFriendsDs from "./DiceFriendsDs";
 import HeartSignalDs from "./HeartSignalDs";
 import ExFriendsDs from "./ExFriendsDs";
+import { Button } from "react-native";
 
 // SVG 테마 컴포넌트
 import ExFriendsTheme from "../assets/theme/exFriendsTheme.svg";
@@ -61,6 +62,8 @@ export default function Home() {
           style={styles.bannerImage}
         />
       </View>
+
+      <Button title='LetterEventScreen' onPress={() => {navigation.navigate('LetterEventScreen')}} />
 
       {/* 🔸 캐러셀 섹션 */}
       <View style={styles.carouselWrapper}>

@@ -12,7 +12,7 @@ import UserCheckScreen from '../screen/UserCheckScreen';
 import ModalAlert from '../component/ModalAlert';
 
 // 하트 이벤트 네비게이터
-import HeartVoteModal from '../loveEvent/HeartVoteModal';
+//import HeartVoteModal from '../loveEvent/HeartVoteModal';
 import LetterEventScreen from '../loveEvent/LetterEventScreen';
 
 const Stack = createNativeStackNavigator();
@@ -37,7 +37,7 @@ export default function AppNavigator() {
       <Stack.Screen name='ModalAlert' component={ModalAlert} />
 
       {/* 하트 이벤트 네비게이터 */}
-      <Stack.Screen name='HeartVoteModal' component={HeartVoteModal} />
+      {/* <Stack.Screen name='HeartVoteModal' component={HeartVoteModal} /> */}
       <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} />
 
     </Stack.Navigator>

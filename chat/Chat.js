@@ -92,9 +92,9 @@ export default function Chat({ navigation }) {
     }
   }, [currentRoomMessages]);
 
-  const handleSendMessage = (messageText) => {
-    sendMessage(messageText);
-  };
+  // const handleSendMessage = (messageText) => {
+  //   sendMessage(messageText);
+  // };
 
   const handleEventConfirm = () => {
     setEventModalVisible(false);

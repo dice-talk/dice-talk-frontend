@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, Pressable, Modal } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { navigateToChat } from '../navigation/navigationUtils';
 import EventModal from './components/EventModal';
-import { postEvent } from '../utils/http/eventAPI';
+import { usePostEvent } from '../utils/http/eventAPI';
 import { useChatContext } from '../context/ChatContext';
 import Footer from '../component/Footer';
 
@@ -11,6 +11,7 @@ import Footer from '../component/Footer';
 const bannerImages = [require('../assets/banner/banner_Ex_love.png')]; // 배너 이미지
 
 export default function ChatMain({ memberId }) {
+  const { postEvent } = usePostEvent();
   const navigation = useNavigation();
   const { chatRoomInfo, updateChatRoomInfo } = useChatContext();
   const { chatRoomId, chatPart } = chatRoomInfo;

@@ -8,7 +8,7 @@ import SelectRegion from '../main/SelectRegion';
 import SelectAge from '../main/SelectAge';
 import DiceFriendsDs from '../main/DiceFriendsDs';
 import hihihi from '../main/hihihi';
-import LetterEventScreen from '../loveEvent/LetterEventScreen';
+//import LetterEventScreen from '../loveEvent/LetterEventScreen';
 
 import DropOutMember from '../plus/DropOutMember';
 import CheckDropOutMember from '../plus/CheckDropOutMember';
@@ -28,7 +28,7 @@ export default function MainNavigator() {
       <Stack.Screen name='SelectAge' component={SelectAge} />
       <Stack.Screen name='DiceFriendsDs' component={DiceFriendsDs} />
       <Stack.Screen name='hihihi' component={hihihi} />
-      <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} />
+      {/* <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} /> */}
 
 
       <Stack.Screen 
@@ -46,7 +46,6 @@ export default function MainNavigator() {
         component={LendingPage}
         options={{ headerShown: false }}
       />
-      <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} />
     </Stack.Navigator>
   );
 } 

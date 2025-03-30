@@ -5,15 +5,18 @@ import LoveNoteCard from '../component/LoveNoteCard';
 import HeartVoteModal from './HeartVoteModal';
 import { useRoute } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
-import { postEvent } from '../utils/http/eventAPI';
+import { usePostEvent } from '../utils/http/eventAPI';
+
+
 
 export default function LetterEventScreen() {
+    const { postEvent } = usePostEvent();
+    console.log('[DEBUG] postEvent:', postEvent);
     const [showCard, setShowCard] = useState(false);
     const [isVoteModalVisible, setVoteModalVisible] = useState(true); 
-    // 익명프로필 보여주기
-    const [selecteduserName, setSelectedUserName] = useState('');
     const route = useRoute();
-    const { receiverId, senderId, chatRoomId, eventId } = route.params;
+    const { receiverId, senderId, chatRoomId, eventId, roomEventType } = route?.params || {};
+    console.log('Route params:', route?.params);
 
     const handleSend = async(text) => {
         console.log('보낸 편지 내용:', text);
@@ -26,9 +29,11 @@ export default function LetterEventScreen() {
                 message: text,
                 roomEventType: 'PICK_MESSAGE',
             };
+            console.log('[HANDLE SEND] Payload:', eventPayload);
+            const result = await postEvent(eventPayload);
+            console.log('이벤트 전송 결과:', result);
 
-            await postEvent(eventPayload);
-            console.log('이벤트 전송 성공');
+
         } catch (error) {
             console.error('이벤트 전송 실패:', error);
             Alert.alert('오류', '하트 메세지 전송 중 오류가 발생했어요.');
@@ -39,9 +44,8 @@ export default function LetterEventScreen() {
         <>
         <HeartVoteModal
             visible={isVoteModalVisible}
-            onSelectDice={(id, name) => {
-                console.log('선택된 상대 ID:', id);
-            setSelectedUserName(name);
+            onSelectDice={(id) => {
+            console.log('선택된 상대 ID:', id);
             setVoteModalVisible(false); // 모달닫기 -> 이후 LetterRain 실행행
         }}
         onClose={() => setVoteModalVisible(false)} />
