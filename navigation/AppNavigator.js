@@ -7,6 +7,7 @@ import MainNavigator from './MainNavigator';
 import ChatNavigator from './ChatNavigator';
 import MyPageNavigator from './MyPageNavigator';
 import SettingNavigator from './SettingNavigator';
+import Chat from '../chat/Chat';
 
 // 공통 컴포넌트
 import UserCheckScreen from '../screen/UserCheckScreen';
@@ -16,6 +17,8 @@ import ModalAlert from '../component/ModalAlert';
 //import HeartVoteModal from '../loveEvent/HeartVoteModal';
 import LetterEventScreen from '../loveEvent/LetterEventScreen';
 import LetterResult from '../loveEvent/LetterResult';
+
+import LoadingScreen from '../queue/LoadingScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +33,7 @@ export default function AppNavigator() {
       
       {/* 채팅 네비게이터 - 채팅 관련 화면들 */}
       <Stack.Screen name='ChatTab' component={ChatNavigator} options={{ headerShown: false }}/>
+      <Stack.Screen name='Chat' component={Chat} options={{ headerShown: false }}/>
       
       {/* 마이페이지 네비게이터 - 사용자 관련 화면들 */}
       <Stack.Screen name='MyPageTab' component={MyPageNavigator} options={{ headerShown: false }}/>
@@ -45,6 +49,8 @@ export default function AppNavigator() {
       {/* <Stack.Screen name='HeartVoteModal' component={HeartVoteModal} /> */}
       <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} options={{ headerShown: false }} />
       <Stack.Screen name='LetterResult' component={LetterResult} options={{ headerShown: false }}/>
+      
+      <Stack.Screen name='LoadingScreen' component={LoadingScreen} options={{headerShown: false}} />
 
     </Stack.Navigator>
   );
