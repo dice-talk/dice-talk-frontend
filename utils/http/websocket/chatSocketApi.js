@@ -1,6 +1,6 @@
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
-import { BASE_URL } from '../http/config';
+import { BASE_URL, WS_URL } from '../http/config';
 
 let stompClient = null;
 let subscribers = {};
@@ -15,7 +15,6 @@ export const connectWebSocket = (token, callbacks) => {
   try {
     // SockJS 연결 생성
     const socket = new SockJS(`${BASE_URL}ws-stomp`);
-    console.log(`WebSocket URL: ${BASE_URL}ws-stomp`);
 
     // Stomp 클라이언트 생성
     stompClient = Stomp.over(socket);

@@ -1,7 +1,8 @@
 // utils/nicknameUtils.js
+import { BASE_URL } from "./config";
 export const requestNickname = async (memberId) => {
     try {
-      const res = await fetch(`http://172.30.1.78:8080/matching/nickname/${memberId}`, {
+      const res = await fetch(BASE_URL + `matching/nickname/${memberId}`, {
         method: 'POST'  // POST 요청으로 변경
       });
       const data = await res.json();
@@ -11,5 +12,4 @@ export const requestNickname = async (memberId) => {
       return null;
     }
   };
-  
   

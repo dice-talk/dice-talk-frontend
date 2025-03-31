@@ -1,277 +1,247 @@
-// context/ChatContext.js
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useRef,
-} from 'react';
-import { connectSocket, disconnectSocket, sendMessage as socketSendMessage } from '../lib/socket';
-import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
+// import React, { createContext, useState, useEffect, useContext } from 'react';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import { connectSocket, disconnectSocket, sendMessage as socketSendMessage } from '../lib/socket';
+
+// const ChatContext = createContext();
+
+// export const useChat = () => useContext(ChatContext);
+
+// export const ChatProvider = ({ children }) => {
+//   const [isConnected, setIsConnected] = useState(false);
+//   const [currentRoomId, setCurrentRoomId] = useState(null);
+//   const [messages, setMessages] = useState({});
+//   const [userInfo, setUserInfo] = useState(null);
+//   const [token, setToken] = useState(null);
+//   const [isConnecting, setIsConnecting] = useState(false);
+
+//   useEffect(() => {
+//     const loadUserData = async () => {
+//       try {
+//         const storedToken = await AsyncStorage.getItem('access_token');
+//         const storedUserInfo = await AsyncStorage.getItem('user_info');
+//         if (storedToken) setToken(storedToken);
+//         if (storedUserInfo) setUserInfo(JSON.parse(storedUserInfo));
+//       } catch (error) {
+//         console.error('❌ 사용자 데이터 로드 오류:', error);
+//       }
+//     };
+//     loadUserData();
+//   }, []);
+
+//   useEffect(() => {
+//     if (token && !isConnected && !isConnecting) {
+//       setIsConnecting(true);
+
+//       connectSocket((type, payload) => {
+//         // 🔥 여기 추가
+//         if (type === 'CHAT') {
+//           const {
+//             chatRoomId,
+//             chatId,
+//             message,
+//             nickName,
+//             createdAt
+//           } = payload;
+
+//           // setCurrentRoomId(chatRoomId); 
+          
+//           console.log("📦 수신된 chatRoomId:", chatRoomId);
+//           console.log("🆔 chatId:", chatId);
+//           console.log("💬 message:", message);
+//           console.log("🙋‍♂️ nickName:", nickName);
+//           console.log("⏰ createdAt:", createdAt);
+          
+//           const convertedMessage = {
+//             id: chatId,
+//             content: message,
+//             sender: nickName,
+//             timestamp: createdAt,
+//           };
+
+          
+//           setMessages(prev => ({
+//             ...prev,
+//             [chatRoomId]: [...(prev[chatRoomId] || []), convertedMessage],
+//           }));
+
+//           console.log("💬 [수신된 메시지]", convertedMessage);
+//         }
+//       });
+
+//       setIsConnected(true);
+//       setIsConnecting(false);
+//     }
+
+//     return () => {
+//       if (isConnected) disconnectSocket();
+//     };
+//   }, [token, isConnected, isConnecting]);
+
+//   const joinRoom = (roomId) => setCurrentRoomId(roomId);
+//   const leaveRoom = () => setCurrentRoomId(null);
+
+//   const sendMessage = async (content) => {
+//     console.log("content : " + content);
+//     console.log("currentRoomId : " + currentRoomId);
+//     console.log("isConnected : " + isConnected);
+//     if (!isConnected || !currentRoomId) return false;
+  
+//     const memberIdStr = await AsyncStorage.getItem("memberId");
+//     const memberId = Number(memberIdStr);
+//     const nickname = await AsyncStorage.getItem("nickname");
+  
+//     const message = {
+//       message: content,
+//       nickname: nickname || "익명",
+//       memberId,
+//       chatRoomId: currentRoomId,
+//     };
+  
+//     // 👉 낙관적 메시지 미리 추가
+//     const optimisticMsg = {
+//       id: Date.now(), // 임시 ID
+//       content: content,
+//       sender: nickname,
+//       timestamp: new Date().toISOString(),
+//     };
+  
+//     setMessages((prev) => ({
+//       ...prev,
+//       [currentRoomId]: [...(prev[currentRoomId] || []), optimisticMsg],
+//     }));
+  
+//     socketSendMessage(currentRoomId, message);
+//     return true;
+//   };
+  
+  
+
+//   const currentRoomMessages = messages[currentRoomId] || [];
+
+//   useEffect(() => {
+//     console.log("🧾 [현재 메시지 상태 업데이트됨]");
+//     console.log("📦 전체 messages 객체:", messages);
+//     console.log("💬 현재 채팅방 메시지:", messages[currentRoomId] || []);
+//   }, [messages, currentRoomId]);
+
+//   return (
+//     <ChatContext.Provider
+//       value={{
+//         isConnected,
+//         isConnecting,
+//         currentRoomId,
+//         currentRoomMessages,
+//         userInfo,
+//         token,
+//         joinRoom,
+//         leaveRoom,
+//         sendMessage,
+//         // 🔁 ChatContext.js 수정
+//         setCurrentRoomMessages: (roomId, updater) =>
+//           setMessages((prev) => ({
+//             ...prev,
+//             [roomId]:
+//               typeof updater === 'function'
+//                 ? updater(prev[roomId] || [])
+//                 : updater,
+//           })),
+//       }}
+//     >
+//       {children}
+//     </ChatContext.Provider>
+//   );
+// };
+
+
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Alert } from 'react-native';
-
-// 미리 정의된 닉네임 목록
-const PREDEFINED_NICKNAMES = ['하나', '두리', '세찌', '네몽', '다오', '육댕'];
-
+import { sendMessage as socketSendMessage } from '../lib/socket';
 
 const ChatContext = createContext();
-const CHAT_STORAGE_KEY = '@chat_room_info';
 
-export const useChat = () => {
-  const context = useContext(ChatContext);
-  if(!context) {
-    throw new Error ('useChat must be used within a ChatProvider');
-  }
-  return context;
-}
-
+export const useChat = () => useContext(ChatContext);
 
 export const ChatProvider = ({ children }) => {
-  const [currentRoomMessages, setCurrentRoomMessages] = useState([]);
-  const [isConnected, setIsConnected] = useState(false);
-  const [currentRoom, setCurrentRoom] = useState(null);
-  const [nickname, setNickname] = useState('');
-  const [isInQueue, setIsInQueue] = useState(false);
+  const [isConnected, setIsConnected] = useState(false); // 연결 상태만 관리
+  const [currentRoomId, setCurrentRoomId] = useState(null);
+  const [messages, setMessages] = useState({});
+  const [userInfo, setUserInfo] = useState(null);
+  const [token, setToken] = useState(null);
 
-  const clientRef = useRef(null);
-  const subscriptionRef = useRef(null);
-
-  // STOMP 클라이언트 초기화
+  // 사용자 정보 로딩
   useEffect(() => {
-    const setupStompClient = async () => {
+    const loadUserData = async () => {
       try {
-        const token = await AsyncStorage.getItem('accessToken');
-        if (!token) {
-          return;
-        }
-
-        const stompClient = new Client({
-          // ✅ 변경 필요: 백엔드 웹소켓 URL
-          webSocketFactory: () => new SockJS('http://172.30.1.78:8080/ws-stomp'),
-          connectHeaders: { Authorization: token },
-          debug: (str) => console.log(new Date(), str),
-          reconnectDelay: 5000,
-          onConnect: () => {
-            console.log('STOMP connected');
-            setIsConnected(true);
-          },
-          onStompError: (frame) => {
-            console.error('STOMP Error:', frame.headers['message']);
-            Alert.alert('연결 오류', '채팅 서버에 연결할 수 없습니다.');
-          },
-        });
-
-        stompClient.activate();
-        clientRef.current = stompClient;
-
-        return () => {
-          if (stompClient) {
-            stompClient.deactivate();
-          }
-        };
+        const storedToken = await AsyncStorage.getItem('access_token');
+        const storedUserInfo = await AsyncStorage.getItem('user_info');
+        if (storedToken) setToken(storedToken);
+        if (storedUserInfo) setUserInfo(JSON.parse(storedUserInfo));
       } catch (error) {
-        console.error('Setup chat error:', error);
+        console.error('❌ 사용자 데이터 로드 오류:', error);
       }
     };
-
-    setupStompClient();
+    loadUserData();
   }, []);
 
-  // 대기열 참가
-  const joinQueue = async () => {
-    if (!isConnected || !clientRef.current) {
-      Alert.alert('연결 오류', '서버에 연결되어 있지 않습니다.');
-      return;
-    }
+  const joinRoom = (roomId) => setCurrentRoomId(roomId);
+  const leaveRoom = () => setCurrentRoomId(null);
 
-    try {
-      setIsInQueue(true);
+  const sendMessage = async (content) => {
+    console.log("content : " + content);
+    console.log("currentRoomId : " + currentRoomId);
+    console.log("isConnected : " + isConnected);
+    if (!currentRoomId) return false;
 
-      // ✅ 변경 필요: 대기열 참가 API 엔드포인트
-      const token = await AsyncStorage.getItem('accessToken');
-      const memberId = await AsyncStorage.getItem('memberId'); // 멤버 ID 가져오기
+    const memberIdStr = await AsyncStorage.getItem("memberId");
+    const memberId = Number(memberIdStr);
+    const nickname = await AsyncStorage.getItem("nickname");
 
-      // ✅ 커스텀 필요: 대기열 참가 가능 여부 확인 API 호출
-      const isPossibleResponse = await fetch(
-        `http://172.30.1.78:8080/chat-rooms/isPossible/${memberId}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        },
-      );
-
-      if (!isPossibleResponse.ok) {
-        setIsInQueue(false);
-        Alert.alert('오류', '이미 다른 채팅방에 참여 중입니다.');
-        return;
-      }
-
-      // ✅ 커스텀 필요: 대기열 참가 API 호출 (실제 API URL로 변경)
-      const response = await fetch('http://172.30.1.78:8080/queue/join', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: token,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('대기열 참가에 실패했습니다.');
-      }
-
-      // 대기열 참가 후 서버로부터 채팅방 할당 대기
-      subscribeToQueueResult();
-    } catch (error) {
-      setIsInQueue(false);
-      Alert.alert('오류', error.message);
-    }
-  };
-
-  // 대기열 결과 구독 (방 할당 알림 수신)
-  const subscribeToQueueResult = () => {
-    if (subscriptionRef.current) {
-      subscriptionRef.current.unsubscribe();
-    }
-
-    // ✅ 커스텀 필요: 대기열 결과 수신 주제(topic)
-    const newSubscription = clientRef.current.subscribe(
-      '/user/queue/assignment',
-      (message) => {
-        try {
-          const payload = JSON.parse(message.body);
-          // 닉네임 할당
-          assignRandomNickname();
-          // 채팅방 참여
-          joinRoom(payload.roomId);
-          setIsInQueue(false);
-        } catch (error) {
-          console.error('Failed to parse queue result:', error);
-        }
-      },
-    );
-
-    subscriptionRef.current = newSubscription;
-  };
-
-  // 랜덤 닉네임 할당
-  const assignRandomNickname = () => {
-    const randomIndex = Math.floor(Math.random() * PREDEFINED_NICKNAMES.length);
-    const selectedNickname = PREDEFINED_NICKNAMES[randomIndex];
-    setNickname(selectedNickname);
-    return selectedNickname;
-  };
-
-  // 채팅방 참여
-  const joinRoom = (roomId) => {
-    if (!isConnected || !clientRef.current) {
-      console.warn('STOMP is not connected yet. Cannot join room.');
-      return;
-    }
-
-    // 이미 구독 중인 채팅방이 있다면 해제
-    if (subscriptionRef.current) {
-      subscriptionRef.current.unsubscribe();
-    }
-
-    setCurrentRoomMessages([]);
-    setCurrentRoom(roomId);
-
-    // ✅ 변경 필요: 채팅방 구독 주제(topic)
-    console.log(`Subscribing to /sub/chat/${roomId}`);
-    const newSubscription = clientRef.current.subscribe(
-      `/sub/chat/${roomId}`,
-      (message) => {
-        try {
-          const payload = JSON.parse(message.body);
-          // ✅ 변경 필요: 메시지 형식 백엔드에 맞게 변경
-          const formattedMessage = {
-            id: payload.chatId || `msg_${Date.now()}`,
-            content: payload.message,
-            sender:
-              payload.nickName === nickname ? 'current_user' : payload.nickName,
-            timestamp: payload.createdAt || new Date().toISOString(),
-          };
-          setCurrentRoomMessages((prev) => [...prev, formattedMessage]);
-        } catch (error) {
-          console.error('Failed to parse message:', error);
-        }
-      },
-    );
-
-    subscriptionRef.current = newSubscription;
-  };
-
-  // 채팅방 나가기
-  const leaveRoom = () => {
-    if (subscriptionRef.current) {
-      subscriptionRef.current.unsubscribe();
-      subscriptionRef.current = null;
-    }
-
-    if (currentRoom && isConnected && clientRef.current) {
-      // ✅ 커스텀 필요: 채팅방 나가기 API 엔드포인트 (추가 구현 필요)
-      clientRef.current.publish({
-        destination: `/pub/chat/${currentRoom}/leave`,
-        body: JSON.stringify({ nickname }),
-      });
-    }
-
-    setCurrentRoom(null);
-    setCurrentRoomMessages([]);
-    setNickname('');
-  };
-
-  // 메시지 전송
-  const sendMessage = (messageText) => {
-    if (
-      !isConnected ||
-      !clientRef.current ||
-      !currentRoom ||
-      !messageText.trim()
-    ) {
-      return;
-    }
-
-    // ✅ 변경 필요: 메시지 페이로드 형식 백엔드에 맞게 변경
-    const messagePayload = {
-      message: messageText,
-      nickname: nickname,
-      chatRoomId: currentRoom,
-      // memberId는 서버에서 STOMP 헤더로부터 가져옴
+    const message = {
+      message: content,
+      nickname: nickname || "익명",
+      memberId,
+      chatRoomId: currentRoomId,
     };
 
-    // ✅ 변경 필요: 메시지 전송 API 엔드포인트
-    clientRef.current.publish({
-      destination: `/pub/chat/${currentRoom}/sendMessage`,
-      body: JSON.stringify(messagePayload),
-    });
-
-    // 로컬에 메시지 추가 (UI 즉시 업데이트)
-    const localMessage = {
-      id: `local_${Date.now()}`,
-      content: messageText,
-      sender: 'current_user',
+    // 낙관적 렌더링
+    const optimisticMsg = {
+      id: Date.now(),
+      content: content,
+      sender: nickname,
       timestamp: new Date().toISOString(),
     };
-    setCurrentRoomMessages((prev) => [...prev, localMessage]);
+
+    setMessages((prev) => ({
+      ...prev,
+      [currentRoomId]: [...(prev[currentRoomId] || []), optimisticMsg],
+    }));
+
+    socketSendMessage(currentRoomId, message);
+    return true;
   };
+
+  const currentRoomMessages = messages[currentRoomId] || [];
 
   return (
     <ChatContext.Provider
       value={{
-        currentRoomMessages,
         isConnected,
-        currentRoom,
-        nickname,
-        isInQueue,
-        joinQueue,
+        setIsConnected, // 외부에서 상태 제어용으로 노출
+        currentRoomId,
+        currentRoomMessages,
+        userInfo,
+        token,
         joinRoom,
         leaveRoom,
         sendMessage,
-
+        setCurrentRoomMessages: (roomId, updater) =>
+          setMessages((prev) => ({
+            ...prev,
+            [roomId]:
+              typeof updater === 'function'
+                ? updater(prev[roomId] || [])
+                : updater,
+          })),
       }}
     >
       {children}
@@ -279,4 +249,156 @@ export const ChatProvider = ({ children }) => {
   );
 };
 
-export const useChatContext = () => useContext(ChatContext);
+
+// import React, { createContext, useState, useEffect, useContext } from 'react';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import { connectSocket, disconnectSocket, sendMessage as socketSendMessage } from '../lib/socket';
+
+// const ChatContext = createContext();
+
+// export const useChat = () => useContext(ChatContext);
+
+// export const ChatProvider = ({ children }) => {
+//   const [isConnected, setIsConnected] = useState(false);
+//   const [currentRoomId, setCurrentRoomId] = useState(null);
+//   const [messages, setMessages] = useState({});
+//   const [userInfo, setUserInfo] = useState(null);
+//   const [token, setToken] = useState(null);
+
+//   // 사용자 정보 및 토큰 로딩 + 소켓 연결
+//   useEffect(() => {
+//     const loadUserData = async () => {
+//       try {
+//         const storedToken = await AsyncStorage.getItem('access_token');
+//         const storedUserInfo = await AsyncStorage.getItem('user_info');
+  
+//         if (storedToken) {
+//           setToken(storedToken);
+//         }
+  
+//         if (storedUserInfo) {
+//           setUserInfo(JSON.parse(storedUserInfo));
+//         }
+  
+//         // ✅ 여기서 connectSocket 실행
+//         if (storedToken && !isConnected) {
+//           console.log("📡 [소켓 연결 시작]");
+//           connectSocket((type, payload) => {
+//             if (type === 'CHAT') {
+//               const {
+//                 chatRoomId,
+//                 chatId,
+//                 message,
+//                 nickName,
+//                 createdAt,
+//               } = payload;
+  
+//               const convertedMessage = {
+//                 id: chatId,
+//                 content: message,
+//                 sender: nickName,
+//                 timestamp: createdAt,
+//               };
+  
+//               setMessages(prev => ({
+//                 ...prev,
+//                 [chatRoomId]: [...(prev[chatRoomId] || []), convertedMessage],
+//               }));
+  
+//               console.log("💬 [수신된 메시지]", convertedMessage);
+//             }
+//           });
+  
+//           setIsConnected(true);
+//         }
+//       } catch (error) {
+//         console.error('❌ 사용자 정보 로딩 실패:', error);
+//       }
+//     };
+  
+//     loadUserData();
+  
+//     return () => {
+//       if (isConnected) {
+//         console.log("🔌 [소켓 연결 해제]");
+//         disconnectSocket();
+//         setIsConnected(false);
+//       }
+//     };
+//   }, []);
+  
+
+//   // 채팅방 입장/퇴장
+//   const joinRoom = (roomId) => setCurrentRoomId(roomId);
+//   const leaveRoom = () => setCurrentRoomId(null);
+
+//   // 메시지 전송
+//   const sendMessage = async (content) => {
+//     console.log("📤 [메시지 전송 시도]");
+//     console.log("내용:", content);
+//     console.log("현재 채팅방:", currentRoomId);
+//     console.log("소켓 연결 상태:", isConnected);
+
+//     if (!isConnected || !currentRoomId) return false;
+
+//     const memberIdStr = await AsyncStorage.getItem("memberId");
+//     const nickname = await AsyncStorage.getItem("nickname");
+
+//     const message = {
+//       message: content,
+//       nickname: nickname || "익명",
+//       memberId: Number(memberIdStr),
+//       chatRoomId: currentRoomId,
+//     };
+
+//     // 낙관적 메시지 렌더링
+//     const optimisticMsg = {
+//       id: Date.now(),
+//       content: content,
+//       sender: nickname,
+//       timestamp: new Date().toISOString(),
+//     };
+
+//     setMessages(prev => ({
+//       ...prev,
+//       [currentRoomId]: [...(prev[currentRoomId] || []), optimisticMsg],
+//     }));
+
+//     socketSendMessage(currentRoomId, message);
+//     return true;
+//   };
+
+//   // 현재 채팅방 메시지
+//   const currentRoomMessages = messages[currentRoomId] || [];
+
+//   // 상태 확인용 디버깅 로그
+//   useEffect(() => {
+//     console.log("🧾 [메시지 상태 업데이트]");
+//     console.log("전체 messages:", messages);
+//     console.log("현재 채팅방 메시지:", currentRoomMessages);
+//   }, [messages, currentRoomId]);
+
+//   return (
+//     <ChatContext.Provider
+//       value={{
+//         isConnected,
+//         currentRoomId,
+//         currentRoomMessages,
+//         userInfo,
+//         token,
+//         joinRoom,
+//         leaveRoom,
+//         sendMessage,
+//         setCurrentRoomMessages: (roomId, updater) =>
+//           setMessages(prev => ({
+//             ...prev,
+//             [roomId]: typeof updater === 'function'
+//               ? updater(prev[roomId] || [])
+//               : updater,
+//           })),
+//       }}
+//     >
+//       {children}
+//     </ChatContext.Provider>
+//   );
+// };

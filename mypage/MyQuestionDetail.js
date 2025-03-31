@@ -20,7 +20,7 @@ export default function MyQuestionDetail () {
 useEffect(() => {
   const fetchDetail = async () => {
     try {
-      const result = await getQuestionDetail(questionId);
+      const result = await getQuestionDetail(questionId,1);
       setQuestion(result); // API 응답이 { data: { ... } } 형태
       setAnswer(result.answer)
     } catch (error) {

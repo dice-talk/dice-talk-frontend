@@ -5,18 +5,17 @@ import DiceFriendsDs from "./DiceFriendsDs";
 import HeartSignalDs from "./HeartSignalDs";
 import ExFriendsDs from "./ExFriendsDs";
 import { Button } from "react-native";
+import { useChat } from "../context/ChatContext";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 import HeartSignalLogo from "../assets/icon/logo/hsDs.svg"
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Footer from "../component/Footer";
 
 
 // SVG 테마 컴포넌트
 import ExFriendsTheme from "../assets/theme/exFriendsTheme.svg";
 import FriendsTheme from "../assets/theme/friendsTheme.svg";
 import HeartSignalTheme from "../assets/theme/heartSignalTheme.svg";
-import Footer from "../component/Footer";
 
 const BANNER_HEIGHT = 180;
 const THEME_IMAGE_SIZE = 200;
@@ -30,6 +29,29 @@ export default function Home() {
   const [heartModalVisible, setHeartModalVisible] = useState(false);
   const [storedToken, setStoredToken] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
+  const { setIsConnected } = useChat();
+
+  useEffect(() => {
+    const connectAfterLogin = async () => {
+      const token = await AsyncStorage.getItem("access_token");
+      if (token) {
+        connectSocket((type, payload) => {
+          if (type === "CHAT") {
+            const convertedMessage = {
+              id: payload.chatId,
+              content: payload.message,
+              sender: payload.nickName,
+              timestamp: payload.createdAt,
+            };
+            setCurrentRoomMessages(payload.chatRoomId, (prev) => [...prev, convertedMessage]);
+          }
+        });
+        setIsConnected(true);
+      }
+    };
+
+    connectAfterLogin();
+  }, []);
 
   useEffect(() => {
     // 로그인 정보가 전달되었는지 확인
@@ -40,14 +62,14 @@ export default function Home() {
     // AsyncStorage에서 토큰과 사용자 정보 확인
     const checkStoredData = async () => {
       try {
-        const token = await AsyncStorage.getItem('accessToken');
-        const userData = await AsyncStorage.getItem('memberId');
+        const token = await AsyncStorage.getItem('access_token');
+        const userData = await AsyncStorage.getItem('user_info');
         
         if (token) {
           setStoredToken(token);
           console.log('AsyncStorage에 저장된 토큰 확인:', token);
         } else {
-         console.log('AsyncStorage에 저장된 토큰이 없습니다.');
+          console.log('AsyncStorage에 저장된 토큰이 없습니다.');
         }
         
         if (userData) {
@@ -104,17 +126,6 @@ export default function Home() {
       </View>
 
       <Button title='LetterEventScreen' onPress={() => {navigation.navigate('LetterEventScreen')}} />
-
-      {/* CHATMAIN 버튼 */}
-      <View style={styles.chatButtonContainer}>
-        <TouchableOpacity
-          style={styles.chatMainButton}
-          onPress={handleChatMainPress}
-        >
-          <Text style={styles.chatMainButtonText}>CHATMAIN</Text>
-        </TouchableOpacity>
-      </View>
-
       {/* 🔸 캐러셀 섹션 */}
       <View style={styles.carouselWrapper}>
         <Animated.ScrollView
@@ -191,9 +202,7 @@ export default function Home() {
               </Animated.View>
             );
           })}
-          
         </Animated.ScrollView>
-        <Footer />
       </View>
 
       {/* Heart Signal Modal */}
@@ -215,7 +224,6 @@ export default function Home() {
           </View>
         </View>
       </Modal>
-      <Footer />
     </View>
   );
 }

@@ -5,7 +5,6 @@ import { connectSocket, disconnectSocket } from "../lib/socket";
 import { useNavigation } from "@react-navigation/native";
 import { requestNickname } from "../utils/http/nicknameUtils"; // 유틸 함수 추가했다고 가정
 import { BASE_URL } from "../utils/http/config";
-
 export default function hihihi() {
   const navigation = useNavigation();
   const [participants, setParticipants] = useState([]);
@@ -36,41 +35,28 @@ export default function hihihi() {
     console.log('[🔌 소켓 연결 시도]');
     connectSocket(callback);
 
-    // return () => {
-    //   console.log('[🔌 소켓 연결 해제]');
-    //   disconnectSocket();
-    // };
+    return () => {
+      console.log('[🔌 소켓 연결 해제]');
+      disconnectSocket();
+    };
   }, [navigation]);
-  
-  const [memberIdStr, setMemberIdStr] = useState("1");
-//   const memberIdHandler = (memberIdStr) => {
-//       if (memberIdStr === 1) {
-//           setMemberIdStr("2");
-//           return memberIdStr;
-//       } else {
-//           setMemberIdStr("1");
-//           return memberIdStr;
-//       }
-//   }
-  const handleJoin = async () => {
-    
-    try {
-        // const memberIdStr = await AsyncStorage.getItem("memberId");
-        
-        console.log('memberIdStr : ', memberIdStr)
-        const memberId = Number(memberIdStr === 1 ? memberIdHandler(memberIdStr) : 1); // 테스트용 하드코딩
 
-        console.log(memberId);
+  const handleJoin = async () => {
+    try {
+        const memberIdStr = await AsyncStorage.getItem("memberId");
+        const memberId = Number(memberIdStr);
+
         // ⭐ 1. 먼저 닉네임 요청 (중복 방지를 위해 서버에서 할당)
         const nickname = await requestNickname(memberId);
         if (!nickname) {
-        alert("닉네임 할당에 실패했습니다.");
-        return;
+          alert("닉네임 할당에 실패했습니다.");
+          return;
         }
         await AsyncStorage.setItem("nickname", nickname); // 3번 저장
         
-      const token = await AsyncStorage.getItem("access_token");
-      const res = await fetch(`${BASE_URL}matching/join`, {
+      const token = await AsyncStorage.getItem("accessToken");
+      console.log("token : ", token)
+      const res = await fetch(BASE_URL + "matching/join", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

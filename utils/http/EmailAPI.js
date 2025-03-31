@@ -68,24 +68,31 @@ export const loginDiceTalk = async (email, password) => {
         password: password,
       }),
     });
-  // 헤더에서 토큰 추출 (대소문자 통일)
-  const token = response.headers.get('Authorization')?.replace('Bearer ', '') || response.headers.get('authorization')?.replace('Bearer ', '');
 
+    // 헤더에서 토큰 추출 (대소문자 통일)
+    const token = response.headers.get('Authorization')?.replace('Bearer ', '') || response.headers.get('authorization')?.replace('Bearer ', '');
+    const memberId = response.headers.get('member-id');
+    const username = response.headers.get('username');
+    // 바디에서 memberId 추출
+    // const responseData = await response.json();
+    // console.log('리스폰스 데이터 : ', responseData)
+    // const memberId = responseData.memberid;
 
-  const memberId = response.headers.get('member-id');
-  const username = response.headers.get('username');
-  // 동시 저장
-  await AsyncStorage.multiSet([
-    ['accessToken', token],
-    ['memberId', String(memberId)],
-    ['username', username]
-  ]);
+    const responseData = await response;
+    console.log('리스폰스 데이터 : ', responseData)
+    // const memberId = responseData.memberid;
+
+    // 동시 저장
+    await AsyncStorage.multiSet([
+      ['accessToken', token],
+      ['memberId', String(memberId)],
+      ['username', username]
+    ]);
 
     return { token, memberId, username };
-
   } catch(error){
-  console.error('❌ 로그인 요청 실패:', error);
-  throw error;
+    console.error('❌ 로그인 요청 실패:', error);
+    throw error;
   }
 };
 
