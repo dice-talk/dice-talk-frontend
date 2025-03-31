@@ -81,9 +81,8 @@ export const loginDiceTalk = async (email, password) => {
     ['username', username]
   ]);
 
+    return { token, memberId, username };
 
-  // 필요한 값 반환환
-  return { token, memberId, username };
   } catch(error){
   console.error('❌ 로그인 요청 실패:', error);
   throw error;
