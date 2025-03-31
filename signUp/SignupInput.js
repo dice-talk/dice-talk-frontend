@@ -22,6 +22,7 @@ export default function SignupInput({ route, navigation}) {
     if (!userInfo) {
         return <Text> 사용자 정보가 없습니다</Text>;
       };
+      
     // 비밀번호 관련 상태
     const [password, setPassword] = useState('');
     const [confirmpassword, setConfirmPassword] = useState('');

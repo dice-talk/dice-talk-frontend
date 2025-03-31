@@ -79,9 +79,13 @@ export const ChatProvider = ({ children }) => {
     };
   }, [token, isConnected, isConnecting]);
 
+  // 채팅방 참여
   const joinRoom = (roomId) => setCurrentRoomId(roomId);
+
+  // 채팅방 나가기
   const leaveRoom = () => setCurrentRoomId(null);
 
+  // 채팅 메시지 전송
   const sendMessage = async (content) => {
     if (!isConnected || !currentRoomId) return false;
   
