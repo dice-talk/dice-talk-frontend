@@ -35,62 +35,50 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     gap: 8,
   },
-  leftContent: {
-    flex: 1,
-  },
-  leftBubbleRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: 6,
-  },
   rightMessageBlock: {
+    alignItems: "flex-end",
+    marginBottom: 16,
+  },
+  userRowRight: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-end",
-    marginBottom: 16,
-    gap: 8,
-    paddingLeft: '20%',
-  },
-  rightBubbleRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
     gap: 6,
-  },
-  rightIconContainer: {
-    alignSelf: 'flex-end',
-    marginBottom: 35,
+    marginBottom: 4,
+    justifyContent: "flex-end",
   },
   userName: {
     fontSize: 12,
     color: "#A45C73",
-    marginBottom: 4,
   },
   leftBubble: {
     backgroundColor: "#E7D0EB",
     padding: 12,
     borderRadius: 12,
+    alignSelf: "flex-start",
     maxWidth: "80%",
   },
   rightBubble: {
     backgroundColor: "#F8CDD6",
     padding: 12,
     borderRadius: 12,
+    alignSelf: "flex-end",
     maxWidth: "80%",
   },
   messageText: {
     fontSize: 14,
-    color: "#444",
+    color: "#fff",
   },
   timeTextLeft: {
     fontSize: 10,
     color: "#999",
-    alignSelf: 'flex-end',
-    marginBottom: 2,
+    marginTop: 4,
+    marginLeft: 44,
   },
   timeTextRight: {
     fontSize: 10,
     color: "#999",
+    marginTop: 4,
     alignSelf: "flex-end",
-    marginRight: 6,
+    marginRight: 4,
   },
-});
+}); 

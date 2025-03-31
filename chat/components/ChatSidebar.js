@@ -60,11 +60,12 @@ export default function ChatSidebar({
             </View>
           ))}
           <View style={{ marginTop: 16 }}>
-            <Button
+            {/* 개발 중인 화면이므로 임시로 주석 처리 */}
+            {/* <Button
               title="러브레터 이벤트로 이동"
               onPress={() => navigation.navigate('LetterEventScreen')}
               color="#A45C73"
-            />
+            /> */}
           </View>
         </ScrollView>
       </View>

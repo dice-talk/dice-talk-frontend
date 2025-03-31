@@ -5,8 +5,9 @@ import LongButton from "./LongButton";
 import { Alert } from "react-native";
 import CitySelectBox from './CitySelectBox';
 import { LinearGradient } from "react-native-svg";
+import { BASE_URL } from "../utils/http/config";
 
-const BACKEND_URL = "http://172.30.1.91:8080";
+const BACKEND_URL = BASE_URL;
 
 export default function EditMyInfoInput({ route, navigation }) {
     // 사용자 정보 (서버에서 받아온 데이터라고 가정)
