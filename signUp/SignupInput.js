@@ -6,9 +6,7 @@ import { Alert } from "react-native";
 import CitySelectBox from '../component/CitySelectBox';
 import { useEmail } from '../context/EmailContext';
 import { LinearGradient } from "react-native-svg";
-//import { BACKEND_URL } from './TossAuth'
 
-const BACKEND_URL = "http://172.30.1.91:8080";
 
 export default function SignupInput({ route, navigation}) {
     const { email } = useEmail(); // 전역상태 가져오기
@@ -100,7 +98,7 @@ export default function SignupInput({ route, navigation}) {
           });
 
         try {
-            const res = await fetch(`${BACKEND_URL}/auth/register`, {
+            const res = await fetch(`${BASE_URL}auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type' : 'application/json',

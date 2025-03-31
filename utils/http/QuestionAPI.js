@@ -1,6 +1,18 @@
 
 import { BASE_URL } from "./config";
 import { fetchWithAuth } from "./fetchWithAuth";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const checkToken = async () => {
+  const token = await AsyncStorage.getItem('accessToken');
+  console.log('🪪 저장된 토큰:', token);
+
+  if (token) {
+    console.log('✅ 토큰이 정상적으로 저장되어 있습니다.');
+  } else {
+    console.log('❌ 토큰이 저장되어 있지 않습니다.');
+  }
+};
 
 // fetch로로 호출 함수 delete
 export const deleteMyQuestion = async (questionId, token) => {
@@ -12,6 +24,7 @@ export const deleteMyQuestion = async (questionId, token) => {
     if (!response.ok) {
       throw new Error(`삭제 실패: ${response.status}`);
     }
+    checkToken();
 
     return response; // 204 No Content일 경우 body 없음
   } catch (error) {
@@ -117,21 +130,34 @@ export const createBannedMemberQuestion = async (questionData) => {
 // 질문 등록
 export const postQuestion = async (question) => {
   try {
+    const memberId = await AsyncStorage.getItem('memberId');
+    const questionWithId = {...question, memberId: Number(memberId),} // 서버에서 숫자로 받는 경우도 대비
+   
     const response = await fetchWithAuth('questions', {
       method: 'POST',
-      body: JSON.stringify({question})
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(questionWithId)
     });
 
-    if (!response.created) {
-      const errorData = await response.json();
+    if (!response.ok) {
+      const errorData = await response.text();
       console.error('질문 등록 실패:', errorData);
       throw new Error(errorData.error || '질문 등록 실패');
     }
 
-    const data = await response.json();
+// 응답데이터가 없을 경우도 대비하자. 응답바디가 없는 경우우
+    let data = null;
+    try {
+      data = await response.json();
+    } catch (e) {
+      //console.error('응답바디 없음. (201 Created)');
+    }
+
     return data;
   } catch (err) {
-    console.error('질문 등록 실패:', err.message);
+    console.error('질문 등록 중 에러:', err.message);
     throw err;
   }
 };

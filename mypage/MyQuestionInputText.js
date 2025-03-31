@@ -40,6 +40,7 @@ export default function MyQuestionInputText () {
                 content: content,
                 question_image: null, // 필요한 경우 이미지 데이터 처리
             };
+            console.log(text, content);
             await postQuestion(newQuestion);
             alert('문의가 등록되었습니다.');
             navigation.goBack();
@@ -269,6 +270,7 @@ const styles = StyleSheet.create({
         gap: 12,
       },
       bottomButtonRow: {
+        bottom: 40,
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginTop: 12,

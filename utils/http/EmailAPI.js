@@ -68,43 +68,25 @@ export const loginDiceTalk = async (email, password) => {
         password: password,
       }),
     });
+  // 헤더에서 토큰 추출 (대소문자 통일)
+  const token = response.headers.get('Authorization')?.replace('Bearer ', '') || response.headers.get('authorization')?.replace('Bearer ', '');
 
-    if(!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || '로그인 실패');
-    }
 
-    // 응답본문 확인
-    const responseText = await response.text();
-    console.log('응답본문 : ', responseText);
+  const memberId = response.headers.get('member-id');
+  const username = response.headers.get('username');
+  // 동시 저장
+  await AsyncStorage.multiSet([
+    ['accessToken', token],
+    ['memberId', String(memberId)],
+    ['username', username]
+  ]);
 
-    let userData;
-    userData = {
-      nickName: response.headers.get('username'),
-      memberId: response.headers.get('memberid')
-    }
 
-     // 헤더에서 토큰 추출 (대소문자 통일)
-     const token = response.headers.get('Authorization')?.replace('Bearer ', '') || response.headers.get('authorization')?.replace('Bearer ', '');
-
-     if(!token) {
-      throw new Error('토큰이 응답에 포함되어 있지 않습니다.');
-     }
-    // 바디에서 memberId 추출
-    const responseData = await response.json();
-    console.log('리스폰스 데이터 : ', responseData)
-    const memberId = responseData.memberid;
-
-    // 동시 저장
-    await AsyncStorage.multiSet([
-      ['accessToken', token],
-      ['memberId', String(memberId)]
-    ]);
-
-    return { token, memberId };
+  // 필요한 값 반환환
+  return { token, memberId, username };
   } catch(error){
-    console.error('❌ 로그인 요청 실패:', error);
-    throw error;
+  console.error('❌ 로그인 요청 실패:', error);
+  throw error;
   }
 };
 

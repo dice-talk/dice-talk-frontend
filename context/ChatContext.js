@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useRef,
 } from 'react';
+import { connectSocket, disconnectSocket, sendMessage as socketSendMessage } from '../lib/socket';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -40,7 +41,7 @@ export const ChatProvider = ({ children }) => {
 
         const stompClient = new Client({
           // ✅ 변경 필요: 백엔드 웹소켓 URL
-          webSocketFactory: () => new SockJS('http://172.30.1.22:8080/ws-stomp'),
+          webSocketFactory: () => new SockJS('http://172.30.1.78:8080/ws-stomp'),
           connectHeaders: { Authorization: token },
           debug: (str) => console.log(new Date(), str),
           reconnectDelay: 5000,
@@ -86,7 +87,7 @@ export const ChatProvider = ({ children }) => {
 
       // ✅ 커스텀 필요: 대기열 참가 가능 여부 확인 API 호출
       const isPossibleResponse = await fetch(
-        `http://172.30.1.22:8080/chat-rooms/isPossible/${memberId}`,
+        `http://172.30.1.78:8080/chat-rooms/isPossible/${memberId}`,
         {
           headers: {
             Authorization: token,
@@ -101,7 +102,7 @@ export const ChatProvider = ({ children }) => {
       }
 
       // ✅ 커스텀 필요: 대기열 참가 API 호출 (실제 API URL로 변경)
-      const response = await fetch('http://172.30.1.22:8080/queue/join', {
+      const response = await fetch('http://172.30.1.78:8080/queue/join', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
