@@ -34,15 +34,18 @@ export default function LoginPassword({navigation}) {
         try {
             const result = await loginDiceTalk(email, inputPassword);
             console.log('서버 응답:', result);
+
+            await AsyncStorage.setItem('accessToken', result.token)
+            console.log('토큰 저장 완료:' , result.token)
             
-            if (result.user && result.user.memberid) {
-                updateMemberId(result.user.memberid);
+            if (result.user && result.user.memberId) {
+                updateMemberId(result.memberId);
             }
-            AsyncStorage.setItem('accessToken', result.token);
-            const acToken = AsyncStorage.getItem('accessToken');
-            console.log(acToken);
-            // await AsyncStorage.setItem('accessToken', result.token);
-            // console.log('토큰 저장 완료', accessToken);
+
+            const acToken = await AsyncStorage.getItem('accessToken');
+            console.log('불러온 Access Tocken:', acToken);
+
+            console.log('토큰 저장 완료', accessToken);
 
             navigation.replace('Main');
         } catch (error) {

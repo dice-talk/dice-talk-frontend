@@ -22,13 +22,11 @@ export default function App() {
       <MemberProvider>
         <EventProvider>
           <EmailProvider>
-            <ChatProvider>
               <GroupProvider>
                 <NavigationContainer>
                   <AppNavigator />
                 </NavigationContainer>
               </GroupProvider>
-            </ChatProvider>
           </EmailProvider>
           </EventProvider>
       </MemberProvider>
