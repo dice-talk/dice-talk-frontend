@@ -19,6 +19,14 @@ const PREDEFINED_NICKNAMES = ['하나', '두리', '세찌', '네몽', '다오', 
 const ChatContext = createContext();
 const CHAT_STORAGE_KEY = '@chat_room_info';
 
+export const useChat = () => {
+  const context = useContext(ChatContext);
+  if(!context) {
+    throw new Error ('useChat must be used within a ChatProvider');
+  }
+  return context;
+}
+
 
 export const ChatProvider = ({ children }) => {
   const [currentRoomMessages, setCurrentRoomMessages] = useState([]);

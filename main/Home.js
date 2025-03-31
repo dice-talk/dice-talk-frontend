@@ -9,6 +9,7 @@ import { Button } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import HeartSignalLogo from "../assets/icon/logo/hsDs.svg"
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Footer from "../component/Footer";
 
 
 // SVG 테마 컴포넌트
@@ -38,14 +39,14 @@ export default function Home() {
     // AsyncStorage에서 토큰과 사용자 정보 확인
     const checkStoredData = async () => {
       try {
-        const token = await AsyncStorage.getItem('access_token');
-        const userData = await AsyncStorage.getItem('user_info');
+        const token = await AsyncStorage.getItem('accessToken');
+        const userData = await AsyncStorage.getItem('memberId');
         
         if (token) {
           setStoredToken(token);
           console.log('AsyncStorage에 저장된 토큰 확인:', token);
         } else {
-          console.log('AsyncStorage에 저장된 토큰이 없습니다.');
+         console.log('AsyncStorage에 저장된 토큰이 없습니다.');
         }
         
         if (userData) {
@@ -211,6 +212,7 @@ export default function Home() {
           </View>
         </View>
       </Modal>
+      <Footer />
     </View>
   );
 }

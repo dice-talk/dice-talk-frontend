@@ -35,13 +35,13 @@ function Footer() {
         Icon={Chat} 
       />
       <Button 
-        title="My Page" 
+        title="MyPage" 
         onPress={() => navigation.navigate("MyPageTab", { screen: "MyPage" })} 
         Icon={MyPage} 
       />
       <Button 
         title="Setting" 
-        onPress={() => navigation.navigate("MyPageTab", { screen: "MyInfo" })} 
+        onPress={() => navigation.navigate("SettingTab", { screen: "SettingMains" })} 
         Icon={Setting} 
       />
     </View>

@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import ClearIcon from "../assets/public/clear.svg";
-import Footer from "../../../../.Trash/dice-talk-frontend/component/Footer";
+import ClearIcon from "../assets/public/clearIcon.svg";
+import Footer from "../component/Footer";
 
 const SettingUserInfoClear = () => {
   const navigation = useNavigation();

@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { connectSocket, disconnectSocket } from "../lib/socket";
 import { useNavigation } from "@react-navigation/native";
 import { requestNickname } from "../utils/http/nicknameUtils"; // 유틸 함수 추가했다고 가정
+import { BASE_URL } from "../utils/http/config";
 
 export default function hihihi() {
   const navigation = useNavigation();
@@ -69,7 +70,7 @@ export default function hihihi() {
         await AsyncStorage.setItem("nickname", nickname); // 3번 저장
         
       const token = await AsyncStorage.getItem("access_token");
-      const res = await fetch("http://172.30.1.78:8080/matching/join", {
+      const res = await fetch(`${BASE_URL}matching/join`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
