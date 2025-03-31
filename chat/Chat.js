@@ -17,25 +17,17 @@ import ChatMessage from './components/ChatMessage';
 import ChatInput from './components/ChatInput';
 import ChatSidebar from './components/ChatSidebar';
 import ChatHeader from './components/ChatHeader';
-import ExitModal from './components/ExitModal';
-import EventModal from './components/EventModal';
-import ResultModal from './components/ResultModal';
-import SignalModal from './components/SignalModal';
 import { useChat } from '../context/ChatContext';
+
 
 export default function Chat({ navigation }) {
   const [sidebarVisible, setSidebarVisible] = useState(false);
-  const [exitModalVisible, setExitModalVisible] = useState(false);
-  const [eventModalVisible, setEventModalVisible] = useState(false);
-  const [eventConfirmed, setEventConfirmed] = useState(false);
-  const [selectedGameIcon, setSelectedGameIcon] = useState(null);
-  const [resultModalVisible, setResultModalVisible] = useState(false);
-  const [thirdModalVisible, setThirdModalVisible] = useState(false);
   const [myNickname, setMyNickname] = useState('');
   const scrollViewRef = useRef(null);
   const slideAnim = useRef(new Animated.Value(Dimensions.get('window').width)).current;
   const { currentRoomMessages, setCurrentRoomMessages, sendMessage, joinRoom, leaveRoom } = useChat();
 
+ 
   useEffect(() => {
     const fetchNickname = async () => {
       const storedNickname = await AsyncStorage.getItem('nickname');

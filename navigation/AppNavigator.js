@@ -8,6 +8,7 @@ import ChatNavigator from './ChatNavigator';
 import MyPageNavigator from './MyPageNavigator';
 import SettingNavigator from './SettingNavigator';
 import Chat from '../chat/Chat';
+console.log("Chat 컴포넌트:", Chat);
 
 // 공통 컴포넌트
 import UserCheckScreen from '../screen/UserCheckScreen';
@@ -51,6 +52,7 @@ export default function AppNavigator() {
       <Stack.Screen name='LetterResult' component={LetterResult} options={{ headerShown: false }}/>
       
       <Stack.Screen name='LoadingScreen' component={LoadingScreen} options={{headerShown: false}} />
+
 
     </Stack.Navigator>
   );
