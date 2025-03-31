@@ -69,9 +69,27 @@ export const loginDiceTalk = async (email, password) => {
       }),
     });
 
-    // 헤더에서 토큰 추출 (대소문자 통일)
-    const token = response.headers.get('Authorization')?.replace('Bearer ', '') || response.headers.get('authorization')?.replace('Bearer ', '');
+    if(!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || '로그인 실패');
+    }
 
+    // 응답본문 확인
+    const responseText = await response.text();
+    console.log('응답본문 : ', responseText);
+
+    let userData;
+    userData = {
+      nickName: response.headers.get('username'),
+      memberId: response.headers.get('memberid')
+    }
+
+     // 헤더에서 토큰 추출 (대소문자 통일)
+     const token = response.headers.get('Authorization')?.replace('Bearer ', '') || response.headers.get('authorization')?.replace('Bearer ', '');
+
+     if(!token) {
+      throw new Error('토큰이 응답에 포함되어 있지 않습니다.');
+     }
     // 바디에서 memberId 추출
     const responseData = await response.json();
     console.log('리스폰스 데이터 : ', responseData)

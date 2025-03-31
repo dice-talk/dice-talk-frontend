@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Animated, StyleSheet, Easing, Text, Image } from 'react-native';
 import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
+import Logo from'../assets/icon/logo/logo_icon.svg';
 
 export default function LoadingScreen() {
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -43,10 +44,7 @@ export default function LoadingScreen() {
           />
         </Svg>
       </Animated.View>
-      <Image
-        source={require('../assets/dice.png')} // dice 아이콘
-        style={styles.icon}
-      />
+      <Logo width={150} height={150} />
     </View>
   );
 }
@@ -63,10 +61,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     color: '#1F2937',
-  },
-  icon: {
-    position: 'absolute',
-    width: 100,
-    height: 100,
-  },
+  }
 });
