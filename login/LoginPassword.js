@@ -39,6 +39,7 @@ export default function LoginPassword({navigation}) {
                 updateMemberId(result.user.memberid);
             }
             AsyncStorage.setItem('accessToken', result.token);
+            
             const acToken = AsyncStorage.getItem('accessToken');
             console.log(acToken);
             // await AsyncStorage.setItem('accessToken', result.token);

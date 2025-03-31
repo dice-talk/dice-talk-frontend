@@ -73,7 +73,11 @@ export const loginDiceTalk = async (email, password) => {
     const token = response.headers.get('Authorization')?.replace('Bearer ', '') || response.headers.get('authorization')?.replace('Bearer ', '');
 
     // 바디에서 memberId 추출
-    const responseData = await response.json();
+    // const responseData = await response.json();
+    // console.log('리스폰스 데이터 : ', responseData)
+    // const memberId = responseData.memberid;
+
+    const responseData = await response;
     console.log('리스폰스 데이터 : ', responseData)
     const memberId = responseData.memberid;
 

@@ -1,28 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, Pressable, Modal, Alert } from 'react-native';
+
 import { useNavigation } from '@react-navigation/native';
 import { navigateToChat } from '../navigation/navigationUtils';
 import EventModal from './components/EventModal';
 import { usePostEvent } from '../utils/http/eventAPI';
 import Footer from '../component/Footer';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { View, Text, StyleSheet, Image, Pressable, Modal, Alert, ActivityIndicator } from 'react-native';
+
+import { useChat } from '../context/ChatContext';
 // 🔹 더미 이미지 임포트 예시
 const bannerImages = [require('../assets/banner/banner_Ex_love.png')]; // 배너 이미지
+export default function ChatMain() {
 
-export default function ChatMain({ memberId }) {
-  const { postEvent } = usePostEvent();
-  const navigation = useNavigation();
-  const { chatRoomInfo, updateChatRoomInfo } = useChatContext();
-  const chatRoomId = chatRoomInfo?.chatRoomId;
-  const chatPart = chatRoomInfo?.chatPart || [];
-
-  
   const [unreadCount, setUnreadCount] = useState(42);
   const [remainingTime, setRemainingTime] = useState(48 * 60 * 60); // 48시간 = 172800초
-  const [isLoading, setIsLoading] = useState(false);
-  const [showEventModal, setShowEventModal] = useState(false);
-  const [selectedIcon, setSelectedIcon] = useState(null);
-  const [isConfirmed, setIsConfirmed] = useState(false);
+  const navigation = useNavigation();
+  const [isJoiningQueue, setIsJoiningQueue] = useState(false);
+  
+  // ChatContext에서 필요한 상태와 함수 가져오기
+  const { 
+    connectWebSocket, 
+    isConnected, 
+    isConnecting, 
+    userInfo, 
+    token, 
+    queueStatus, 
+    isInQueue, 
+    joinQueue, 
+    leaveQueue, 
+    getQueueStatus,
+    chatRooms
+  } = useChat();
+
 
   // 선택된 아이콘에 해당하는 사용자의 memberId를 찾는 함수
   const findSelectedUserMemberId = (iconId) => {
@@ -39,19 +50,71 @@ export default function ChatMain({ memberId }) {
     )
   }
 
+
+  // 토큰과 웹소켓 연결 관리
+  useEffect(() => {
+    if (token && !isConnected && !isConnecting) {
+      connectWebSocket();
+    }
+  }, [token, isConnected, isConnecting, connectWebSocket]);
+
+  // 웹소켓 연결 후 대기열 상태 요청
+  useEffect(() => {
+    if (isConnected) {
+      getQueueStatus();
+    }
+  }, [isConnected, getQueueStatus]);
+
+  // 타이머 설정
+
   useEffect(() => {
     const interval = setInterval(() => {
-      setRemainingTime(prev => {
-        const newTime = prev > 0 ? prev - 1 : 0;
-        // 8시간 = 28800초
-        if (newTime <= 28800) {
-          setShowEventModal(true);
-        }
-        return newTime;
-      });
+      setRemainingTime(prev => (prev > 0 ? prev - 1 : 0));
     }, 1000);
+    
     return () => clearInterval(interval);
   }, []);
+
+  // 입장 버튼 핸들러
+  const handleEnterPress = async () => {
+    if (!token || !userInfo) {
+      Alert.alert('로그인 필요', '채팅 기능을 사용하려면 로그인이 필요합니다.');
+      return;
+    }
+    
+    if (!isConnected) {
+      Alert.alert('연결 오류', '채팅 서버에 연결되어 있지 않습니다. 다시 시도해주세요.');
+      return;
+    }
+    
+    setIsJoiningQueue(true);
+    
+    try {
+      let success;
+      if (isInQueue) {
+        // 대기열에서 나가기
+        success = await leaveQueue();
+        if (success) {
+          Alert.alert('대기열에서 나왔습니다');
+        }
+      } else {
+        // 대기열 참가
+        success = await joinQueue();
+        if (success) {
+          Alert.alert('대기열에 참가했습니다', '다른 참가자들을 기다리는 중입니다...');
+        }
+      }
+      
+      if (!success) {
+        Alert.alert('오류 발생', '대기열 작업 중 오류가 발생했습니다.');
+      }
+    } catch (error) {
+      console.error('대기열 참가/나가기 오류:', error);
+      Alert.alert('오류 발생', '대기열 작업 중 오류가 발생했습니다.');
+    } finally {
+      setIsJoiningQueue(false);
+    }
+  };
 
   const formatTime = (seconds) => {
     const hrs = String(Math.floor(seconds / 3600)).padStart(2, '0');
@@ -60,8 +123,9 @@ export default function ChatMain({ memberId }) {
     return `${hrs}:${mins}:${secs}`;
   };
 
-  const handleConfirm = () => {
-    navigateToChat(navigation, 'Chat');
+  // 뒤로가기 핸들러 - Home으로 돌아가기
+  const handleGoBack = () => {
+    navigation.navigate('Main');
   };
 
   const handleEventConfirm = async () => {
@@ -101,8 +165,37 @@ export default function ChatMain({ memberId }) {
       
     } catch (error) {
       Alert.alert('오류', '이벤트 등록에 실패했습니다.');
+
+  // 현재 대기열 참가자 수 표시
+  const getUserCount = () => {
+    if (queueStatus && queueStatus.users) {
+      return queueStatus.users.length;
+
     }
+    return 0;
   };
+
+  // 예상 대기 시간 표시
+  const getEstimatedWaitTime = () => {
+    if (queueStatus && queueStatus.estimatedWaitTime !== undefined) {
+      const minutes = Math.floor(queueStatus.estimatedWaitTime / 60);
+      const seconds = queueStatus.estimatedWaitTime % 60;
+      return `${minutes}분 ${seconds}초`;
+    }
+    return '계산 중...';
+  };
+
+  // 우측 상단 배지의 안 읽은 메시지 수
+  useEffect(() => {
+    // 모든 채팅방의 안 읽은 메시지 수 계산
+    let totalUnread = 0;
+    if (chatRooms && chatRooms.length > 0) {
+      // 각 채팅방의 안읽은 메시지를 합산 (실제 구현이 필요합니다)
+      // 예: chatRooms.forEach(room => totalUnread += room.unreadCount || 0);
+      totalUnread = 42; // 현재는 고정 값 사용
+    }
+    setUnreadCount(totalUnread);
+  }, [chatRooms]);
 
   return (
     <View style={styles.container}>
@@ -114,19 +207,53 @@ export default function ChatMain({ memberId }) {
       {/* 🔸 Body */}
       <View style={styles.chatBody}>
         {/* 채팅 배경 영역 */}
-
+        <View style={styles.chatBackground}>
+          {/* 예시 채팅 메시지 */}
+          <Text style={styles.chatBubble}>안녕하세요! 하늘놀늘 강하늘이에요!</Text>
+        </View>
 
         {/* 🔸 남은 시간 모달 */}
         <View style={styles.timerModal}>
           <Text style={styles.modalLabel}>채팅 종료까지</Text>
           <Text style={styles.timerText}>{formatTime(remainingTime)}</Text>
-          <Pressable 
-            style={[styles.enterButton, isLoading && styles.buttonDisabled]} 
-            onPress={handleConfirm}
-            disabled={isLoading}
-          >
-            <Text style={styles.enterButtonText}>입장</Text>
-          </Pressable>
+          
+          {isConnecting ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#e163f6" />
+              <Text style={styles.loadingText}>연결 중...</Text>
+            </View>
+          ) : (
+            <>
+              {queueStatus && isInQueue && (
+                <View style={styles.queueInfoContainer}>
+                  <Text style={styles.queueInfoText}>
+                    현재 대기 인원: {getUserCount()}/6명
+                  </Text>
+                  <Text style={styles.queueInfoText}>
+                    예상 대기 시간: {getEstimatedWaitTime()}
+                  </Text>
+                </View>
+              )}
+              
+              <Pressable 
+                style={[
+                  styles.enterButton,
+                  isJoiningQueue && styles.disabledButton,
+                  isInQueue && styles.leaveButton
+                ]}
+                onPress={handleEnterPress}
+                disabled={isJoiningQueue}
+              >
+                {isJoiningQueue ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={styles.enterButtonText}>
+                    {isInQueue ? '나가기' : '입장'}
+                  </Text>
+                )}
+              </Pressable>
+            </>
+          )}
 
           {/* 🔹 안읽은 메시지 수 뱃지 */}
           <View style={styles.unreadBadge}>
@@ -135,22 +262,32 @@ export default function ChatMain({ memberId }) {
         </View>
       </View>
 
+
       {/* Footer 컴포넌트로 교체 */}
       <Footer />
 
-      <EventModal
-        visible={showEventModal}
-        onClose={() => setShowEventModal(false)}
-        onConfirm={handleEventConfirm}
-        isConfirmed={isConfirmed}
-        selectedIcon={selectedIcon}
-        onSelectIcon={setSelectedIcon}
-        chatRoomId={chatRoomInfo.chatRoomId}
-      />
+ 
+      {/* 🔹 Footer */}
+      <View style={styles.footer}>
+        <FooterButton title="Home" Icon={null} onPress={handleGoBack} />
+        <FooterButton title="History" Icon={null} onPress={() => {}} />
+        <FooterButton title="Chat" Icon={null} onPress={() => {}} />
+        <FooterButton title="Message" Icon={null} onPress={() => {}} />
+        <FooterButton title="Setting" Icon={null} onPress={() => {}} />
+      </View>
     </View>
   );
 }
 
+function FooterButton({ title, Icon, onPress }) {
+  return (
+    <Pressable onPress={onPress} style={styles.footerButton}>
+      {Icon && <Icon width={35} height={35} />}
+      <Text style={styles.footerText}>{title}</Text>
+    </Pressable>
+    );
+    } 
+  }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -183,12 +320,13 @@ const styles = StyleSheet.create({
   },
   timerModal: {
     position: 'absolute',
-    top: 80,
-    left: '10%',
-    right: '10%',
+    top: 100,
+    left: '5%',
+    right: '5%',
     backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 20,
+    borderRadius: 24,
+    paddingVertical: 40,
+    paddingHorizontal: 30,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOpacity: 0.1,
@@ -196,9 +334,9 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalLabel: {
-    fontSize: 16,
+    fontSize: 20,
     color: '#888',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   timerText: {
     fontSize: 48,
@@ -211,6 +349,14 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 60,
     borderRadius: 24,
+    minWidth: 180,
+    alignItems: 'center',
+  },
+  disabledButton: {
+    opacity: 0.7,
+  },
+  leaveButton: {
+    backgroundColor: '#ff6b6b',
   },
   enterButtonText: {
     color: '#fff',
@@ -247,7 +393,23 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 12,
   },
-  buttonDisabled: {
-    backgroundColor: '#ccc',
+  loadingContainer: {
+    alignItems: 'center',
+    marginVertical: 15,
+  },
+  loadingText: {
+    marginTop: 10,
+    color: '#666',
+    fontSize: 16,
+  },
+  queueInfoContainer: {
+    marginBottom: 15,
+    alignItems: 'center',
+  },
+  queueInfoText: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 5,
   },
 });
+  }

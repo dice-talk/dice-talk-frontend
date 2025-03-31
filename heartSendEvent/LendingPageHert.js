@@ -12,40 +12,81 @@ export default function LendingPage() {
         creationTime: new Date(Date.now() - 23 * 60 * 60 * 1000).toISOString(), // 23시간 전 생성
     };
 
+    // Chat으로 이동하는 핸들러
+    const handleChatPress = () => {
+        navigation.navigate('ChatTab', {
+            screen: 'Chat',
+            params: {
+                chatRoomId: testChatRoom.id,
+                creationTime: testChatRoom.creationTime
+            }
+        });
+    };
+
+    // Event로 이동하는 핸들러
+    const handleEventPress = () => {
+        navigation.navigate('ChatTab', {
+            screen: 'LetterEventScreen'
+        });
+    };
+
     return (
         <View style={styles.container}>
-            {/* 기존 코드 ... */}
+            {/* 버튼 컨테이너 */}
+            <View style={styles.buttonContainer}>
+                {/* Chat 버튼 */}
+                <TouchableOpacity 
+                    style={[styles.button, styles.chatButton]}
+                    onPress={handleChatPress}
+                >
+                    <Text style={styles.buttonText}>Chat</Text>
+                </TouchableOpacity>
 
-            {/* 채팅방 테스트 버튼 추가 */}
-            <TouchableOpacity 
-                style={styles.chatButton}
-                onPress={() => navigation.navigate('Chat', { 
-                    chatRoomId: testChatRoom.id,
-                    creationTime: testChatRoom.creationTime
-                })}
-            >
-                <Text style={styles.chatButtonText}>채팅방 테스트</Text>
-            </TouchableOpacity>
-
-            {/* 기존 코드 ... */}
+                {/* Event 버튼 */}
+                <TouchableOpacity 
+                    style={[styles.button, styles.eventButton]}
+                    onPress={handleEventPress}
+                >
+                    <Text style={styles.buttonText}>Event</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }
 
-// 스타일에 추가
 const styles = StyleSheet.create({
-    // ... 기존 스타일 ...
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#fff',
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
+        paddingHorizontal: 20,
+    },
+    button: {
+        width: '45%',
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
     chatButton: {
         backgroundColor: '#B28EF8',
-        padding: 15,
-        borderRadius: 8,
-        marginTop: 20,
-        width: '80%',
-        alignItems: 'center',
     },
-    chatButtonText: {
+    eventButton: {
+        backgroundColor: '#F476E5',
+    },
+    buttonText: {
         color: 'white',
         fontWeight: 'bold',
-        fontSize: 16,
+        fontSize: 18,
     },
 });
