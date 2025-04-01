@@ -125,7 +125,6 @@ export default function Home() {
         />
       </View>
 
-      <Button title='LetterEventScreen' onPress={() => {navigation.navigate('LetterEventScreen')}} />
       {/* 🔸 캐러셀 섹션 */}
       <View style={styles.carouselWrapper}>
         <Animated.ScrollView

@@ -9,7 +9,7 @@ import SelectRegion from '../main/SelectRegion';
 import SelectAge from '../main/SelectAge';
 import DiceFriendsDs from '../main/DiceFriendsDs';
 import hihihi from '../main/hihihi';
-//import LetterEventScreen from '../loveEvent/LetterEventScreen';
+import ChatMainTest from '../chat/ChatMain';
 
 
 import DropOutMember from '../plus/DropOutMember';
@@ -29,7 +29,6 @@ export default function MainNavigator({route}) {
       <Stack.Screen name='SelectAge' component={SelectAge} />
       <Stack.Screen name='DiceFriendsDs' component={DiceFriendsDs} />
       <Stack.Screen name='hihihi' component={hihihi} />
-      {/* <Stack.Screen name='LetterEventScreen' component={LetterEventScreen} /> */}
       <Stack.Screen 
         name='DropOutMember' 
         component={DropOutMember}

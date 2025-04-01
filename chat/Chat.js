@@ -17,9 +17,18 @@ import ChatHeader from "./components/ChatHeader";
 import { useChat } from "../context/ChatContext";
 import { subscribeChatRoom } from "../lib/socket";
 
+import ArrowCountdown from "../components/ArrowCountdown";
+import ArrowEventModal from "../components/ArrowEventModal";
+import ArrowSignalModal from "../components/ArrowSignalModal";
+import { useEvent } from "../context/EventContext"; // 이벤트 상태관리를 위해 필요
+
 export default function Chat({ navigation }) {
   const route = useRoute();
   const roomId = route.params?.roomId;
+
+  const [showArrowEventModal, setShowArrowEventModal] = useState(false);
+  const [showArrowSignalModal, setShowArrowSignalModal] = useState(false);
+  const { eventState, setEventState } = useEvent();  //이벤트 컨텍스트 사용용
 
   const [myNickname, setMyNickname] = useState("");
   const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -34,6 +43,24 @@ export default function Chat({ navigation }) {
     joinRoom,
     leaveRoom,
   } = useChat();
+
+  // // 채팅방 생성 시간 기준으로 이벤트 타이머 표시
+  // useEffect(() => {
+  //   if(!roomId) return;
+  //   // 채팅방 정보 가져오기
+  //   const fetchChatRoom = async () => {
+  //     try {
+  //       const response = await fetchWithAuth(`chat-room/${chat-room-id}`);
+  //       const data = await response.json();
+  //       const creationTime = new Date(data.createdAt);
+
+  //       fetchChatRoomInfo();
+  //     } catch (error) {
+  //       console.error("채팅방 정보 가져오기 실패:", error);
+  //     }
+  //   };
+  //   fetchChatRoom();
+  // }, [roomId]);
 
   // 내 닉네임 불러오기
   useEffect(() => {
@@ -90,6 +117,12 @@ export default function Chat({ navigation }) {
     console.log("📢 Chat 컴포넌트에서 감지된 메시지 변화!");
     console.log(currentRoomMessages);
   }, [currentRoomMessages]);
+ 
+  // 이벤트 버튼 핸들러
+  const handleEventPress = () => {
+    setShowEventModal(true);
+    setSidebarVisible(false); // 사이드바 닫기
+  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -154,6 +187,27 @@ export default function Chat({ navigation }) {
             navigation={navigation}
           />
         </Animated.View>
+
+        <ArrowCountdown />
+
+        {/* 이벤트 모달 */}
+        <ArrowEventModal
+          visible={showArrowEventModal}
+          onClose={() => setShowArrowEventModal(false)}
+          chatRoomId={roomId}
+          onConfirm={() => {
+            setShowArrowEventModal(false);
+            setShowArrowSignalModal(true);
+          }}
+        />
+
+        {/* 시그널 모달 */}
+        <ArrowSignalModal
+          visible={showArrowSignalModal}
+          onClose={() => setShowArrowSignalModal(false)}
+          chatRoomId={roomId}
+          onConfirm={() => console.log("시그널 확인")}
+        />
       </View>
     </TouchableWithoutFeedback>
   );
