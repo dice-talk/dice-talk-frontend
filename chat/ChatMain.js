@@ -1,19 +1,10 @@
-import React, { useState, useEffect } from 'react';
+// ... 기존 import 유지 ...
+import { joinMatching, cancelMatching } from '../utils/http/nicknameUtils';
 
-import { useNavigation } from '@react-navigation/native';
-import { navigateToChat } from '../navigation/navigationUtils';
-import EventModal from './components/EventModal';
-import { usePostEvent } from '../utils/http/eventAPI';
-import Footer from '../component/Footer';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-
-import { View, Text, StyleSheet, Image, Pressable, Modal, Alert, ActivityIndicator } from 'react-native';
-
-import { useChat } from '../context/ChatContext';
-// 🔹 더미 이미지 임포트 예시
-const bannerImages = [require('../assets/banner/banner_Ex_love.png')]; // 배너 이미지
 export default function ChatMain() {
 
+  // ... 기존 state 유지 ...
+  const [isInMatching, setIsInMatching] = useState(false);
   const [unreadCount, setUnreadCount] = useState(42);
   const [remainingTime, setRemainingTime] = useState(48 * 60 * 60); // 48시간 = 172800초
   const navigation = useNavigation();
@@ -77,41 +68,39 @@ export default function ChatMain() {
   // 입장 버튼 핸들러
   const handleEnterPress = async () => {
     if (!token || !userInfo) {
-      Alert.alert('로그인 필요', '채팅 기능을 사용하려면 로그인이 필요합니다.');
-      return;
-    }
-    
-    if (!isConnected) {
-      Alert.alert('연결 오류', '채팅 서버에 연결되어 있지 않습니다. 다시 시도해주세요.');
+      Alert.alert('알림', '로그인이 필요합니다.');
       return;
     }
     
     setIsJoiningQueue(true);
+    setIsInMatching(true);
     
     try {
-      let success;
-      if (isInQueue) {
-        // 대기열에서 나가기
-        success = await leaveQueue();
-        if (success) {
-          Alert.alert('대기열에서 나왔습니다');
-        }
+      const result = await joinMatching();
+      if (result.chatRoomId) {
+        navigation.navigate("ChatTab", {
+          screen: "Chat",
+          params: { roomId: result.chatRoomId },
+        });
       } else {
-        // 대기열 참가
-        success = await joinQueue();
-        if (success) {
-          Alert.alert('대기열에 참가했습니다', '다른 참가자들을 기다리는 중입니다...');
-        }
-      }
-      
-      if (!success) {
-        Alert.alert('오류 발생', '대기열 작업 중 오류가 발생했습니다.');
+        Alert.alert('알림', '매칭 대기열에 참가했습니다.');
       }
     } catch (error) {
-      console.error('대기열 참가/나가기 오류:', error);
-      Alert.alert('오류 발생', '대기열 작업 중 오류가 발생했습니다.');
+      Alert.alert('오류', '매칭 참가 중 오류가 발생했습니다.');
     } finally {
       setIsJoiningQueue(false);
+    }
+  };
+
+
+  // 돌아가기 버튼 핸들러
+  const handleCancelPress = async () => {
+    try {
+      await cancelMatching();
+      setIsInMatching(false);
+      Alert.alert('알림', '매칭이 취소되었습니다.');
+    } catch (error) {
+      Alert.alert('오류', '매칭 취소 중 오류가 발생했습니다.');
     }
   };
 
@@ -170,8 +159,9 @@ export default function ChatMain() {
     if (queueStatus && queueStatus.users) {
       return queueStatus.users.length;
     }
-    return 0;
   };
+};
+
 
   // 예상 대기 시간 표시
   const getEstimatedWaitTime = () => {
@@ -265,7 +255,6 @@ export default function ChatMain() {
       <Footer />
     </View>
   );
-}
 
 // function FooterButton({ title, Icon, onPress }) {
 //   return (

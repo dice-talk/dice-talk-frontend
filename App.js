@@ -26,7 +26,7 @@ export default function App() {
               </GroupProvider>
             </ChatProvider>
           </EmailProvider>
-          </EventProvider>
+        </EventProvider>
       </MemberProvider>
     </AuthProvider>
   );
