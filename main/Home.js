@@ -16,6 +16,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ExFriendsTheme from "../assets/theme/exFriendsTheme.svg";
 import FriendsTheme from "../assets/theme/friendsTheme.svg";
 import HeartSignalTheme from "../assets/theme/heartSignalTheme.svg";
+import Footer from "../component/Footer";
+import MainBackground from "../assets/public/MainBackground.svg"
 
 const BANNER_HEIGHT = 180;
 const THEME_IMAGE_SIZE = 200;
@@ -30,6 +32,8 @@ export default function Home() {
   const [storedToken, setStoredToken] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   const { setIsConnected } = useChat();
+  const [diceFriendsVisible, setDiceFriendsVisible] = useState(false);
+  const [exModalVisible, setExModalVisible] = useState(false);
 
   useEffect(() => {
     const connectAfterLogin = async () => {
@@ -115,15 +119,36 @@ export default function Home() {
     { id: 2, label: "EX LOVE", Component: ExFriendsTheme },
   ];
 
+  const handleDiceFriendsParticipate = () => {
+    setDiceFriendsVisible(false);
+    navigation.navigate("SelectRegion");
+  };
+
+  const handleHeartSignalParticipate = () => {
+    setHeartModalVisible(false);
+    navigation.navigate("SelectRegion");
+  };
+
+  const handleExFriendsParticipate = () => {
+    setExModalVisible(false);
+    navigation.navigate("SelectRegion");
+  };
+
   return (
-    <View style={styles.container}>
-      {/* 🔹 배너 섹션 */}
-      <View style={styles.bannerContainer}>
-        <Image
-          source={bannerImages[0]} // 원하는대로 currentIndex 연결 가능
-          style={styles.bannerImage}
-        />
-      </View>
+
+      <View style={styles.container}>
+        <View style={styles.backgroundContainer}>
+         <MainBackground width="100%" height="100%" />
+         </View>
+        {/* 🔹 배너 섹션 */}
+        <View style={styles.bannerContainer}>
+          <Image
+            source={bannerImages[0]} // 원하는대로 currentIndex 연결 가능
+            style={styles.bannerImage}
+          />
+        </View>
+
+      {/* <Button title='LetterEventScreen' onPress={() => {navigation.navigate('LetterEventScreen')}} /> */}
 
       {/* 🔸 캐러셀 섹션 */}
       <View style={styles.carouselWrapper}>
@@ -186,11 +211,11 @@ export default function Home() {
                 <Pressable
                   onPress={() => {
                     if (item.id === 0) {
-                      navigation.navigate("SelectRegion");
+                      setDiceFriendsVisible(true);
                     } else if (item.id === 1) {
                       setHeartModalVisible(true);
                     } else if (item.id === 2) {
-                      navigation.navigate("SelectRegion");
+                      setExModalVisible(true);
                     }
                   }}>
                   <BlurView intensity={opacity.__getValue() < 1 ? 60 : 0} style={styles.blurWrapper}>
@@ -203,26 +228,29 @@ export default function Home() {
           })}
         </Animated.ScrollView>
       </View>
-
+    
       {/* Heart Signal Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
+      
+
+      <DiceFriendsDs
+        visible={diceFriendsVisible}
+        onClose={() => setDiceFriendsVisible(false)}
+        onParticipate={handleDiceFriendsParticipate}
+      />
+
+      <HeartSignalDs
         visible={heartModalVisible}
-        onRequestClose={() => setHeartModalVisible(false)}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity style={styles.closeButton} onPress={() => setHeartModalVisible(false)}>
-              <Text style={styles.closeButtonText}>X</Text>
-            </TouchableOpacity>
-            <HeartSignalLogo width={100} height={100} />
-            <Text style={styles.modalText}>Join the Heart Signal community!</Text>
-            <Pressable style={styles.joinButton} onPress={() => navigation.navigate("SelectRegion")}>
-              <Text style={styles.joinButtonText}>참여하기</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
+        onClose={() => setHeartModalVisible(false)}
+        onParticipate={handleHeartSignalParticipate}
+      />
+
+      <ExFriendsDs
+        visible={exModalVisible}
+        onClose={() => setExModalVisible(false)}
+        onParticipate={handleExFriendsParticipate}
+      />
+
+      <Footer />
     </View>
   );
 }
@@ -230,7 +258,19 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'transparent',
+  },
+  backgroundContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width:"100%",
+    height:"100%",
+    zIndex: -1,
   },
   // 배너 스타일
   bannerContainer: {

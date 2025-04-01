@@ -6,6 +6,8 @@ import { Alert } from "react-native";
 import CitySelectBox from './CitySelectBox';
 import { LinearGradient } from "expo-linear-gradient";
 import { BASE_URL } from "../utils/http/config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchWithAuth } from "../utils/http/fetchWithAuth";
 
 const BACKEND_URL = BASE_URL;
 
@@ -75,11 +77,12 @@ export default function EditMyInfoInput({ route, navigation }) {
 
         const normalizedGender = userInfo.gender === '남성' ? 'MALE' : 'FEMALE';
         const region = selectedCity + " " + selectedDistrict;
+        const memberId =  await AsyncStorage.getItem('memberId');
 
         try {
-            const res = await fetch(`${BACKEND_URL}/user/update`, {
-                method: 'PUT',
-                headers: {
+            const res = await fetchWithAuth(`my-info/${memberId}`, {
+                method: 'PATCH',
+                headers:{
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({

@@ -66,8 +66,8 @@ const styles = StyleSheet.create({
         paddingVertical: 30,
     },
     logoContainer: {
-        flex: 0.8, // 로고가 위쪽에 배치되도록 설정
-        justifyContent: 'flex-end', // 로고와 텍스트를아래로 정렬
+        flex: 1, // 로고가 위쪽에 배치되도록 설정
+        justifyContent: 'flex-bottom', // 로고와 텍스트를아래로 정렬
         alignItems: 'center',
         marginTop: 40, // 여백을 추가하여 더 아래로 내린다.
     },

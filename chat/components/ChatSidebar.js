@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView, Dimensions, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import SidebarBack from "../../assets/icon/logo/love_sidebar_back.svg";
@@ -12,6 +12,7 @@ import Love_03 from "../../assets/icon/profile/love_03.svg";
 import Love_04 from "../../assets/icon/profile/love_04.svg";
 import Love_05 from "../../assets/icon/profile/love_05.svg";
 import Love_06 from "../../assets/icon/profile/love_06.svg";
+import EventModal from './EventModal';
 
 export default function ChatSidebar({ 
   onClose, 
@@ -21,6 +22,15 @@ export default function ChatSidebar({
   onCheckResultPress,
 }) {
   const navigation = useNavigation();
+  const [isEventModalVisible, setIsEventModalVisible] = useState(false);
+
+  const handleEventPress = () => {
+    setIsEventModalVisible(true);
+  };
+
+  const closeEventModal = () => {
+    setIsEventModalVisible(false);
+  };
 
   return (
     <View style={styles.container}>
@@ -32,7 +42,7 @@ export default function ChatSidebar({
           </Pressable>
         </View>
         {/* 상단 이벤트 이미지 */}
-        <Pressable onPress={onEventPress} style={styles.eventBanner}>
+        <Pressable onPress={handleEventPress} style={styles.eventBanner}>
           <HeartArrow width="100%" height="100%" />
         </Pressable>
         <Pressable 
@@ -85,6 +95,11 @@ export default function ChatSidebar({
           </Pressable>
         </View>
       </View>
+
+      <EventModal 
+        visible={isEventModalVisible}
+        onClose={closeEventModal}
+      />
     </View>
   );
 }
@@ -107,11 +122,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   eventBanner: {
-    width: "100%",
-    height: 180,
-    borderRadius: 10,
-    overflow: "hidden",
-    position: "relative"
+    width: 200,
+    height: 60,
   },
   timerContainer: {
     backgroundColor: "#EAD1EB",

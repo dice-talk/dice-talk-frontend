@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { SafeAreaView, View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from '@react-navigation/native';
-import Footer from "../../../../.Trash/dice-talk-frontend/component/Footer";
+import Footer from "../component/Footer";
 
 const SettingUserInfo = () => {
   const navigation = useNavigation();

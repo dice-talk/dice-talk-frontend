@@ -24,7 +24,7 @@ const Stack = createNativeStackNavigator();
 
 export default function AuthNavigator() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false, animation: 'none' }}>
       <Stack.Screen name='LendingPage' component={LendingPage} />
       
       {/* 회원가입 플로우 */}
