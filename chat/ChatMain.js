@@ -1,5 +1,6 @@
 // ... 기존 import 유지 ...
 import { joinMatching, cancelMatching } from '../utils/http/nicknameUtils';
+import { StyleSheet, View, Text, Image, Pressable, ActivityIndicator, Alert } from 'react-native';
 
 export default function ChatMain() {
 
@@ -160,7 +161,6 @@ export default function ChatMain() {
       return queueStatus.users.length;
     }
   };
-};
 
 
   // 예상 대기 시간 표시
@@ -255,6 +255,7 @@ export default function ChatMain() {
       <Footer />
     </View>
   );
+}
 
 // function FooterButton({ title, Icon, onPress }) {
 //   return (
