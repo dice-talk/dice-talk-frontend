@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { EventProvider } from '../contexts/EventContext';
+import { EventProvider } from '../context/EventContext';
 
 export default function ChatMainTest() {
   return (

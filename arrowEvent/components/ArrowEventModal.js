@@ -1,43 +1,116 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from 'react-native';
-import { useEvent } from '../../contexts/EventContext';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView, Pressable, Alert, Image } from 'react-native';
+import { useEvent } from '../../context/EventContext';
 import { LinearGradient } from 'expo-linear-gradient';
+import ArrowBoard01 from "../../assets/event/arrowBoard_01.svg";
+import ArrowBoard02 from "../../assets/event/arrowBoard_02.svg";
+import { usePostEvent } from '../../utils/http/eventAPI';
+import { useMemberContext } from '../../context/MemberContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import FriendsGame_01 from "../../assets/icon/profile/friends_game_01";
+import FriendsGame_02 from "../../assets/icon/profile/friends_game_02";
+import FriendsGame_05 from "../../assets/icon/profile/friends_game_05";
+import LoveGameSelect_01 from "../../assets/icon/profile/love_game_select_01";
+import LoveGameSelect_02 from "../../assets/icon/profile/love_game_select_02";
+import LoveGameSelect_05 from "../../assets/icon/profile/love_game_select_05";
 
-export default function ArrowEventModal({ visible, onClose, participants }) {
-  const { eventState, selectUser, modifySelection, getEventStage } = useEvent();
-  const stage = getEventStage();
+// 하드코딩된 참여자 데이터
+const MOCK_PARTICIPANTS = [
+  {
+    id: 1,
+    nickname: "한가로운 하나",
+    DefaultIcon: FriendsGame_01,
+    SelectedIcon: LoveGameSelect_01,
+    color: '#FF6B6B'
+  },
+  {
+    id: 2,
+    nickname: "세침한 세찌",
+    DefaultIcon: FriendsGame_02,
+    SelectedIcon: LoveGameSelect_02,
+    color: '#4ECDC4'
+  },
+  {
+    id: 3,
+    nickname: "단호한데 다정한 다오",
+    DefaultIcon: FriendsGame_05,
+    SelectedIcon: LoveGameSelect_05,
+    color: '#45B7D1'
+  }
+];
 
-  const handleSelect = (userId) => {
+export default function ArrowEventModal({ visible, onClose, chatRoomId }) {
+  const { postEvent } = usePostEvent();
+  const { eventState, selectUser, modifySelection } = useEvent();
+  const { memberId } = useMemberContext();
+  const [showResult, setShowResult] = useState(false);
+  const [selectedParticipant, setSelectedParticipant] = useState(null);
+
+  const handleSelect = async (userId) => {
     if (eventState.hasSelected && !eventState.hasModified) {
-      // 결제 필요 모달 표시
       return;
     }
-    selectUser(userId);
-    onClose();  
+
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
+      const participant = MOCK_PARTICIPANTS.find(p => p.id === userId);
+      
+      setSelectedParticipant(participant);
+      setShowResult(true);
+      
+      const eventData = {
+        receiverId: userId,
+        senderId: memberId,
+        eventId: 1,
+        chatRoomId: chatRoomId || 2,
+        message: "화살표 이벤트 선택",
+        roomEventType: "PICK_MESSAGE"
+      };
+
+      // 이벤트 전송
+      const eventResponse = await postEvent(eventData);
+      console.log('✅ 이벤트 전송 응답:', eventResponse);
+
+      // // 3초 후에 결과를 저장하고 모달을 닫습니다
+      // setTimeout(() => {
+      //   selectUser(userId);
+      //   setShowResult(false);
+      //   onClose();
+      // }, 3000);
+
+    } catch (error) {
+      console.error('❌ 에러 발생:', error);
+      Alert.alert('오류', error.message || '요청 처리 중 오류가 발생했습니다.');
+    }
   };
 
   const handleModify = () => {
-    // 결제 모달 표시
     modifySelection();
   };
 
   const renderParticipantList = () => {
-    return participants.map((participant) => (
-      <TouchableOpacity
-        key={participant.id}
-        style={[
-          styles.participantItem,
-          eventState.selectedUser === participant.id && styles.selectedItem
-        ]}
-        onPress={() => handleSelect(participant.id)}
-        disabled={eventState.hasSelected && !eventState.hasModified}
-      >
-        <Text style={styles.participantName}>{participant.nickname}</Text>
-        {eventState.selectedUser === participant.id && (
-          <Text style={styles.selectedText}>선택됨</Text>
-        )}
-      </TouchableOpacity>
-    ));
+    return (
+      <View style={styles.diceContainer}>
+        {MOCK_PARTICIPANTS.map((participant) => {
+          const isSelected = eventState.selectedUser === participant.id;
+          const Icon = isSelected ? participant.SelectedIcon : participant.DefaultIcon;
+
+          return (
+            <TouchableOpacity
+              key={participant.id}
+              style={styles.diceItem}
+              onPress={() => handleSelect(participant.id)}
+              disabled={eventState.hasSelected && !eventState.hasModified}
+            >
+              <Icon width={40} height={40} />
+              <Text style={[styles.participantName, { color: participant.color }]}>
+                {participant.nickname}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    );
   };
 
   return (
@@ -47,44 +120,53 @@ export default function ArrowEventModal({ visible, onClose, participants }) {
       animationType="slide"
       onRequestClose={onClose}
     >
-      <View style={styles.modalContainer}>
+      <Pressable style={styles.modalContainer} onPress={onClose}>
         <View style={styles.modalContent}>
-          <Text style={styles.title}>이벤트 참가자 선택</Text>
-          
-          {eventState.hasSelected && !eventState.hasModified ? (
-            <View style={styles.modifyContainer}>
-              <Text style={styles.modifyText}>
-                이미 선택을 완료했습니다.
-                {'\n'}선택을 수정하시겠습니까?
-              </Text>
-              <TouchableOpacity
-                style={styles.modifyButton}
-                onPress={handleModify}
-              >
-                <LinearGradient
-                  colors={['#C4B5FD', '#A78BFA']}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 1}}
-                  style={styles.gradient}
-                >
-                  <Text style={styles.buttonText}>선택 수정하기</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <ScrollView style={styles.participantList}>
-              {renderParticipantList()}
-            </ScrollView>
-          )}
+          <View style={styles.arrowBoardContainer}>
+            {showResult ? (
+              <ArrowBoard02 width={450} height={330} />
+            ) : (
+              <ArrowBoard01 width={450} height={330} />
+            )}
 
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={onClose}
-          >
-            <Text style={styles.closeButtonText}>닫기</Text>
-          </TouchableOpacity>
+            <Pressable onPress={onClose} style={styles.closeButton}>
+              <Text style={styles.closeButtonText}>X</Text>
+            </Pressable>
+
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>
+                {showResult ? "선택의 결과를 확인해주세요" : "좀 더 대화하고 싶은 상대를 선택해주세요"}
+              </Text>
+            </View>
+
+            {eventState.hasSelected && !eventState.hasModified ? (
+              <View style={styles.modifyContainer}>
+                <Text style={styles.modifyText}>
+                  이미 선택을 완료했습니다.
+                  {'\n'}선택을 수정하시겠습니까?
+                </Text>
+                <TouchableOpacity
+                  style={styles.modifyButton}
+                  onPress={handleModify}
+                >
+                  <LinearGradient
+                    colors={['#C4B5FD', '#A78BFA']}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 1}}
+                    style={styles.gradient}
+                  >
+                    <Text style={styles.buttonText}>선택 수정하기</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={styles.participantList}>
+                {renderParticipantList()}
+              </View>
+            )}
+          </View>
         </View>
-      </View>
+      </Pressable>
     </Modal>
   );
 }
@@ -97,42 +179,70 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 20,
-    width: '80%',
-    maxHeight: '80%',
+    width: '100%',
+    alignItems: 'center',
+  },
+  arrowBoardContainer: {
+    width: 520,
+    height: 400,
+    position: 'relative',
+    alignItems: 'center',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 8,
+    right: 10,
+    zIndex: 1,
+  },
+  closeButtonText: {
+    color: "white",
+    fontSize: 16,
+  },
+  titleContainer: {
+    position: 'absolute',
+    top: 135,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    zIndex: 1,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#8B5CF6',
+    fontSize: 12,
+    color: '#F8B4C4',
     textAlign: 'center',
-    marginBottom: 20,
   },
   participantList: {
-    maxHeight: 400,
+    position: 'absolute',
+    top: 180,
+    left: 20,
+    right: 20,
+    zIndex: 1,
   },
-  participantItem: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+  diceContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    width: '100%',
+    paddingHorizontal: 20,
   },
-  selectedItem: {
-    backgroundColor: '#F5F3FF',
+  diceItem: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
   },
   participantName: {
-    fontSize: 16,
-    color: '#1F2937',
-  },
-  selectedText: {
-    fontSize: 14,
-    color: '#8B5CF6',
-    marginTop: 5,
+    fontSize: 12,
+    marginTop: 8,
+    fontWeight: '600',
   },
   modifyContainer: {
+    position: 'absolute',
+    top: 180,
+    left: 20,
+    right: 20,
     alignItems: 'center',
     padding: 20,
+    zIndex: 1,
   },
   modifyText: {
     fontSize: 16,
@@ -156,19 +266,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  closeButton: {
-    marginTop: 20,
-    padding: 15,
-    backgroundColor: '#F3F4F6',
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  closeButtonText: {
-    fontSize: 16,
-    color: '#4B5563',
-    fontWeight: '600',
-  },
-}); 
+});
 
 // 참가자 목록 표시
 // 사용자 선택 기능

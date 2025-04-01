@@ -18,6 +18,7 @@ export default function ChatSidebar({
   onEventPress, 
   onExitPress, 
   onReportPress,
+  onCheckResultPress,
 }) {
   const navigation = useNavigation();
 
@@ -33,6 +34,12 @@ export default function ChatSidebar({
         {/* 상단 이벤트 이미지 */}
         <Pressable onPress={onEventPress} style={styles.eventBanner}>
           <HeartArrow width="100%" height="100%" />
+        </Pressable>
+        <Pressable 
+          onPress={onCheckResultPress} 
+          style={styles.resultButton}
+        >
+          <Text style={styles.resultButtonText}>매칭 결과 확인</Text>
         </Pressable>
         <View style={styles.timerContainer}>
           <Text style={styles.timerText}>
@@ -161,5 +168,18 @@ const styles = StyleSheet.create({
   footerButtons: {
     flexDirection: "row",
     gap: 20,
+  },
+  resultButton: {
+    backgroundColor: '#8B5CF6',
+    padding: 12,
+    borderRadius: 8,
+    marginHorizontal: 16,
+    marginTop: 8,
+    alignItems: 'center',
+  },
+  resultButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

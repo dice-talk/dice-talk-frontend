@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useEvent } from '../../contexts/EventContext';
+import { useEvent } from '../../context/EventContext';
 
 export default function ArrowCountdownTimer() {
   const { calculateRemainingTime, getEventStage } = useEvent();

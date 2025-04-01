@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   View, ScrollView, Animated, Dimensions, Keyboard,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback, Text
 } from 'react-native';
 import { useRoute } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -15,12 +15,12 @@ import ChatSidebar from "./components/ChatSidebar";
 import ChatHeader from "./components/ChatHeader";
 
 import { useChat } from "../context/ChatContext";
-import { subscribeChatRoom } from "../lib/socket";
-
-import ArrowCountdown from "../components/ArrowCountdown";
-import ArrowEventModal from "../components/ArrowEventModal";
-import ArrowSignalModal from "../components/ArrowSignalModal";
+import { subscribeChatRoom, sendMessage as socketSendMessage } from "../lib/socket";
 import { useEvent } from "../context/EventContext"; // 이벤트 상태관리를 위해 필요
+
+import ArrowCountdownTimer from "../arrowEvent/components/ArrowCountdownTimer";
+import ArrowEventModal from "../arrowEvent/components/ArrowEventModal";
+import ArrowSignalModal from "../arrowEvent/components/ArrowSignalModal";
 
 export default function Chat({ navigation }) {
   const route = useRoute();
@@ -28,7 +28,7 @@ export default function Chat({ navigation }) {
 
   const [showArrowEventModal, setShowArrowEventModal] = useState(false);
   const [showArrowSignalModal, setShowArrowSignalModal] = useState(false);
-  const { eventState, setEventState } = useEvent();  //이벤트 컨텍스트 사용용
+  const { eventState, setEventState, checkEventResult } = useEvent();
 
   const [myNickname, setMyNickname] = useState("");
   const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -39,7 +39,6 @@ export default function Chat({ navigation }) {
   const {
     currentRoomMessages,
     setCurrentRoomMessages,
-    sendMessage,
     joinRoom,
     leaveRoom,
   } = useChat();
@@ -80,14 +79,6 @@ export default function Chat({ navigation }) {
   
     subscribeChatRoom(roomId, async (type, msg) => {
       if (type === "CHAT") {
-        const myIdStr = await AsyncStorage.getItem("memberId");
-        const myId = Number(myIdStr);
-  
-        if (msg.memberId && msg.memberId === myId) {
-          console.log("🙅‍♂️ 내 메시지 echo, 무시함");
-          return;
-        }
-  
         const convertedMsg = {
           id: msg.chatId,
           content: msg.message,
@@ -117,11 +108,70 @@ export default function Chat({ navigation }) {
     console.log("📢 Chat 컴포넌트에서 감지된 메시지 변화!");
     console.log(currentRoomMessages);
   }, [currentRoomMessages]);
- 
+
+  // 이벤트 결과 자동 체크
+  useEffect(() => {
+    if (!roomId) return;
+
+    const checkResult = async () => {
+      await checkEventResult(roomId);
+      if (eventState.stage === 'REVIEW') {
+        setShowArrowSignalModal(true);
+      }
+    };
+
+    const interval = setInterval(checkResult, 60000); // 1분마다 체크
+    return () => clearInterval(interval);
+  }, [roomId]);
+
   // 이벤트 버튼 핸들러
   const handleEventPress = () => {
-    setShowEventModal(true);
-    setSidebarVisible(false); // 사이드바 닫기
+    setShowArrowEventModal(true);
+    setSidebarVisible(false);
+  };
+
+  // 시그널 모달 확인 버튼 핸들러
+  const handleSignalConfirm = () => {
+    setShowArrowSignalModal(false);
+    leaveRoom();
+    navigation.goBack();
+  };
+
+  // 결과 확인 핸들러
+  const handleCheckResult = async () => {
+    if (!roomId) return;
+    await checkEventResult(roomId);
+    setShowArrowSignalModal(true);
+    setSidebarVisible(false);
+  };
+
+  // 메시지 전송 함수
+  const handleSendMessage = async (content) => {
+    if (!roomId || !myNickname) return;
+
+    try {
+      const message = {
+        chatRoomId: roomId,
+        message: content,
+        memberId: await AsyncStorage.getItem("memberId"),
+        nickName: myNickname
+      };
+
+      // 웹소켓으로 메시지 전송
+      socketSendMessage(`/pub/chat/${roomId}/sendMessage`, message);
+
+      // 로컬 메시지 상태 업데이트
+      const newMessage = {
+        id: Date.now(), // 임시 ID
+        content: content,
+        sender: myNickname,
+        timestamp: new Date().toISOString()
+      };
+
+      setCurrentRoomMessages(roomId, (prev) => [...prev, newMessage]);
+    } catch (error) {
+      console.error('메시지 전송 오류:', error);
+    }
   };
 
   return (
@@ -133,35 +183,40 @@ export default function Chat({ navigation }) {
           onToggleSidebar={() => setSidebarVisible(!sidebarVisible)}
         />
 
-<ScrollView
-  style={{ flex: 1, padding: 16 }}
-  contentContainerStyle={{ paddingBottom: 100 }}
-  ref={scrollViewRef}
-  onContentSizeChange={() =>
-    scrollViewRef.current?.scrollToEnd({ animated: true })
-  }
->
-{currentRoomMessages.map((msg, index) => {
-  const isMine = msg.sender?.trim() === myNickname?.trim();
+        <ScrollView
+          style={{ flex: 1, padding: 16 }}
+          contentContainerStyle={{ paddingBottom: 100 }}
+          ref={scrollViewRef}
+          onContentSizeChange={() =>
+            scrollViewRef.current?.scrollToEnd({ animated: true })
+          }
+        >
+          {currentRoomMessages && currentRoomMessages.length > 0 ? (
+            currentRoomMessages.map((msg, index) => {
+              const isMine = msg.sender?.trim() === myNickname?.trim();
 
-  return (
-    <ChatMessage
-      key={`${msg.id}-${index}`}
-      message={msg.content}
-      sender={msg.sender}
-      type={isMine ? "right" : "left"}
-      icon={isMine ? Love_04 : Love_01}
-      time={new Date(msg.timestamp).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      })}
-    />
-  );
-})}
+              return (
+                <ChatMessage
+                  key={`${msg.id}-${index}`}
+                  message={msg.content}
+                  sender={msg.sender}
+                  type={isMine ? "right" : "left"}
+                  icon={isMine ? Love_04 : Love_01}
+                  time={new Date(msg.timestamp).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                />
+              );
+            })
+          ) : (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={{ color: '#666' }}>아직 메시지가 없습니다.</Text>
+            </View>
+          )}
+        </ScrollView>
 
-</ScrollView>
-
-        <ChatInput onSendMessage={sendMessage} />
+        <ChatInput onSendMessage={handleSendMessage} />
 
         <Animated.View
           style={[{
@@ -181,20 +236,22 @@ export default function Chat({ navigation }) {
         >
           <ChatSidebar
             onClose={() => setSidebarVisible(false)}
-            onEventPress={() => console.log("이벤트")}
+            onEventPress={handleEventPress}
             onExitPress={() => console.log("나가기")}
             onReportPress={() => navigation.navigate("ChatReport")}
+            onCheckResultPress={handleCheckResult}
             navigation={navigation}
           />
         </Animated.View>
 
-        <ArrowCountdown />
+        <ArrowCountdownTimer />
 
         {/* 이벤트 모달 */}
         <ArrowEventModal
           visible={showArrowEventModal}
           onClose={() => setShowArrowEventModal(false)}
           chatRoomId={roomId}
+          participants={eventState?.participants || []}
           onConfirm={() => {
             setShowArrowEventModal(false);
             setShowArrowSignalModal(true);
@@ -206,7 +263,8 @@ export default function Chat({ navigation }) {
           visible={showArrowSignalModal}
           onClose={() => setShowArrowSignalModal(false)}
           chatRoomId={roomId}
-          onConfirm={() => console.log("시그널 확인")}
+          matchResult={eventState.matchResult}
+          onConfirm={handleSignalConfirm}
         />
       </View>
     </TouchableWithoutFeedback>
