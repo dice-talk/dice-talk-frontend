@@ -41,20 +41,20 @@ export default function ChatMain() {
     return selectedUser ? selectedUser.memberId : null;
   };
 
-  if(!chatRoomId) {
-    return (
-      <View style={styles.container}>
-        <Text>채팅방 정보를 불러오는 중입니다...</Text>
-        <Button title='결과보기' onPress={() => navigation.navigate('LetterResult')}/>
-      </View>
-    )
-  }
+  // if(!chatRoomId) {
+  //   return (
+  //     <View style={styles.container}>
+  //       <Text>채팅방 정보를 불러오는 중입니다...</Text>
+  //       <Button title='결과보기' onPress={() => navigation.navigate('LetterResult')}/>
+  //     </View>
+  //   )
+  // }
 
 
   // 토큰과 웹소켓 연결 관리
   useEffect(() => {
     if (token && !isConnected && !isConnecting) {
-      connectWebSocket();
+      // connectWebSocket();
     }
   }, [token, isConnected, isConnecting, connectWebSocket]);
 
@@ -128,44 +128,44 @@ export default function ChatMain() {
     navigation.navigate('Main');
   };
 
-  const handleEventConfirm = async () => {
-    try {
-      if (!selectedIcon) return;
+  // const handleEventConfirm = async () => {
+  //   try {
+  //     if (!selectedIcon) return;
       
-      const receiverMemberId = findSelectedUserMemberId(selectedIcon);
-      if (!receiverMemberId) {
-        Alert.alert('오류', '선택된 사용자를 찾을 수 없습니다.');
-        return;
-      }
+  //     const receiverMemberId = findSelectedUserMemberId(selectedIcon);
+  //     if (!receiverMemberId) {
+  //       Alert.alert('오류', '선택된 사용자를 찾을 수 없습니다.');
+  //       return;
+  //     }
 
-      const response = await postEvent({
-        receiverId: receiverMemberId,
-        senderId: memberId,
-        eventId: 1,
-        chatRoomId: chatRoomInfo.chatRoomId,
-        message: "상대방을 선택했습니다.",
-        roomEventType: "PICK_MESSAGE"
-      });
+  //     const response = await postEvent({
+  //       receiverId: receiverMemberId,
+  //       senderId: memberId,
+  //       eventId: 1,
+  //       chatRoomId: chatRoomInfo.chatRoomId,
+  //       message: "상대방을 선택했습니다.",
+  //       roomEventType: "PICK_MESSAGE"
+  //     });
       
-      if (response) {
-        setChatRoomInfo(prev => ({
-          ...prev,
-          lastEventTime: new Date().toISOString(),
-          lastEventType: "PICK_MESSAGE",
-          selectedReceiverId: receiverMemberId
-        }));
-      }
+  //     if (response) {
+  //       setChatRoomInfo(prev => ({
+  //         ...prev,
+  //         lastEventTime: new Date().toISOString(),
+  //         lastEventType: "PICK_MESSAGE",
+  //         selectedReceiverId: receiverMemberId
+  //       }));
+  //     }
       
-      setIsConfirmed(true);
-      setTimeout(() => {
-        setShowEventModal(false);
-        setIsConfirmed(false);
-        setSelectedIcon(null);
-      }, 2000);
+  //     setIsConfirmed(true);
+  //     setTimeout(() => {
+  //       setShowEventModal(false);
+  //       setIsConfirmed(false);
+  //       setSelectedIcon(null);
+  //     }, 2000);
       
-    } catch (error) {
-      Alert.alert('오류', '이벤트 등록에 실패했습니다.');
-
+  //   } catch (error) {
+  //     Alert.alert('오류', '이벤트 등록에 실패했습니다.');
+  //   }
   // 현재 대기열 참가자 수 표시
   const getUserCount = () => {
     if (queueStatus && queueStatus.users) {
@@ -186,16 +186,16 @@ export default function ChatMain() {
   };
 
   // 우측 상단 배지의 안 읽은 메시지 수
-  useEffect(() => {
-    // 모든 채팅방의 안 읽은 메시지 수 계산
-    let totalUnread = 0;
-    if (chatRooms && chatRooms.length > 0) {
-      // 각 채팅방의 안읽은 메시지를 합산 (실제 구현이 필요합니다)
-      // 예: chatRooms.forEach(room => totalUnread += room.unreadCount || 0);
-      totalUnread = 42; // 현재는 고정 값 사용
-    }
-    setUnreadCount(totalUnread);
-  }, [chatRooms]);
+  // useEffect(() => {
+  //   // 모든 채팅방의 안 읽은 메시지 수 계산
+  //   let totalUnread = 0;
+  //   if (chatRooms && chatRooms.length > 0) {
+  //     // 각 채팅방의 안읽은 메시지를 합산 (실제 구현이 필요합니다)
+  //     // 예: chatRooms.forEach(room => totalUnread += room.unreadCount || 0);
+  //     totalUnread = 42; // 현재는 고정 값 사용
+  //   }
+  //   setUnreadCount(totalUnread);
+  // }, [chatRooms]);
 
   return (
     <View style={styles.container}>
@@ -265,29 +265,19 @@ export default function ChatMain() {
 
       {/* Footer 컴포넌트로 교체 */}
       <Footer />
-
- 
-      {/* 🔹 Footer */}
-      <View style={styles.footer}>
-        <FooterButton title="Home" Icon={null} onPress={handleGoBack} />
-        <FooterButton title="History" Icon={null} onPress={() => {}} />
-        <FooterButton title="Chat" Icon={null} onPress={() => {}} />
-        <FooterButton title="Message" Icon={null} onPress={() => {}} />
-        <FooterButton title="Setting" Icon={null} onPress={() => {}} />
-      </View>
     </View>
   );
 }
 
-function FooterButton({ title, Icon, onPress }) {
-  return (
-    <Pressable onPress={onPress} style={styles.footerButton}>
-      {Icon && <Icon width={35} height={35} />}
-      <Text style={styles.footerText}>{title}</Text>
-    </Pressable>
-    );
-    } 
-  }
+// function FooterButton({ title, Icon, onPress }) {
+//   return (
+//     <Pressable onPress={onPress} style={styles.footerButton}>
+//       {Icon && <Icon width={35} height={35} />}
+//       <Text style={styles.footerText}>{title}</Text>
+//     </Pressable>
+//     );
+//     } 
+//   }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -412,4 +402,3 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 });
-  }
