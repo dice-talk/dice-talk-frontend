@@ -10,7 +10,7 @@ import { useEmail } from '../context/EmailContext';
 import { useMemberContext } from '../context/MemberContext';
 import { navigateAfterLogin } from '../navigation/navigationUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoginPassword({navigation}) {
     const { email } = useEmail(); // 전역상태로 관리되는 email
@@ -57,9 +57,9 @@ export default function LoginPassword({navigation}) {
     };
 
     return (
-        <>
+        <SafeAreaView style={{flex: 1}}>
         <KeyboardAvoidingView 
-            behavior='height' // 안드로이드 전용 설정
+            behavior='padding' // 안드로이드 전용 설정
             style={styles.container}
         > 
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -120,7 +120,8 @@ export default function LoginPassword({navigation}) {
                 </View>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
-        </>
+        </SafeAreaView>
+
     )
 }
 

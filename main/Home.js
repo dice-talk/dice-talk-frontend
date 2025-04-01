@@ -32,6 +32,8 @@ export default function Home() {
   const [storedToken, setStoredToken] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   const { setIsConnected } = useChat();
+  const [diceFriendsVisible, setDiceFriendsVisible] = useState(false);
+  const [exModalVisible, setExModalVisible] = useState(false);
 
   useEffect(() => {
     const connectAfterLogin = async () => {
@@ -117,7 +119,23 @@ export default function Home() {
     { id: 2, label: "EX LOVE", Component: ExFriendsTheme },
   ];
 
+  const handleDiceFriendsParticipate = () => {
+    setDiceFriendsVisible(false);
+    navigation.navigate("SelectRegion");
+  };
+
+  const handleHeartSignalParticipate = () => {
+    setHeartModalVisible(false);
+    navigation.navigate("SelectRegion");
+  };
+
+  const handleExFriendsParticipate = () => {
+    setExModalVisible(false);
+    navigation.navigate("SelectRegion");
+  };
+
   return (
+
       <View style={styles.container}>
         <View style={styles.backgroundContainer}>
          <MainBackground width="100%" height="100%" />
@@ -129,7 +147,9 @@ export default function Home() {
             style={styles.bannerImage}
           />
         </View>
-      <Button title='LetterEventScreen' onPress={() => {navigation.navigate('LetterEventScreen')}} />
+
+      {/* <Button title='LetterEventScreen' onPress={() => {navigation.navigate('LetterEventScreen')}} /> */}
+
       {/* 🔸 캐러셀 섹션 */}
       <View style={styles.carouselWrapper}>
         <Animated.ScrollView
@@ -191,11 +211,11 @@ export default function Home() {
                 <Pressable
                   onPress={() => {
                     if (item.id === 0) {
-                      navigation.navigate("SelectRegion");
+                      setDiceFriendsVisible(true);
                     } else if (item.id === 1) {
                       setHeartModalVisible(true);
                     } else if (item.id === 2) {
-                      navigation.navigate("SelectRegion");
+                      setExModalVisible(true);
                     }
                   }}>
                   <BlurView intensity={opacity.__getValue() < 1 ? 60 : 0} style={styles.blurWrapper}>
@@ -210,24 +230,26 @@ export default function Home() {
       </View>
     
       {/* Heart Signal Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
+      
+
+      <DiceFriendsDs
+        visible={diceFriendsVisible}
+        onClose={() => setDiceFriendsVisible(false)}
+        onParticipate={handleDiceFriendsParticipate}
+      />
+
+      <HeartSignalDs
         visible={heartModalVisible}
-        onRequestClose={() => setHeartModalVisible(false)}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity style={styles.closeButton} onPress={() => setHeartModalVisible(false)}>
-              <Text style={styles.closeButtonText}>X</Text>
-            </TouchableOpacity>
-            <HeartSignalLogo width={100} height={100} />
-            <Text style={styles.modalText}>Join the Heart Signal community!</Text>
-            <Pressable style={styles.joinButton} onPress={() => navigation.navigate("SelectRegion")}>
-              <Text style={styles.joinButtonText}>참여하기</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
+        onClose={() => setHeartModalVisible(false)}
+        onParticipate={handleHeartSignalParticipate}
+      />
+
+      <ExFriendsDs
+        visible={exModalVisible}
+        onClose={() => setExModalVisible(false)}
+        onParticipate={handleExFriendsParticipate}
+      />
+
       <Footer />
     </View>
   );
