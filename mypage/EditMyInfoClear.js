@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import LongButton from '../component/LongButton';
+import ClearIcon from '../assets/icon/logo/ClearIcon.svg';
 
 export default function EditMyInfoClear({ navigation }) {
     return (
@@ -11,7 +12,8 @@ export default function EditMyInfoClear({ navigation }) {
                 style={styles.gradient}
             >
                 <View style={styles.content}>
-                    <ClearIcon width={120} height={120} />
+                    <ClearIcon width={70} height={70} />
+                    <Text />
                     <Text style={styles.title}>변경에 성공했습니다!</Text>
                     <Text style={styles.description}>
                         회원정보가 성공적으로 변경되었습니다.{'\n'}
