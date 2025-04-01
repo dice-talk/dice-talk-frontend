@@ -23,7 +23,7 @@ export default function MainNavigator({route}) {
   const initialParams = route?.params || {};
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name='Home' component={Home} initialParams={initialParams}/>
       <Stack.Screen name='SelectRegion' component={SelectRegion} />
       <Stack.Screen name='SelectAge' component={SelectAge} />

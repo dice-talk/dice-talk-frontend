@@ -20,14 +20,6 @@ export default function LendingPage({navigation}) {
                 <LogoText width={300} height={300}/>
             </View>
 
-            <Button title='DropOutMember' onPress={() => {navigation.navigate('DropOutMember')}} />
-
-            <Button title='ChatMain' onPress={() => {navigation.navigate('ChatMain')}} />
-
-            <Button title='HeartChat' onPress={() => {navigation.navigate('HeartChat')}}/>
-
-            <Button title='LetterEventScreen' onPress={() => {navigation.navigate('LetterEventScreen')}} />
-
             <View style={styles.bottomContainer}>
                   <LongButton onPress={() => navigation.navigate('LoginEmail')}>
                   <FontAwesome name="envelope" size={20} color="white" style={styles.icon} /> 
@@ -74,8 +66,8 @@ const styles = StyleSheet.create({
         paddingVertical: 30,
     },
     logoContainer: {
-        flex: 0.8, // 로고가 위쪽에 배치되도록 설정
-        justifyContent: 'flex-end', // 로고와 텍스트를아래로 정렬
+        flex: 1, // 로고가 위쪽에 배치되도록 설정
+        justifyContent: 'flex-bottom', // 로고와 텍스트를아래로 정렬
         alignItems: 'center',
         marginTop: 40, // 여백을 추가하여 더 아래로 내린다.
     },

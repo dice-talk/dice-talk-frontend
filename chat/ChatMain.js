@@ -50,7 +50,6 @@ export default function ChatMain() {
   //   )
   // }
 
-
   // 토큰과 웹소켓 연결 관리
   useEffect(() => {
     if (token && !isConnected && !isConnecting) {
@@ -170,7 +169,6 @@ export default function ChatMain() {
   const getUserCount = () => {
     if (queueStatus && queueStatus.users) {
       return queueStatus.users.length;
-
     }
     return 0;
   };
@@ -209,7 +207,7 @@ export default function ChatMain() {
         {/* 채팅 배경 영역 */}
         <View style={styles.chatBackground}>
           {/* 예시 채팅 메시지 */}
-          <Text style={styles.chatBubble}>안녕하세요! 하늘놀늘 강하늘이에요!</Text>
+
         </View>
 
         {/* 🔸 남은 시간 모달 */}

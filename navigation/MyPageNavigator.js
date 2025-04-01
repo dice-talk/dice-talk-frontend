@@ -21,7 +21,7 @@ const Stack = createNativeStackNavigator();
 
 export default function MyPageNavigator() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name='MyPage' component={MyPage} />
       <Stack.Screen name='MyInfo' component={MyInfo} />
       <Stack.Screen name='EditMyInfo' component={EditMyInfo} />
