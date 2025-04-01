@@ -1,5 +1,5 @@
-import React from 'react';
-import { Pressable, StyleSheet, View, Text, Image, Alert } from "react-native";
+import React, { useEffect, useState } from 'react';
+import { Pressable, StyleSheet, View, Text, Image, Alert, ActivityIndicator } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Friends_03 from "../assets/icon/profile/friends_03.svg";
 import Footer from "../component/Footer";
@@ -17,78 +17,142 @@ import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../utils/http/AuthContext';
 import { logout } from '../utils/http/EmailAPI';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { fetchWithAuth } from '../utils/http/fetchWithAuth';
+import { getAnonymousMyPage } from '../utils/http/MyPageApi';
 
 const MyPage = () => {
     const navigation = useNavigation();
     const { setAuth } = useAuth();
+    const [myPage, setMyPage] = useState(null);
+
+    useEffect (() => {
+        const getMyPage = async () => {
+            const memberId = await AsyncStorage.getItem('memberId');
+            const accessToken = await AsyncStorage.getItem('accessToken');
+            try{
+            const response = await getAnonymousMyPage(memberId, accessToken);
+            console.log(response);
+            setMyPage(response.data)
+            } catch (error) {
+                console.error("마이페이지 조회 에러 : ", error);
+            }
+        };
+        getMyPage();
+    }, []);
 
     return (
-        <>
-        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'white', zIndex: -1 }} />
+      <>
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'white',
+            zIndex: -1,
+          }}
+        />
         <View style={styles.container}>
-            <LinearGradient colors={["#D7C0FA", "#F8B4F1"]} style={styles.backgroundShape}/>
-                <View style={styles.profileContainer}>
-                    <Friends_03 width={90} height={90} />
-                    <Text style={styles.userName}>새침한 세찌</Text>
-                    <Text style={styles.userStatus}>💬 채팅 참여중</Text>
-                    <View style={styles.separator} />
-                    <View style={styles.diceInfo}>
-                        <View style={styles.diceLeft}>
-                            <Text style={styles.dice}>My Dice</Text>
-                            <Vector width={20} height={20} />
-                            <Text style={styles.dice}>수</Text>
-                        </View>
-                        <View style={styles.diceRight}>
-                            <Text style={styles.dice}>0</Text>
-                            <Text style={styles.dice}>개</Text>
-                            <Plus />
-                        </View>
-                    </View>
+          <LinearGradient
+            colors={['#D7C0FA', '#F8B4F1']}
+            style={styles.backgroundShape}
+          />
+          {myPage ? (
+            <>
+              <View style={styles.profileContainer}>
+                <Friends_03 width={90} height={90} />
+                <Text style={styles.userName}>{myPage.nickname}</Text>
+                <Text style={styles.userStatus}>
+                  {myPage.exitStatus === 'ROOM_EXIT'
+                    ? '💬 채팅방 없음'
+                    : '💬 채팅 참여중'}
+                </Text>
+                <View style={styles.separator} />
+                <View style={styles.diceInfo}>
+                  <View style={styles.diceLeft}>
+                    <Text style={styles.dice}>My Dice</Text>
+                    <Vector width={20} height={20} />
+                    <Text style={styles.dice}>수</Text>
+                  </View>
+                  <View style={styles.diceRight}>
+                    <Text style={styles.dice}>{myPage.totalDice} 개</Text>
+                    <Plus onPress={() => navigation.navigate('ChargeDice')} />
+                  </View>
                 </View>
-                <View style={styles.buttonContainer}>
-                    <MyPageButton title="나의 정보" onPress={() => navigation.navigate('MyInfo')} Icon={MyInfo}/>
-                    <MyPageButton title="나의 문의 조회" onPress={() => navigation.navigate('MyQuestion')} Icon={MyQuestion}/>
-                    <MyPageButton title="DICE 사용 내역" onPress={() => navigation.navigate('MyDice')} Icon={DiceHistory}/>
-                    <MyPageButton title="DICE 충전하기" onPress={() => navigation.navigate('ChargeDice')} Icon={DicePayment}/>
-                    
-                    <Pressable 
-                        style={styles.logout}
-                        onPress={async () => {
-                            try {
-                                const token = await AsyncStorage.getItem("accessToken");
-                                await logout(token);
-                                setAuth(null);
-                                navigation.reset({
-                                    index: 0,
-                                    routes: [
-                                        {
-                                            name: 'Auth',
-                                            state: {
-                                                routes: [
-                                                    {
-                                                        name: 'LendingPage'
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    ]
-                                });
-                            } catch (error) {
-                                console.error('로그아웃 실패:', error);
-                                Alert.alert('로그아웃 실패', '로그아웃 처리 중 오류가 발생했습니다.');
-                            }
-                        }}
-                    >
-                        <Logout />
-                        <Text style={{color: '#715E7C', fontSize: 12}}>로그아웃</Text>
-                    </Pressable>
-                </View>
-            </View>
+              </View>
+              <View style={styles.buttonContainer}>
+                <MyPageButton
+                  title='나의 정보'
+                  onPress={() => navigation.navigate('MyInfo')}
+                  Icon={MyInfo}
+                />
+                <MyPageButton
+                  title='나의 문의 조회'
+                  onPress={() => navigation.navigate('MyQuestion')}
+                  Icon={MyQuestion}
+                />
+                <MyPageButton
+                  title='DICE 사용 내역'
+                  onPress={() => navigation.navigate('MyDice')}
+                  Icon={DiceHistory}
+                />
+                <MyPageButton
+                  title='DICE 충전하기'
+                  onPress={() => navigation.navigate('ChargeDice')}
+                  Icon={DicePayment}
+                />
 
-            <View style={styles.bottomLine} />
-            <Footer />
-        </>
-    )
+                <Pressable
+                  style={styles.logout}
+                  onPress={async () => {
+                    try {
+                      const token = await AsyncStorage.getItem('accessToken');
+                      await logout(token);
+                      setAuth(null);
+                      navigation.reset({
+                        index: 0,
+                        routes: [
+                          {
+                            name: 'Auth',
+                            state: {
+                              routes: [
+                                {
+                                  name: 'LendingPage',
+                                },
+                              ],
+                            },
+                          },
+                        ],
+                      });
+                    } catch (error) {
+                      console.error('로그아웃 실패:', error);
+                      Alert.alert(
+                        '로그아웃 실패',
+                        '로그아웃 처리 중 오류가 발생했습니다.',
+                      );
+                    }
+                  }}
+                >
+                  <Logout />
+                  <Text style={{ color: '#715E7C', fontSize: 12 }}>
+                    로그아웃
+                  </Text>
+                </Pressable>
+              </View>
+            </>
+          ) : (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size='large' color='#D8B4FE' />
+              <Text style={styles.loadingText}>로딩 중...</Text>
+            </View>
+          )}
+        </View>
+        <View style={styles.bottomLine} />
+        <Footer />
+      </>
+    );
+
 }
 
 const styles = StyleSheet.create({
