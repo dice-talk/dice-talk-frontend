@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, Switch, StyleSheet, Platform } from "react-native";
-import Footer from "../../../../.Trash/dice-talk-frontend/component/Footer";
+import Footer from "../component/Footer";
 
 export default function AlertSetting() {
   const [soundNotification, setSoundNotification] = useState(true);

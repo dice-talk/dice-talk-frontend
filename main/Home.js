@@ -16,6 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ExFriendsTheme from "../assets/theme/exFriendsTheme.svg";
 import FriendsTheme from "../assets/theme/friendsTheme.svg";
 import HeartSignalTheme from "../assets/theme/heartSignalTheme.svg";
+import Footer from "../component/Footer";
 
 const BANNER_HEIGHT = 180;
 const THEME_IMAGE_SIZE = 200;
@@ -224,6 +225,7 @@ export default function Home() {
           </View>
         </View>
       </Modal>
+      <Footer />
     </View>
   );
 }

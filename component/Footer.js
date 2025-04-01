@@ -41,7 +41,7 @@ function Footer() {
       />
       <Button 
         title="Setting" 
-        onPress={() => navigation.navigate("MyPageTab", { screen: "MyInfo" })} 
+        onPress={() => navigation.navigate("Setting", { screen: "SettingMain" })} 
         Icon={Setting} 
       />
     </View>

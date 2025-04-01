@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import LongButton from "../../../../.Trash/dice-talk-frontend/component/LongButton";
-import CitySelectBox from '../../../../.Trash/dice-talk-frontend/component/CitySelectBox';
-import { useEmail } from '../../../../.Trash/dice-talk-frontend/context/EmailContext';
+import LongButton from "../component/LongButton";
+import CitySelectBox from "../component/CitySelectBox";
+import { useEmail } from "../context/EmailContext";
 
 export default function SettingUserInfoChange({ route, navigation }) {
   const { email } = useEmail();
@@ -18,7 +18,6 @@ export default function SettingUserInfoChange({ route, navigation }) {
 
   const [password, setPassword] = useState('');
   const [confirmpassword, setConfirmPassword] = useState('');
-
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
-import Pagination from "../../../../.Trash/dice-talk-frontend/component/Pagination";
-import Footer from "../../../../.Trash/dice-talk-frontend/component/Footer";
+import Pagination from "../component/Pagination";
+import Footer from "../component/Footer";
 
 const postData = [
   { id: "1", type: "공지", title: "런칭 기념 이벤트", date: "2025-03-01" },
