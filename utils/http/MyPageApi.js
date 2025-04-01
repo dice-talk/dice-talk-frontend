@@ -1,9 +1,12 @@
+import { fetchWithAuth } from "./fetchWithAuth";
+
 // 마이페이지(익명) 조회
-const getAnonymousMyPage = async (memberId) => {
+export const getAnonymousMyPage = async (memberId, token) => {
   try {
     const response = await fetchWithAuth(`my-page/${memberId}`, {
       method: 'GET',
     });
+    console.log(response);
 
     if (!response.ok) {
       throw new Error(`조회 실패: ${response.status}`);
@@ -17,11 +20,12 @@ const getAnonymousMyPage = async (memberId) => {
 };
 
 // 내 정보 조회
-const getMyInfo = async (memberId) => {
+export const getMyInfo = async (memberId, token) => {
   try {
-    const response = await fetchWithAuth(`${BASE_URL}my-info/${memberId}`, {
+    const response = await fetchWithAuth(`my-info/${memberId}`, {
       method: 'GET',
     });
+    console.log(response);
 
     if (!response.ok) {
       throw new Error(`회원 정보 조회 실패: ${response.status}`);
